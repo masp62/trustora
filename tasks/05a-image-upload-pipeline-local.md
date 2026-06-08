@@ -11,15 +11,15 @@ This gives post creation and avatar upload a fully functional image pipeline dur
 
 ## Acceptance criteria
 
-- [ ] An `uploadImage` abstraction is defined (e.g. accepts file data, returns `{ url: string }`) and selects the backend based on `IMAGE_PROVIDER` env var
-- [ ] The `local` backend writes accepted files to `public/uploads/` with unique filenames and returns the local URL path
-- [ ] A server-side upload endpoint (API route or Server Action) accepts image file data and delegates to the abstraction
-- [ ] Accepted file types enforced server-side (JPEG, PNG, WebP only)
-- [ ] File size limit enforced server-side (e.g. 5 MB)
-- [ ] Photo count limits (min 1, max 10 per post) documented and ready for enforcement in the post creation slice
-- [ ] Upload endpoint is not publicly accessible without authentication (requires a session)
-- [ ] `.env.example` updated with `IMAGE_PROVIDER=local`
-- [ ] `public/uploads/` is added to `.gitignore`
+- [x] An `uploadImage` abstraction is defined (e.g. accepts file data, returns `{ url: string }`) and selects the backend based on `IMAGE_PROVIDER` env var
+- [x] The `local` backend writes accepted files to `public/uploads/` with unique filenames and returns the local URL path
+- [x] A server-side upload endpoint (API route or Server Action) accepts image file data and delegates to the abstraction
+- [x] Accepted file types enforced server-side (JPEG, PNG, WebP only)
+- [x] File size limit enforced server-side (e.g. 5 MB)
+- [x] Photo count limits (min 1, max 10 per post) documented and ready for enforcement in the post creation slice
+- [x] Upload endpoint is not publicly accessible without authentication (requires a session)
+- [x] `.env.example` updated with `IMAGE_PROVIDER=local`
+- [x] `public/uploads/` is added to `.gitignore`
 
 ## Blocked by
 
