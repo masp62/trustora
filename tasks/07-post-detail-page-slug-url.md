@@ -9,12 +9,12 @@ Build the public Experience Post detail page at `/post/[id]/[slug]`. The page mu
 
 ## Acceptance criteria
 
-- [ ] Any visitor (logged in or not) can view a post at `/post/[id]/[slug]`
-- [ ] Page renders: photo gallery (browsable), title, rich-text body, location (city + country), property name (if set), tags as chips, trip type, author avatar + display name + username, like count, and comments section
-- [ ] Visiting `/post/[id]` or `/post/[id]/wrong-slug` redirects (308) to the canonical `/post/[id]/[correct-slug]`
-- [ ] Author name and avatar link to `/u/[username]`
-- [ ] Page is server-rendered (SSR); meta title, description, and Open Graph tags populated from post data
-- [ ] Photo gallery allows browsing through all uploaded images
+- [x] Any visitor (logged in or not) can view a post at `/post/[id]/[slug]`
+- [x] Page renders: photo gallery (browsable), title, rich-text body, location (city + country), property name (if set), tags as chips, trip type, author avatar + display name + username, like count, and comments section
+- [x] Visiting `/post/[id]` or `/post/[id]/wrong-slug` redirects (308) to the canonical `/post/[id]/[correct-slug]`
+- [x] Author name and avatar link to `/u/[username]`
+- [x] Page is server-rendered (SSR); meta title, description, and Open Graph tags populated from post data
+- [x] Photo gallery allows browsing through all uploaded images
 
 ## Blocked by
 

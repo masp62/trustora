@@ -195,5 +195,5 @@ export async function createExperiencePost(
     });
   }
 
-  redirect(`/post/${createdPost.slug}`);
+  redirect(`/post/${createdPost.id}/${createdPost.slug}`);
 }
