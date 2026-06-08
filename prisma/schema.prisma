@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TripType {
+  solo
+  couple
+  family
+  friends
+  business
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum ReportTargetType {
+  post
+  comment
+}
+
+enum ReportStatus {
+  pending
+  resolved
+  dismissed
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  displayName  String
+  avatarUrl    String?
+  bio          String?  @db.VarChar(280)
+  location     String?
+  role         UserRole @default(user)
+  passwordHash String?
+  isBanned     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  posts     ExperiencePost[]
+  likes     Like[]
+  comments  Comment[]
+  followers Follow[]         @relation("following")
+  following Follow[]         @relation("follower")
+  reports   Report[]         @relation("reporter")
+  passwordResetTokens PasswordResetToken[]
+}
+
+model ExperiencePost {
+  id              String   @id @default(cuid())
+  slug            String
+  title           String   @db.VarChar(120)
+  body            String   @db.VarChar(5000)
+  locationCity    String
+  locationCountry String
+  propertyName    String?  @db.VarChar(140)
+  tripType        TripType
+  authorId        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  images   PostImage[]
+  postTags PostTag[]
+  likes    Like[]
+  comments Comment[]
+
+  @@index([authorId, createdAt(sort: Desc)])
+  @@index([locationCountry, locationCity, createdAt(sort: Desc)])
+}
+
+model PostImage {
+  id            String @id @default(cuid())
+  postId        String
+  cloudinaryUrl String
+  order         Int
+
+  post ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, order])
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+
+  postTags PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag            @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId, createdAt(sort: Desc)])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String   @db.VarChar(2000)
+  postId    String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post   ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+}
+
+model Report {
+  id         String           @id @default(cuid())
+  reporterId String
+  targetType ReportTargetType
+  targetId   String
+  reason     String?          @db.VarChar(1000)
+  status     ReportStatus     @default(pending)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  reporter User @relation("reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([targetType, targetId])
+  @@index([status, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}

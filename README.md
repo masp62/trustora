@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RealBnB
 
-## Getting Started
+RealBnB is a Next.js App Router application for sharing travel stay experiences.
 
-First, run the development server:
+## Project Foundation Status
+
+- Next.js 16 + TypeScript + App Router configured
+- Tailwind v4 and shadcn/ui baseline tokens configured
+- Full Prisma schema for the MVP domain implemented
+- Prisma seed script for predefined tags implemented
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Copy environment variables and fill secrets:
+
+```bash
+cp .env.example .env
+```
+
+3. Create your first migration and generate Prisma client:
+
+```bash
+npm run prisma:migrate -- --name init
+npm run prisma:generate
+```
+
+4. Seed predefined tags:
+
+```bash
+npm run prisma:seed
+```
+
+5. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prisma Commands
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run prisma:migrate` - run a development migration
+- `npm run prisma:generate` - regenerate Prisma client
+- `npm run prisma:seed` - seed predefined tags
+- `npm run prisma:studio` - open Prisma Studio
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Vercel Deployment
 
-## Learn More
+Automatic deploys on push to `main` are enabled after linking this repo to Vercel once:
 
-To learn more about Next.js, take a look at the following resources:
+1. Import this Git repository in Vercel.
+2. Set all environment variables from `.env.example` in Vercel project settings.
+3. Confirm production branch is `main`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+After that, every push to `main` triggers a production deployment.
