@@ -23,13 +23,13 @@ The menu should be a dropdown or popover on smaller screens and can be inline it
 
 ## Acceptance criteria
 
-- [ ] The header shows "Sign in" and "Create account" links when the user is not authenticated
-- [ ] The header shows "Edit profile" and "Sign out" actions when the user is authenticated
-- [ ] A "Help" link is always visible in the menu regardless of auth state
-- [ ] On mobile, the menu items are accessible via a hamburger or avatar-based dropdown toggle
-- [ ] Sign out uses the existing `signOutFromApp` action and redirects to `/explore`
-- [ ] The per-page sign-in/sign-out buttons on `/explore` and `/create` can be removed once the header menu is in place
-- [ ] The menu is keyboard-accessible (Tab, Enter, Escape to close)
+- [x] The header shows "Sign in" and "Create account" links when the user is not authenticated
+- [x] The header shows "Edit profile" and "Sign out" actions when the user is authenticated
+- [x] A "Help" link is always visible in the menu regardless of auth state
+- [x] On mobile, the menu items are accessible via a hamburger or avatar-based dropdown toggle
+- [x] Sign out uses the existing `signOutFromApp` action and redirects to `/explore`
+- [x] The per-page sign-in/sign-out buttons on `/explore` and `/create` can be removed once the header menu is in place
+- [x] The menu is keyboard-accessible (Tab, Enter, Escape to close)
 
 ## Blocked by
 

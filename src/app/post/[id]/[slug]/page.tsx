@@ -72,8 +72,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   }
 
   return (
-    <main className="flex flex-1 px-4 py-10 sm:px-8 sm:py-12">
-      <article className="mx-auto w-full max-w-5xl space-y-8 rounded-[2rem] border border-stone-200/80 bg-white/95 p-6 shadow-xl shadow-amber-950/10 backdrop-blur sm:p-10">
+    <main className="flex flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 sm:py-12">
+      <article className="mx-auto w-full max-w-[1760px] space-y-8 rounded-[2rem] border border-stone-200/80 bg-white/95 p-6 shadow-xl shadow-amber-950/10 backdrop-blur sm:p-10">
         <header className="space-y-3">
           <p className="text-sm font-semibold tracking-[0.16em] text-amber-700 uppercase">Experience</p>
           <h1 className="font-heading text-3xl leading-tight text-stone-900 sm:text-5xl">{post.title}</h1>

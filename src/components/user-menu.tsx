@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CircleHelp, LogIn, LogOut, Menu, User } from "lucide-react";
+import { CircleHelp, Compass, LogIn, LogOut, Menu, PenLine, User } from "lucide-react";
 
 import { signOutFromApp } from "@/lib/auth-actions";
 import { AuthDialog } from "@/components/auth/auth-dialog";
@@ -15,10 +15,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+type NavLink = { href: string; label: string };
+
 type UserMenuProps = {
   isAuthenticated: boolean;
   googleAuthConfigured: boolean;
   displayName: string | null;
+  navLinks?: NavLink[];
+};
+
+const navIcons: Record<string, React.ReactNode> = {
+  "/explore": <Compass className="mr-2 size-4" />,
+  "/create": <PenLine className="mr-2 size-4" />,
 };
 
 function getInitials(name: string) {
@@ -30,7 +38,7 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-export function UserMenu({ isAuthenticated, googleAuthConfigured, displayName }: UserMenuProps) {
+export function UserMenu({ isAuthenticated, googleAuthConfigured, displayName, navLinks = [] }: UserMenuProps) {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   return (
@@ -63,6 +71,20 @@ export function UserMenu({ isAuthenticated, googleAuthConfigured, displayName }:
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
+          {/* Mobile-only nav links */}
+          {navLinks.length > 0 && (
+            <>
+              {navLinks.map((link) => (
+                <DropdownMenuItem key={link.href} asChild className="sm:hidden">
+                  <Link href={link.href} className="cursor-pointer">
+                    {navIcons[link.href] ?? null}
+                    {link.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator className="sm:hidden" />
+            </>
+          )}
           {isAuthenticated ? (
             <>
               <DropdownMenuItem asChild>

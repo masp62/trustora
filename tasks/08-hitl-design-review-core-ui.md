@@ -18,12 +18,12 @@ Aspects to evaluate:
 
 ## Acceptance criteria
 
-- [ ] Post card design reviewed and approved (or change requests issued)
-- [ ] Post detail page layout reviewed and approved (or change requests issued)
-- [ ] Photo gallery behavior reviewed and approved (or change requests issued)
-- [ ] Navigation shell reviewed and approved (or change requests issued)
-- [ ] Profile page layout reviewed and approved (or change requests issued)
-- [ ] All design change requests from this review resolved before feeds and profiles are implemented (#13, #15)
+- [x] Post card design reviewed and approved (or change requests issued)
+- [x] Post detail page layout reviewed and approved (or change requests issued)
+- [x] Photo gallery behavior reviewed and approved (or change requests issued)
+- [x] Navigation shell reviewed and approved (or change requests issued)
+- [x] Profile page layout reviewed and approved (or change requests issued)
+- [x] All design change requests from this review resolved before feeds and profiles are implemented (#13, #15)
 
 ## Blocked by
 
