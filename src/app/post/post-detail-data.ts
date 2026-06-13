@@ -22,6 +22,7 @@ export type PostDetailData = {
   locationCountry: string;
   propertyName: string | null;
   tripType: string;
+  authorId: string;
   createdAt: Date;
   author: {
     username: string;
@@ -127,6 +128,7 @@ export const getPostDetailById = cache(async (id: string): Promise<PostDetailDat
     locationCountry: post.locationCountry,
     propertyName: post.propertyName,
     tripType: post.tripType,
+    authorId: post.authorId,
     createdAt: post.createdAt,
     author,
     images,

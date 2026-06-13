@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 
+import { auth } from "@/auth";
 import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-data";
 
 import { PhotoGallery } from "./photo-gallery";
+import { PostAuthorActions } from "./post-author-actions";
 
 type PostDetailPageProps = {
   params: Promise<{ id: string; slug: string }>;
@@ -71,11 +73,17 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     permanentRedirect(postCanonicalPath(post.id, post.slug));
   }
 
+  const session = await auth();
+  const isAuthor = session?.user?.id === post.authorId;
+
   return (
     <main className="flex flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 sm:py-12">
       <article className="mx-auto w-full max-w-[1760px] space-y-8 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm sm:p-10">
         <header className="space-y-3">
-          <p className="text-sm font-semibold tracking-[0.16em] text-gray-500 uppercase">Experience</p>
+          <div className="flex items-start justify-between gap-4">
+            <p className="text-sm font-semibold tracking-[0.16em] text-gray-500 uppercase">Experience</p>
+            {isAuthor && <PostAuthorActions postId={post.id} />}
+          </div>
           <h1 className="font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">{post.title}</h1>
           <p className="text-sm text-gray-600">
             {post.locationCity}, {post.locationCountry} · {toTitleCase(post.tripType)}
