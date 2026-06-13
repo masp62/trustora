@@ -13,7 +13,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex w-full items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C] disabled:cursor-not-allowed disabled:bg-gray-300"
+      className="inline-flex w-full items-center justify-center rounded-full bg-[#0066FF] px-6 py-3 font-semibold text-white transition hover:bg-[#0052CC] disabled:cursor-not-allowed disabled:bg-gray-300"
     >
       {pending ? "Sending..." : "Send reset link"}
     </button>
@@ -39,7 +39,7 @@ export function ForgotPasswordForm() {
           autoComplete="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#00A67E]"
         />
       </label>
 

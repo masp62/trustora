@@ -23,7 +23,7 @@ export async function SiteHeader() {
         <div className="flex items-center gap-8">
           <Link
             href="/explore"
-            className="font-heading text-4xl font-bold tracking-tight text-[#E0565B] transition hover:text-[#FF787C]"
+            className="font-heading text-4xl font-bold tracking-tight text-[#0066FF] transition hover:text-[#0052CC]"
           >
             RealBnB
           </Link>

@@ -72,7 +72,7 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
               <button
                 type="button"
                 onClick={() => setMode("signup")}
-                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
+                className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
               >
                 Create one
               </button>
@@ -117,7 +117,7 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
+                className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
               >
                 Sign in
               </button>
@@ -141,7 +141,7 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
+                className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
               >
                 Sign in
               </button>

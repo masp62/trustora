@@ -12,7 +12,7 @@ export default function HelpPage() {
           This page is coming soon. In the meantime, feel free to reach out to us at{" "}
           <a
             href="mailto:support@realbnb.com"
-            className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
+            className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
           >
             support@realbnb.com
           </a>

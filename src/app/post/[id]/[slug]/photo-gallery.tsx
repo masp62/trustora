@@ -131,7 +131,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
               onClick={() => scrollToIndex(index)}
               className={`size-2 rounded-full transition ${
                 index === activeIndex
-                  ? "scale-125 bg-[#E0565B]"
+                  ? "scale-125 bg-[#0066FF]"
                   : "bg-gray-300 hover:bg-gray-400"
               }`}
               role="tab"

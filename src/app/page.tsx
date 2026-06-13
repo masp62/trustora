@@ -14,7 +14,7 @@ export default function Home() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <a
-            className="inline-flex items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C]"
+            className="inline-flex items-center justify-center rounded-full bg-[#0066FF] px-6 py-3 font-semibold text-white transition hover:bg-[#0052CC]"
             href="/explore"
           >
             Explore (coming in next slice)

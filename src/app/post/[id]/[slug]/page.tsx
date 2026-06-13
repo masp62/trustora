@@ -145,7 +145,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
                 <li key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     {comment.author ? (
-                      <Link href={`/u/${comment.author.username}`} className="text-sm font-semibold text-gray-800 hover:text-[#E0565B]">
+                      <Link href={`/u/${comment.author.username}`} className="text-sm font-semibold text-gray-800 hover:text-[#0066FF]">
                         {comment.author.displayName} (@{comment.author.username})
                       </Link>
                     ) : (
