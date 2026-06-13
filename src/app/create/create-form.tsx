@@ -28,7 +28,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
     <button
       type="submit"
       disabled={pending || disabled}
-      className="inline-flex w-full items-center justify-center rounded-full bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:bg-amber-300"
+      className="inline-flex w-full items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C] disabled:cursor-not-allowed disabled:bg-gray-300"
     >
       {pending ? "Publishing..." : "Publish experience"}
     </button>
@@ -179,31 +179,31 @@ export function CreatePostForm() {
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} className="mt-8 space-y-6">
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Title</span>
+        <span className="text-sm font-semibold text-gray-700">Title</span>
         <input
           name="title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           maxLength={POST_TITLE_MAX_LENGTH}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
         />
-        <p className="text-xs text-stone-500">{titleRemaining} characters remaining</p>
+        <p className="text-xs text-gray-500">{titleRemaining} characters remaining</p>
         {(clientErrors.title ?? state.fieldErrors.title) && (
           <p className="text-sm text-red-700">{clientErrors.title ?? state.fieldErrors.title}</p>
         )}
       </label>
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Story</span>
+        <span className="text-sm font-semibold text-gray-700">Story</span>
         <textarea
           name="body"
           value={body}
           onChange={(event) => setBody(event.target.value)}
           maxLength={POST_BODY_MAX_LENGTH}
           rows={8}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
         />
-        <p className="text-xs text-stone-500">{bodyRemaining} characters remaining</p>
+        <p className="text-xs text-gray-500">{bodyRemaining} characters remaining</p>
         {(clientErrors.body ?? state.fieldErrors.body) && (
           <p className="text-sm text-red-700">{clientErrors.body ?? state.fieldErrors.body}</p>
         )}
@@ -211,22 +211,22 @@ export function CreatePostForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1">
-          <span className="text-sm font-semibold text-stone-700">City</span>
+          <span className="text-sm font-semibold text-gray-700">City</span>
           <input
             name="locationCity"
             value={locationCity}
             onChange={(event) => setLocationCity(event.target.value)}
-            className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-sm font-semibold text-stone-700">Country</span>
+          <span className="text-sm font-semibold text-gray-700">Country</span>
           <input
             name="locationCountry"
             value={locationCountry}
             onChange={(event) => setLocationCountry(event.target.value)}
-            className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
           />
         </label>
       </div>
@@ -236,23 +236,23 @@ export function CreatePostForm() {
       )}
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Property name (optional)</span>
+        <span className="text-sm font-semibold text-gray-700">Property name (optional)</span>
         <input
           name="propertyName"
           value={propertyName}
           onChange={(event) => setPropertyName(event.target.value)}
           maxLength={PROPERTY_NAME_MAX_LENGTH}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
         />
       </label>
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Trip type</span>
+        <span className="text-sm font-semibold text-gray-700">Trip type</span>
         <select
           name="tripType"
           value={tripType}
           onChange={(event) => setTripType(event.target.value as (typeof TRIP_TYPES)[number])}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition focus:border-[#008489]"
         >
           <option value="">Select trip type</option>
           {TRIP_TYPES.map((type) => (
@@ -265,7 +265,7 @@ export function CreatePostForm() {
       </label>
 
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-stone-700">
+        <legend className="text-sm font-semibold text-gray-700">
           Tags ({selectedTags.length}/{MAX_TAGS_PER_POST})
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
@@ -274,7 +274,7 @@ export function CreatePostForm() {
             const disabled = !checked && selectedTags.length >= MAX_TAGS_PER_POST;
 
             return (
-              <label key={tag} className="flex items-center gap-2 rounded-lg border border-amber-100 bg-amber-50/50 px-3 py-2 text-sm text-stone-800">
+              <label key={tag} className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-800">
                 <input
                   type="checkbox"
                   checked={checked}
@@ -295,7 +295,7 @@ export function CreatePostForm() {
       </fieldset>
 
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-stone-700">
+        <legend className="text-sm font-semibold text-gray-700">
           Photos ({uploadedPhotos.length}/{MAX_PHOTOS_PER_POST})
         </legend>
         <input
@@ -303,20 +303,20 @@ export function CreatePostForm() {
           accept="image/jpeg,image/png,image/webp"
           multiple
           onChange={handlePhotoSelection}
-          className="block w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-sm text-stone-900"
+          className="block w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900"
         />
 
-        {isUploading && <p className="text-sm text-stone-600">Uploading photos...</p>}
+        {isUploading && <p className="text-sm text-gray-600">Uploading photos...</p>}
 
         {uploadedPhotos.length > 0 && (
           <ul className="space-y-2">
             {uploadedPhotos.map((photo) => (
-              <li key={photo.url} className="flex items-center justify-between rounded-lg border border-amber-100 bg-white px-3 py-2 text-sm">
-                <div className="truncate pr-3 text-stone-800">{photo.name}</div>
+              <li key={photo.url} className="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-3 py-2 text-sm">
+                <div className="truncate pr-3 text-gray-800">{photo.name}</div>
                 <button
                   type="button"
                   onClick={() => removePhoto(photo.url)}
-                  className="rounded-md border border-amber-300 px-2 py-1 text-xs font-semibold text-amber-800 hover:bg-amber-50"
+                  className="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
                 >
                   Remove
                 </button>

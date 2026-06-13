@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff7eb;
-  --foreground: #292524;
+  --background: #FAFAF7;
+  --foreground: #222222;
 
-  --card: #fffcf8;
-  --card-foreground: #292524;
-  --popover: #fffcf8;
-  --popover-foreground: #292524;
-  --primary: #c2410c;
-  --primary-foreground: #fffaf5;
-  --secondary: #fed7aa;
-  --secondary-foreground: #7c2d12;
-  --muted: #ffedd5;
-  --muted-foreground: #9a3412;
-  --accent: #f59e0b;
-  --accent-foreground: #422006;
+  --card: #FFFFFF;
+  --card-foreground: #222222;
+  --popover: #FFFFFF;
+  --popover-foreground: #222222;
+  --primary: #E0565B;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F7F7F7;
+  --secondary-foreground: #222222;
+  --muted: #F7F7F7;
+  --muted-foreground: #717171;
+  --accent: #008489;
+  --accent-foreground: #FFFFFF;
   --destructive: #dc2626;
-  --destructive-foreground: #fff7ed;
-  --border: #fed7aa;
-  --input: #fdba74;
-  --ring: #f97316;
+  --destructive-foreground: #FFFFFF;
+  --border: #DDDDDD;
+  --input: #DDDDDD;
+  --ring: #E0565B;
   --radius: 1rem;
 }
 
@@ -59,10 +59,6 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  background-image:
-    radial-gradient(circle at 10% 10%, rgba(251, 146, 60, 0.25) 0, transparent 35%),
-    radial-gradient(circle at 90% 25%, rgba(253, 186, 116, 0.3) 0, transparent 40%),
-    linear-gradient(180deg, #fff7eb 0%, #ffedd5 100%);
   font-family: var(--font-body), sans-serif;
 }
 

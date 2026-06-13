@@ -77,7 +77,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
       tabIndex={0}
       role="region"
     >
-      <p className="text-sm text-stone-600">
+      <p className="text-sm text-gray-600">
         {activeIndex + 1} / {count} photos
       </p>
 
@@ -89,7 +89,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
           {images.map((image, index) => (
             <li
               key={image.cloudinaryUrl}
-              className="min-w-[85%] snap-start overflow-hidden rounded-2xl border border-amber-200/80 bg-stone-100 sm:min-w-[70%]"
+              className="min-w-[85%] snap-start overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 sm:min-w-[70%]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -109,7 +109,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
               className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-2 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
               aria-label="Previous photo"
             >
-              <ChevronLeft className="size-5 text-stone-800" />
+              <ChevronLeft className="size-5 text-gray-800" />
             </button>
             <button
               onClick={goNext}
@@ -117,7 +117,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
               className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-2 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
               aria-label="Next photo"
             >
-              <ChevronRight className="size-5 text-stone-800" />
+              <ChevronRight className="size-5 text-gray-800" />
             </button>
           </>
         )}
@@ -131,8 +131,8 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
               onClick={() => scrollToIndex(index)}
               className={`size-2 rounded-full transition ${
                 index === activeIndex
-                  ? "scale-125 bg-amber-600"
-                  : "bg-stone-300 hover:bg-stone-400"
+                  ? "scale-125 bg-[#E0565B]"
+                  : "bg-gray-300 hover:bg-gray-400"
               }`}
               role="tab"
               aria-selected={index === activeIndex}

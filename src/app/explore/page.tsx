@@ -63,9 +63,9 @@ export default async function ExplorePage() {
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       {/* Hero */}
-      <section className="mx-auto mb-10 w-full max-w-[1760px] rounded-[2rem] border border-stone-200/80 bg-white/90 p-8 shadow-xl shadow-amber-950/10 backdrop-blur sm:p-12">
-        <p className="text-sm font-semibold tracking-[0.15em] text-amber-700 uppercase">Explore</p>
-        <h1 className="mt-4 max-w-2xl font-heading text-4xl leading-tight text-stone-900 sm:text-6xl">
+      <section className="mx-auto mb-10 w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-12">
+        <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Explore</p>
+        <h1 className="mt-4 max-w-2xl font-heading text-4xl leading-tight text-gray-900 sm:text-6xl">
           Discover real travel stay stories.
         </h1>
 
@@ -76,7 +76,7 @@ export default async function ExplorePage() {
             <div className="mt-6">
               <Link
                 href="/create"
-                className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-500"
+                className="inline-flex items-center gap-2 rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C]"
               >
                 <PenLine className="size-4" />
                 Share your experience
@@ -96,9 +96,9 @@ export default async function ExplorePage() {
       {/* Post Feed */}
       <section className="mx-auto w-full max-w-[1760px]">
         {posts.length === 0 ? (
-          <div className="rounded-2xl border border-stone-200/80 bg-white/80 p-12 text-center">
-            <p className="font-heading text-xl text-stone-600">No stories yet.</p>
-            <p className="mt-2 text-sm text-stone-500">Be the first to share your travel experience!</p>
+          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center">
+            <p className="font-heading text-xl text-gray-600">No stories yet.</p>
+            <p className="mt-2 text-sm text-gray-500">Be the first to share your travel experience!</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">

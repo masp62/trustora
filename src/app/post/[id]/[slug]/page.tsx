@@ -73,19 +73,19 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
   return (
     <main className="flex flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 sm:py-12">
-      <article className="mx-auto w-full max-w-[1760px] space-y-8 rounded-[2rem] border border-stone-200/80 bg-white/95 p-6 shadow-xl shadow-amber-950/10 backdrop-blur sm:p-10">
+      <article className="mx-auto w-full max-w-[1760px] space-y-8 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm sm:p-10">
         <header className="space-y-3">
-          <p className="text-sm font-semibold tracking-[0.16em] text-amber-700 uppercase">Experience</p>
-          <h1 className="font-heading text-3xl leading-tight text-stone-900 sm:text-5xl">{post.title}</h1>
-          <p className="text-sm text-stone-600">
+          <p className="text-sm font-semibold tracking-[0.16em] text-gray-500 uppercase">Experience</p>
+          <h1 className="font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">{post.title}</h1>
+          <p className="text-sm text-gray-600">
             {post.locationCity}, {post.locationCountry} · {toTitleCase(post.tripType)}
           </p>
-          {post.propertyName && <p className="text-sm text-stone-600">Property: {post.propertyName}</p>}
+          {post.propertyName && <p className="text-sm text-gray-600">Property: {post.propertyName}</p>}
         </header>
 
         <PhotoGallery title={post.title} images={post.images} />
 
-        <section className="rounded-2xl border border-amber-100 bg-amber-50/50 p-4 sm:p-5">
+        <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
           <div className="flex items-center gap-3">
             <Link href={`/u/${post.author.username}`} className="inline-flex items-center gap-3">
               {post.author.avatarUrl ? (
@@ -93,16 +93,16 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
                 <img
                   src={post.author.avatarUrl}
                   alt={post.author.displayName}
-                  className="h-12 w-12 rounded-full border border-amber-200 object-cover"
+                  className="h-12 w-12 rounded-full border border-gray-200 object-cover"
                 />
               ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-100 text-sm font-semibold text-amber-900">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-semibold text-gray-700">
                   {post.author.displayName.slice(0, 1).toUpperCase()}
                 </div>
               )}
               <div>
-                <p className="font-semibold text-stone-900">{post.author.displayName}</p>
-                <p className="text-sm text-stone-600">@{post.author.username}</p>
+                <p className="font-semibold text-gray-900">{post.author.displayName}</p>
+                <p className="text-sm text-gray-600">@{post.author.username}</p>
               </div>
             </Link>
           </div>
@@ -113,7 +113,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             {post.tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold tracking-wide text-amber-900"
+                className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold tracking-wide text-gray-700"
               >
                 {tag}
               </li>
@@ -122,38 +122,38 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         )}
 
         <section className="space-y-3">
-          <h2 className="font-heading text-2xl text-stone-900">Story</h2>
-          <p className="whitespace-pre-wrap text-[1.05rem] leading-8 text-stone-800">{post.body}</p>
+          <h2 className="font-heading text-2xl text-gray-900">Story</h2>
+          <p className="whitespace-pre-wrap text-[1.05rem] leading-8 text-gray-800">{post.body}</p>
         </section>
 
-        <section className="space-y-2 rounded-2xl border border-stone-200 p-4 sm:p-5" aria-label="Post stats">
-          <p className="text-sm text-stone-700">
-            <span className="font-semibold text-stone-900">{post.likeCount}</span> likes
+        <section className="space-y-2 rounded-2xl border border-gray-200 p-4 sm:p-5" aria-label="Post stats">
+          <p className="text-sm text-gray-700">
+            <span className="font-semibold text-gray-900">{post.likeCount}</span> likes
           </p>
-          <p className="text-sm text-stone-600">Published {formatDate(post.createdAt)}</p>
+          <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
         </section>
 
         <section className="space-y-4" aria-label="Comments">
-          <h2 className="font-heading text-2xl text-stone-900">Comments ({post.comments.length})</h2>
+          <h2 className="font-heading text-2xl text-gray-900">Comments ({post.comments.length})</h2>
           {post.comments.length === 0 ? (
-            <p className="rounded-xl border border-stone-200 bg-stone-50 p-4 text-sm text-stone-600">
+            <p className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
               No comments yet.
             </p>
           ) : (
             <ul className="space-y-3">
               {post.comments.map((comment) => (
-                <li key={comment.id} className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+                <li key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     {comment.author ? (
-                      <Link href={`/u/${comment.author.username}`} className="text-sm font-semibold text-stone-800 hover:text-amber-800">
+                      <Link href={`/u/${comment.author.username}`} className="text-sm font-semibold text-gray-800 hover:text-[#E0565B]">
                         {comment.author.displayName} (@{comment.author.username})
                       </Link>
                     ) : (
-                      <span className="text-sm font-semibold text-stone-600">Deleted user</span>
+                      <span className="text-sm font-semibold text-gray-600">Deleted user</span>
                     )}
-                    <time className="text-xs text-stone-500">{formatDate(comment.createdAt)}</time>
+                    <time className="text-xs text-gray-500">{formatDate(comment.createdAt)}</time>
                   </div>
-                  <p className="whitespace-pre-wrap text-sm leading-6 text-stone-800">{comment.body}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-6 text-gray-800">{comment.body}</p>
                 </li>
               ))}
             </ul>

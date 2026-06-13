@@ -27,7 +27,7 @@ export function PostCard({ post }: { post: PostCardData }) {
   const href = postCanonicalPath(post.id, post.slug);
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-stone-200/80 bg-white/95 shadow-md shadow-amber-950/5 transition hover:shadow-lg hover:shadow-amber-950/10">
+    <article className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md">
       <Link href={href} className="block">
         {post.leadImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -37,26 +37,26 @@ export function PostCard({ post }: { post: PostCardData }) {
             className="h-52 w-full object-cover transition group-hover:scale-[1.02] sm:h-60"
           />
         ) : (
-          <div className="flex h-52 w-full items-center justify-center bg-amber-50 sm:h-60">
-            <MapPin className="size-10 text-amber-300" />
+          <div className="flex h-52 w-full items-center justify-center bg-gray-50 sm:h-60">
+            <MapPin className="size-10 text-gray-300" />
           </div>
         )}
       </Link>
 
       <div className="space-y-3 p-4 sm:p-5">
         <Link href={href} className="block">
-          <h3 className="line-clamp-2 font-heading text-lg leading-snug text-stone-900 transition group-hover:text-amber-800">
+          <h3 className="line-clamp-2 font-heading text-lg leading-snug text-gray-900 transition group-hover:text-[#E0565B]">
             {post.title}
           </h3>
         </Link>
 
-        <div className="flex items-center gap-2 text-sm text-stone-600">
-          <MapPin className="size-3.5 text-amber-600" />
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <MapPin className="size-3.5 text-[#008489]" />
           <span className="truncate">
             {post.locationCity}, {post.locationCountry}
           </span>
-          <span className="text-stone-400">·</span>
-          <span className="text-stone-500">{toTitleCase(post.tripType)}</span>
+          <span className="text-gray-400">·</span>
+          <span className="text-gray-500">{toTitleCase(post.tripType)}</span>
         </div>
 
         <div className="flex items-center justify-between pt-1">
@@ -69,19 +69,19 @@ export function PostCard({ post }: { post: PostCardData }) {
               <img
                 src={post.author.avatarUrl}
                 alt={post.author.displayName}
-                className="size-7 rounded-full border border-amber-200 object-cover"
+                className="size-7 rounded-full border border-gray-200 object-cover"
               />
             ) : (
-              <div className="flex size-7 items-center justify-center rounded-full border border-amber-200 bg-amber-100 text-xs font-semibold text-amber-900">
+              <div className="flex size-7 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-semibold text-gray-700">
                 {post.author.displayName.slice(0, 1).toUpperCase()}
               </div>
             )}
-            <span className="text-sm font-medium text-stone-700">
+            <span className="text-sm font-medium text-gray-700">
               {post.author.displayName}
             </span>
           </Link>
 
-          <div className="flex items-center gap-1 text-sm text-stone-500">
+          <div className="flex items-center gap-1 text-sm text-gray-500">
             <Heart className="size-3.5" />
             <span>{post.likeCount}</span>
           </div>

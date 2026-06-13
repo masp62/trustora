@@ -20,7 +20,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex w-full items-center justify-center rounded-full bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:bg-amber-300"
+      className="inline-flex w-full items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C] disabled:cursor-not-allowed disabled:bg-gray-300"
     >
       {pending ? "Saving..." : "Save"}
     </button>
@@ -45,7 +45,7 @@ export function ProfileSetupForm({
   return (
     <form action={formAction} className="space-y-4">
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Display name</span>
+        <span className="text-sm font-semibold text-gray-700">Display name</span>
         <input
           required
           name="displayName"
@@ -53,31 +53,31 @@ export function ProfileSetupForm({
           autoComplete="name"
           value={displayName}
           onChange={(event) => setDisplayName(event.target.value)}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none ring-0 transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
         />
       </label>
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Bio (optional)</span>
+        <span className="text-sm font-semibold text-gray-700">Bio (optional)</span>
         <textarea
           name="bio"
           maxLength={280}
           rows={4}
           value={bio}
           onChange={(event) => setBio(event.target.value)}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none ring-0 transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
         />
-        <p className="text-xs text-stone-500">{bio.length}/280 characters</p>
+        <p className="text-xs text-gray-500">{bio.length}/280 characters</p>
       </label>
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Location (optional)</span>
+        <span className="text-sm font-semibold text-gray-700">Location (optional)</span>
         <input
           name="location"
           type="text"
           value={location}
           onChange={(event) => setLocation(event.target.value)}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none ring-0 transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
         />
       </label>
 
@@ -91,7 +91,7 @@ export function ProfileSetupForm({
         <button
           type="button"
           onClick={onSkip}
-          className="inline-flex w-full items-center justify-center rounded-full border border-amber-200 px-6 py-3 text-sm font-medium text-stone-600 transition hover:bg-amber-50"
+          className="inline-flex w-full items-center justify-center rounded-full border border-gray-200 px-6 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
         >
           Skip for now
         </button>

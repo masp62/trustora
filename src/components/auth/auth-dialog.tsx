@@ -36,10 +36,10 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
         {mode === "login" ? (
           <>
             <DialogHeader>
-              <DialogTitle className="font-heading text-2xl text-stone-900">
+              <DialogTitle className="font-heading text-2xl text-gray-900">
                 Sign in to RealBnB
               </DialogTitle>
-              <DialogDescription className="text-stone-600">
+              <DialogDescription className="text-gray-600">
                 Continue with Google or use your email and password.
               </DialogDescription>
             </DialogHeader>
@@ -48,31 +48,31 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
               <form action={signInWithGoogle}>
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-amber-300 bg-amber-50 px-6 py-3 font-semibold text-amber-900 transition hover:bg-amber-100"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
                 >
                   Continue with Google
                 </button>
               </form>
             ) : (
-              <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                 Google sign-in is not configured for this environment.
               </p>
             )}
 
-            <div className="flex items-center gap-3 text-xs font-semibold tracking-[0.08em] text-stone-500 uppercase">
-              <span className="h-px flex-1 bg-stone-200" />
+            <div className="flex items-center gap-3 text-xs font-semibold tracking-[0.08em] text-gray-500 uppercase">
+              <span className="h-px flex-1 bg-gray-200" />
               <span>or continue with email</span>
-              <span className="h-px flex-1 bg-stone-200" />
+              <span className="h-px flex-1 bg-gray-200" />
             </div>
 
             <LoginForm onForgotPassword={() => setMode("forgot-password")} />
 
-            <p className="text-center text-sm text-stone-600">
+            <p className="text-center text-sm text-gray-600">
               No account yet?{" "}
               <button
                 type="button"
                 onClick={() => setMode("signup")}
-                className="font-semibold text-amber-700 hover:text-amber-600"
+                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
               >
                 Create one
               </button>
@@ -81,10 +81,10 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
         ) : mode === "signup" ? (
           <>
             <DialogHeader>
-              <DialogTitle className="font-heading text-2xl text-stone-900">
+              <DialogTitle className="font-heading text-2xl text-gray-900">
                 Create your account
               </DialogTitle>
-              <DialogDescription className="text-stone-600">
+              <DialogDescription className="text-gray-600">
                 Continue with Google or sign up with email and password.
               </DialogDescription>
             </DialogHeader>
@@ -93,31 +93,31 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
               <form action={signInWithGoogle}>
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-amber-300 bg-amber-50 px-6 py-3 font-semibold text-amber-900 transition hover:bg-amber-100"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
                 >
                   Continue with Google
                 </button>
               </form>
             ) : (
-              <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                 Google sign-up is not configured for this environment.
               </p>
             )}
 
-            <div className="flex items-center gap-3 text-xs font-semibold tracking-[0.08em] text-stone-500 uppercase">
-              <span className="h-px flex-1 bg-stone-200" />
+            <div className="flex items-center gap-3 text-xs font-semibold tracking-[0.08em] text-gray-500 uppercase">
+              <span className="h-px flex-1 bg-gray-200" />
               <span>or continue with email</span>
-              <span className="h-px flex-1 bg-stone-200" />
+              <span className="h-px flex-1 bg-gray-200" />
             </div>
 
             <SignupForm />
 
-            <p className="text-center text-sm text-stone-600">
+            <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-amber-700 hover:text-amber-600"
+                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
               >
                 Sign in
               </button>
@@ -126,22 +126,22 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="font-heading text-2xl text-stone-900">
+              <DialogTitle className="font-heading text-2xl text-gray-900">
                 Forgot your password?
               </DialogTitle>
-              <DialogDescription className="text-stone-600">
+              <DialogDescription className="text-gray-600">
                 Enter your email address and we&apos;ll send you a reset link.
               </DialogDescription>
             </DialogHeader>
 
             <ForgotPasswordForm />
 
-            <p className="text-center text-sm text-stone-600">
+            <p className="text-center text-sm text-gray-600">
               Remember your password?{" "}
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-amber-700 hover:text-amber-600"
+                className="font-semibold text-[#E0565B] hover:text-[#FF787C]"
               >
                 Sign in
               </button>

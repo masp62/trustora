@@ -14,7 +14,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex w-full items-center justify-center rounded-full bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:bg-amber-300"
+      className="inline-flex w-full items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C] disabled:cursor-not-allowed disabled:bg-gray-300"
     >
       {pending ? "Resetting..." : "Reset password"}
     </button>
@@ -56,7 +56,7 @@ export function ResetPasswordForm() {
         </p>
         <a
           href="/login"
-          className="inline-flex w-full items-center justify-center rounded-full bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-500"
+          className="inline-flex w-full items-center justify-center rounded-full bg-[#E0565B] px-6 py-3 font-semibold text-white transition hover:bg-[#FF787C]"
         >
           Go to sign in
         </a>
@@ -69,7 +69,7 @@ export function ResetPasswordForm() {
       <input type="hidden" name="token" value={token} />
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">New password</span>
+        <span className="text-sm font-semibold text-gray-700">New password</span>
         <input
           required
           minLength={8}
@@ -78,12 +78,12 @@ export function ResetPasswordForm() {
           autoComplete="new-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none ring-0 transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
         />
       </label>
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Confirm password</span>
+        <span className="text-sm font-semibold text-gray-700">Confirm password</span>
         <input
           required
           minLength={8}
@@ -92,7 +92,7 @@ export function ResetPasswordForm() {
           autoComplete="new-password"
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
-          className="w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-stone-900 shadow-sm outline-none ring-0 transition focus:border-amber-500"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#008489]"
         />
       </label>
 

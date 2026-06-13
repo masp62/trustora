@@ -35,10 +35,10 @@ export function ProfileSetupDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-heading text-2xl text-stone-900">
+          <DialogTitle className="font-heading text-2xl text-gray-900">
             Complete your public profile
           </DialogTitle>
-          <DialogDescription className="text-stone-600">
+          <DialogDescription className="text-gray-600">
             We&apos;ll generate your unique username from your display name.
           </DialogDescription>
         </DialogHeader>

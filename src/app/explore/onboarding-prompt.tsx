@@ -27,7 +27,7 @@ export function OnboardingPrompt() {
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-900">
+    <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 text-gray-800">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-semibold">Welcome to RealBnB.</p>
@@ -36,7 +36,7 @@ export function OnboardingPrompt() {
         <Link
           href="/explore"
           onClick={handleDismiss}
-          className="rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold uppercase transition hover:bg-amber-100"
+          className="rounded-full border border-gray-300 px-3 py-1 text-xs font-semibold uppercase transition hover:bg-gray-100"
         >
           Dismiss
         </Link>

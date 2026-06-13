@@ -18,7 +18,7 @@ export function MobileNav({ links }: MobileNavProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="text-amber-800 hover:bg-amber-100/60"
+        className="text-gray-700 hover:bg-gray-100"
         onClick={() => setOpen(true)}
         aria-label="Open navigation menu"
       >
@@ -39,8 +39,8 @@ export function MobileNav({ links }: MobileNavProps) {
             className="fixed inset-y-0 right-0 z-50 flex w-64 flex-col bg-white/95 shadow-xl backdrop-blur"
             aria-label="Mobile navigation"
           >
-            <div className="flex h-14 items-center justify-between border-b border-amber-200/80 px-5">
-              <span className="font-heading text-lg font-bold text-teal-500">Menu</span>
+            <div className="flex h-14 items-center justify-between border-b border-gray-200 px-5">
+              <span className="font-heading text-lg font-bold text-[#E0565B]">Menu</span>
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -57,7 +57,7 @@ export function MobileNav({ links }: MobileNavProps) {
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-3 text-sm font-medium text-stone-700 transition hover:bg-amber-50 hover:text-stone-900"
+                    className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-gray-900"
                   >
                     {link.label}
                   </Link>

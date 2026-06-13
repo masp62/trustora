@@ -49,11 +49,11 @@ export function UserMenu({ isAuthenticated, googleAuthConfigured, displayName, n
           className="flex items-center gap-2 rounded-full transition hover:opacity-80"
           title="Edit profile"
         >
-          <span className="flex size-8 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-800">
+          <span className="flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-700">
             {displayName ? getInitials(displayName) : <User className="size-4" />}
           </span>
           {displayName && (
-            <span className="hidden text-sm font-medium text-stone-700 sm:inline">
+            <span className="hidden text-sm font-medium text-gray-700 sm:inline">
               {displayName}
             </span>
           )}
@@ -64,7 +64,7 @@ export function UserMenu({ isAuthenticated, googleAuthConfigured, displayName, n
           <Button
             variant="ghost"
             size="icon"
-            className="text-amber-800 hover:bg-amber-100/60"
+            className="text-gray-700 hover:bg-gray-100"
             aria-label="Open menu"
           >
             <Menu className="size-5" />

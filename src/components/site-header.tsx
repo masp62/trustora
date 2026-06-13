@@ -18,12 +18,12 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-amber-200/80 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
         <div className="flex items-center gap-8">
           <Link
             href="/explore"
-            className="font-heading text-4xl font-bold tracking-tight text-teal-500 transition hover:text-teal-400"
+            className="font-heading text-4xl font-bold tracking-tight text-[#E0565B] transition hover:text-[#FF787C]"
           >
             RealBnB
           </Link>
@@ -34,7 +34,7 @@ export async function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-600 transition hover:bg-amber-100/60 hover:text-stone-900"
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
               >
                 {link.label}
               </Link>
