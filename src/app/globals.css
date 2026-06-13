@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-:root {
+/* Theme: Clean & Tropical (default) */
+:root,
+[data-theme="tropical"] {
   --background: #F7F9FA;
   --foreground: #1A2B3C;
 
@@ -22,6 +24,39 @@
   --input: #E2E8F0;
   --ring: #0066FF;
   --radius: 1rem;
+
+  --color-brand: #0066FF;
+  --color-brand-hover: #0052CC;
+  --color-brand-accent: #00A67E;
+}
+
+/* Theme: Ocean & Sand */
+[data-theme="ocean"] {
+  --background: #FAFAF7;
+  --foreground: #222222;
+
+  --card: #FFFFFF;
+  --card-foreground: #222222;
+  --popover: #FFFFFF;
+  --popover-foreground: #222222;
+  --primary: #E0565B;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F7F7F7;
+  --secondary-foreground: #222222;
+  --muted: #F7F7F7;
+  --muted-foreground: #717171;
+  --accent: #008489;
+  --accent-foreground: #FFFFFF;
+  --destructive: #dc2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #DDDDDD;
+  --input: #DDDDDD;
+  --ring: #E0565B;
+  --radius: 1rem;
+
+  --color-brand: #E0565B;
+  --color-brand-hover: #FF787C;
+  --color-brand-accent: #008489;
 }
 
 @theme inline {
@@ -44,6 +79,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-accent: var(--color-brand-accent);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

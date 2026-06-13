@@ -122,12 +122,12 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 sm:justify-start">
                 {user.location && (
                   <span className="flex items-center gap-1">
-                    <MapPin className="size-3.5 text-[#00A67E]" />
+                    <MapPin className="size-3.5 text-brand-accent" />
                     {user.location}
                   </span>
                 )}
                 <span className="flex items-center gap-1">
-                  <CalendarDays className="size-3.5 text-[#00A67E]" />
+                  <CalendarDays className="size-3.5 text-brand-accent" />
                   Joined {formatJoinDate(user.createdAt)}
                 </span>
               </div>

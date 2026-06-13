@@ -76,7 +76,7 @@ export default async function ExplorePage() {
             <div className="mt-6">
               <Link
                 href="/create"
-                className="inline-flex items-center gap-2 rounded-full bg-[#0066FF] px-6 py-3 font-semibold text-white transition hover:bg-[#0052CC]"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover"
               >
                 <PenLine className="size-4" />
                 Share your experience

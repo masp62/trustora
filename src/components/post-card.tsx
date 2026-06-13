@@ -45,13 +45,13 @@ export function PostCard({ post }: { post: PostCardData }) {
 
       <div className="space-y-3 p-4 sm:p-5">
         <Link href={href} className="block">
-          <h3 className="line-clamp-2 font-heading text-lg leading-snug text-gray-900 transition group-hover:text-[#0066FF]">
+          <h3 className="line-clamp-2 font-heading text-lg leading-snug text-gray-900 transition group-hover:text-brand">
             {post.title}
           </h3>
         </Link>
 
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <MapPin className="size-3.5 text-[#00A67E]" />
+          <MapPin className="size-3.5 text-brand-accent" />
           <span className="truncate">
             {post.locationCity}, {post.locationCountry}
           </span>

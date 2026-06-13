@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { auth, googleAuthConfigured } from "@/auth";
 
+import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
 const navLinks = [
@@ -23,7 +24,7 @@ export async function SiteHeader() {
         <div className="flex items-center gap-8">
           <Link
             href="/explore"
-            className="font-heading text-4xl font-bold tracking-tight text-[#0066FF] transition hover:text-[#0052CC]"
+            className="font-heading text-4xl font-bold tracking-tight text-brand transition hover:text-brand-hover"
           >
             RealBnB
           </Link>
@@ -42,12 +43,15 @@ export async function SiteHeader() {
           </nav>
         </div>
 
-        <UserMenu
-          isAuthenticated={isAuthenticated}
-          googleAuthConfigured={googleAuthConfigured}
-          displayName={session?.user?.name ?? null}
-          navLinks={visibleLinks.map((l) => ({ href: l.href, label: l.label }))}
-        />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <UserMenu
+            isAuthenticated={isAuthenticated}
+            googleAuthConfigured={googleAuthConfigured}
+            displayName={session?.user?.name ?? null}
+            navLinks={visibleLinks.map((l) => ({ href: l.href, label: l.label }))}
+          />
+        </div>
       </div>
     </header>
   );

@@ -40,7 +40,7 @@ export function MobileNav({ links }: MobileNavProps) {
             aria-label="Mobile navigation"
           >
             <div className="flex h-14 items-center justify-between border-b border-gray-200 px-5">
-              <span className="font-heading text-lg font-bold text-[#0066FF]">Menu</span>
+              <span className="font-heading text-lg font-bold text-brand">Menu</span>
               <Button
                 variant="ghost"
                 size="icon-sm"

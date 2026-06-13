@@ -15,7 +15,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex w-full items-center justify-center rounded-full bg-[#0066FF] px-6 py-3 font-semibold text-white transition hover:bg-[#0052CC] disabled:cursor-not-allowed disabled:bg-gray-300"
+      className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
     >
       {pending ? "Signing in..." : "Sign in with email"}
     </button>
@@ -42,7 +42,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
           autoComplete="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#00A67E]"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-brand-accent"
         />
       </label>
 
@@ -55,7 +55,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
           autoComplete="current-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-[#00A67E]"
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none ring-0 transition focus:border-brand-accent"
         />
       </label>
 
@@ -70,7 +70,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
           <button
             type="button"
             onClick={onForgotPassword}
-            className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
+            className="font-semibold text-brand hover:text-brand-hover"
           >
             Forgot password?
           </button>
@@ -79,7 +79,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
         <p className="text-center text-sm text-gray-600">
           <a
             href="/forgot-password"
-            className="font-semibold text-[#0066FF] hover:text-[#0052CC]"
+            className="font-semibold text-brand hover:text-brand-hover"
           >
             Forgot password?
           </a>
