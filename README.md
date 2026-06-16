@@ -7,7 +7,7 @@ RealBnB is a Next.js App Router application for sharing travel stay experiences.
 - Next.js 16 + TypeScript + App Router configured
 - Tailwind v4 and shadcn/ui baseline tokens configured
 - Full Prisma schema for the MVP domain implemented
-- Prisma seed script for predefined tags implemented
+- Prisma seed script for predefined tags and local baseline demo data implemented
 
 ## Local Setup
 
@@ -30,7 +30,7 @@ npm run prisma:migrate -- --name init
 npm run prisma:generate
 ```
 
-4. Seed predefined tags:
+4. Seed baseline local data (tags, 2 users, and stories):
 
 ```bash
 npm run prisma:seed
@@ -41,6 +41,17 @@ npm run prisma:seed
 ```bash
 npm run dev
 ```
+
+## Baseline Local Accounts
+
+The seed creates two users with profiles and 5-8 stories each.
+
+- Email: `anna@realbnb.local` | Password: `12345678`
+- Email: `lukas@realbnb.local` | Password: `12345678`
+
+`npm run dev` automatically runs the seed first, so baseline data is available each time the app starts.
+
+When `USE_IN_MEMORY_DB=true`, Prisma seed is skipped automatically and the app starts without requiring a PostgreSQL connection. In-memory baseline users and stories are loaded directly from the app's in-memory store initializer.
 
 ## Prisma Commands
 

@@ -596,20 +596,312 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const inMemoryStore =
-  globalForInMemory.inMemoryStore ??
-  {
-    users: [],
-    experiencePosts: [],
-    postImages: [],
-    tags: [],
-    postTags: [],
-    likes: [],
+const BASELINE_TAGS = [
+  "beach",
+  "city-break",
+  "countryside",
+  "luxury",
+  "budget",
+  "pet-friendly",
+  "unique-stay",
+  "remote-work",
+] as const;
+
+const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5Fa947p1Njc/C";
+
+function createBaselineInMemoryStore(): InMemoryStore {
+  const now = new Date();
+
+  const users: InMemoryUser[] = [
+    {
+      id: "usr_anna",
+      email: "anna@realbnb.local",
+      username: "annawanders",
+      displayName: "Anna Mueller",
+      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
+      bio: "Coffee first, then city walks and hidden guesthouse gems.",
+      location: "Berlin, Germany",
+      role: UserRole.user,
+      passwordHash: BASELINE_PASSWORD_HASH,
+      isBanned: false,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: "usr_lukas",
+      email: "lukas@realbnb.local",
+      username: "lukasontheroad",
+      displayName: "Lukas Schneider",
+      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
+      bio: "Chasing mountain air, surf spots, and practical stays for longer trips.",
+      location: "Munich, Germany",
+      role: UserRole.user,
+      passwordHash: BASELINE_PASSWORD_HASH,
+      isBanned: false,
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
+
+  const tags: InMemoryTag[] = BASELINE_TAGS.map((name, index) => ({
+    id: `tag_${index + 1}`,
+    name,
+  }));
+  const tagByName = new Map(tags.map((tag) => [tag.name, tag.id]));
+
+  const postSeeds: Array<{
+    id: string;
+    slug: string;
+    title: string;
+    body: string;
+    locationCity: string;
+    locationCountry: string;
+    propertyName: string;
+    tripType: TripType;
+    authorId: string;
+    tags: string[];
+    images: string[];
+  }> = [
+    {
+      id: "post_a_1",
+      slug: "sunrise-rooftop-in-lisbon",
+      title: "Sunrise Rooftop in Lisbon",
+      body: "Quiet mornings, orange rooftops, and a tiny balcony that became my office for three days.",
+      locationCity: "Lisbon",
+      locationCountry: "Portugal",
+      propertyName: "Alfama Rooftop Studio",
+      tripType: TripType.solo,
+      authorId: "usr_anna",
+      tags: ["city-break", "remote-work"],
+      images: [
+        "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_a_2",
+      slug: "slow-weekend-at-lake-como",
+      title: "Slow Weekend at Lake Como",
+      body: "A small villa near the water with mountain views and zero urge to check emails.",
+      locationCity: "Como",
+      locationCountry: "Italy",
+      propertyName: "Villa Bellavista",
+      tripType: TripType.couple,
+      authorId: "usr_anna",
+      tags: ["luxury", "countryside"],
+      images: [
+        "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_a_3",
+      slug: "rainy-nights-in-kyoto",
+      title: "Rainy Nights in Kyoto",
+      body: "Tatami floors, tea every evening, and a calm neighborhood close to tiny ramen bars.",
+      locationCity: "Kyoto",
+      locationCountry: "Japan",
+      propertyName: "Gion Garden Inn",
+      tripType: TripType.solo,
+      authorId: "usr_anna",
+      tags: ["city-break", "unique-stay"],
+      images: [
+        "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_a_4",
+      slug: "budget-gem-in-valencia",
+      title: "Budget Gem in Valencia",
+      body: "Small room, great host, free bikes, and incredible local market food around the corner.",
+      locationCity: "Valencia",
+      locationCountry: "Spain",
+      propertyName: "Ruzafa Guest Rooms",
+      tripType: TripType.friends,
+      authorId: "usr_anna",
+      tags: ["budget", "city-break"],
+      images: [
+        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_a_5",
+      slug: "work-sprint-in-tallinn",
+      title: "Work Sprint in Tallinn",
+      body: "Fast wifi, minimalist apartment, and enough cafes nearby for a full week of focus.",
+      locationCity: "Tallinn",
+      locationCountry: "Estonia",
+      propertyName: "Old Town Loft",
+      tripType: TripType.business,
+      authorId: "usr_anna",
+      tags: ["remote-work", "city-break"],
+      images: [
+        "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_l_1",
+      slug: "surf-house-in-ericeira",
+      title: "Surf House in Ericeira",
+      body: "Shared kitchen, sunset cliffs, and walking distance to two beginner-friendly beaches.",
+      locationCity: "Ericeira",
+      locationCountry: "Portugal",
+      propertyName: "Blue Tide Surf House",
+      tripType: TripType.friends,
+      authorId: "usr_lukas",
+      tags: ["beach", "budget"],
+      images: [
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_l_2",
+      slug: "alpine-cabin-near-innsbruck",
+      title: "Alpine Cabin near Innsbruck",
+      body: "Wood interiors, fresh snow, and a sauna with mountain views after long hiking days.",
+      locationCity: "Innsbruck",
+      locationCountry: "Austria",
+      propertyName: "Nordkette Cabin",
+      tripType: TripType.couple,
+      authorId: "usr_lukas",
+      tags: ["countryside", "luxury"],
+      images: [
+        "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_l_3",
+      slug: "family-week-in-copenhagen",
+      title: "Family Week in Copenhagen",
+      body: "Bright apartment, stroller-friendly neighborhood, and parks in every direction.",
+      locationCity: "Copenhagen",
+      locationCountry: "Denmark",
+      propertyName: "Norrebro Family Flat",
+      tripType: TripType.family,
+      authorId: "usr_lukas",
+      tags: ["city-break", "pet-friendly"],
+      images: [
+        "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_l_4",
+      slug: "remote-month-in-tbilisi",
+      title: "Remote Month in Tbilisi",
+      body: "Affordable loft, super welcoming host, and plenty of coworking spots nearby.",
+      locationCity: "Tbilisi",
+      locationCountry: "Georgia",
+      propertyName: "Mtatsminda Loft",
+      tripType: TripType.business,
+      authorId: "usr_lukas",
+      tags: ["remote-work", "budget"],
+      images: [
+        "https://images.unsplash.com/photo-1544989164-31b2b9a3161f?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+    {
+      id: "post_l_5",
+      slug: "island-pause-in-hvar",
+      title: "Island Pause in Hvar",
+      body: "Stone house, crystal water, and simple evenings with local food and no schedule.",
+      locationCity: "Hvar",
+      locationCountry: "Croatia",
+      propertyName: "Old Port Retreat",
+      tripType: TripType.couple,
+      authorId: "usr_lukas",
+      tags: ["beach", "unique-stay"],
+      images: [
+        "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1400&q=80",
+      ],
+    },
+  ];
+
+  const experiencePosts: InMemoryExperiencePost[] = postSeeds.map((post) => ({
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    body: post.body,
+    locationCity: post.locationCity,
+    locationCountry: post.locationCountry,
+    propertyName: post.propertyName,
+    tripType: post.tripType,
+    authorId: post.authorId,
+    createdAt: now,
+    updatedAt: now,
+  }));
+
+  const postImages: InMemoryPostImage[] = postSeeds.flatMap((post) =>
+    post.images.map((url, index) => ({
+      id: `img_${post.id}_${index + 1}`,
+      postId: post.id,
+      cloudinaryUrl: url,
+      order: index,
+    })),
+  );
+
+  const postTags: InMemoryPostTag[] = postSeeds.flatMap((post) =>
+    post.tags
+      .map((tagName) => tagByName.get(tagName))
+      .filter((tagId): tagId is string => Boolean(tagId))
+      .map((tagId) => ({
+        postId: post.id,
+        tagId,
+      })),
+  );
+
+  const likes: InMemoryLike[] = [
+    {
+      id: "like_1",
+      userId: "usr_anna",
+      postId: "post_l_1",
+      createdAt: now,
+    },
+    {
+      id: "like_2",
+      userId: "usr_anna",
+      postId: "post_l_3",
+      createdAt: now,
+    },
+    {
+      id: "like_3",
+      userId: "usr_lukas",
+      postId: "post_a_1",
+      createdAt: now,
+    },
+  ];
+
+  return {
+    users,
+    experiencePosts,
+    postImages,
+    tags,
+    postTags,
+    likes,
     comments: [],
     follows: [],
     reports: [],
     passwordResetTokens: [],
   };
+}
+
+const inMemoryStore =
+  globalForInMemory.inMemoryStore ??
+  (useInMemoryDb
+    ? createBaselineInMemoryStore()
+    : {
+        users: [],
+        experiencePosts: [],
+        postImages: [],
+        tags: [],
+        postTags: [],
+        likes: [],
+        comments: [],
+        follows: [],
+        reports: [],
+        passwordResetTokens: [],
+      });
 
 const prisma =
   globalForPrisma.prisma ??
