@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, MapPin } from "lucide-react";
 
+import { auth, googleAuthConfigured } from "@/auth";
 import { db } from "@/lib/db";
 import { postCanonicalPath } from "@/app/post/post-detail-data";
+import { FollowButton } from "@/components/follow-button";
 
 type ProfilePageProps = {
   params: Promise<{ username: string }>;
@@ -85,6 +87,18 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
 
   if (!profile) notFound();
 
+  const session = await auth();
+  const currentUserId = session?.user?.id ?? null;
+  const isOwnProfile = currentUserId === profile.user.id;
+  const currentUserFollowCount = currentUserId
+    ? await db.follow.count({
+        where: {
+          followerId: currentUserId,
+          followingId: profile.user.id,
+        },
+      })
+    : 0;
+
   const { user, posts } = profile;
 
   return (
@@ -138,26 +152,27 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                   <span className="font-semibold text-gray-900">{user._count.posts}</span>{" "}
                   <span className="text-gray-500">posts</span>
                 </span>
-                <span>
+                <Link href={`/u/${user.username}/followers`} className="transition hover:text-brand">
                   <span className="font-semibold text-gray-900">{user._count.followers}</span>{" "}
                   <span className="text-gray-500">followers</span>
-                </span>
-                <span>
+                </Link>
+                <Link href={`/u/${user.username}/following`} className="transition hover:text-brand">
                   <span className="font-semibold text-gray-900">{user._count.following}</span>{" "}
                   <span className="text-gray-500">following</span>
-                </span>
+                </Link>
               </div>
 
-              {/* Follow button placeholder — will be wired in task #12 */}
-              <div className="mt-5">
-                <button
-                  className="rounded-full border border-gray-900 bg-gray-900 px-6 py-2 text-sm font-semibold text-white transition hover:bg-gray-700"
-                  disabled
-                  title="Follow feature coming soon"
-                >
-                  Follow
-                </button>
-              </div>
+              {!isOwnProfile && (
+                <div className="mt-5">
+                  <FollowButton
+                    targetUserId={user.id}
+                    targetUsername={user.username}
+                    initiallyFollowing={currentUserFollowCount > 0}
+                    isAuthenticated={!!session?.user}
+                    googleAuthConfigured={googleAuthConfigured}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </section>

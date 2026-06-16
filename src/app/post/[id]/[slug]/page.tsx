@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 import { auth, googleAuthConfigured } from "@/auth";
 import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-data";
+import { FollowButton } from "@/components/follow-button";
 import { PostComments } from "@/components/post-comments";
 import { PostLikeButton } from "@/components/post-like-button";
 import { db } from "@/lib/db";
@@ -79,6 +80,14 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const session = await auth();
   const currentUserId = session?.user?.id ?? null;
   const isAuthor = session?.user?.id === post.authorId;
+  const currentUserFollowCount = currentUserId
+    ? await db.follow.count({
+        where: {
+          followerId: currentUserId,
+          followingId: post.authorId,
+        },
+      })
+    : 0;
   const likeCount = await db.like.count({ where: { postId: post.id } });
   const userLikeCount = session?.user?.id
     ? await db.like.count({ where: { postId: post.id, userId: session.user.id } })
@@ -102,7 +111,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         <PhotoGallery title={post.title} images={post.images} />
 
         <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             <Link href={`/u/${post.author.username}`} className="inline-flex items-center gap-3">
               {post.author.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -121,6 +130,17 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
                 <p className="text-sm text-gray-600">@{post.author.username}</p>
               </div>
             </Link>
+
+            {!isAuthor && (
+              <FollowButton
+                targetUserId={post.authorId}
+                targetUsername={post.author.username}
+                initiallyFollowing={currentUserFollowCount > 0}
+                isAuthenticated={!!session?.user}
+                googleAuthConfigured={googleAuthConfigured}
+                className="px-5"
+              />
+            )}
           </div>
         </section>
 
