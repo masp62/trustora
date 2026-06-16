@@ -1,5 +1,3 @@
-import { cache } from "react";
-
 import { db } from "@/lib/db";
 
 export type PostDetailComment = {
@@ -39,7 +37,7 @@ export function postCanonicalPath(postId: string, slug: string) {
   return `/post/${postId}/${slug}`;
 }
 
-export const getPostDetailById = cache(async (id: string): Promise<PostDetailData | null> => {
+export async function getPostDetailById(id: string): Promise<PostDetailData | null> {
   const post = (await db.experiencePost.findUnique({
     where: { id },
     select: {
@@ -141,4 +139,4 @@ export const getPostDetailById = cache(async (id: string): Promise<PostDetailDat
       author: commentAuthorMap.get(comment.authorId) ?? null,
     })),
   };
-});
+}

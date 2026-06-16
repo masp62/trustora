@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Heart, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 import { postCanonicalPath } from "@/app/post/post-detail-data";
+import { PostLikeButton } from "@/components/post-like-button";
 
 export type PostCardData = {
   id: string;
@@ -17,13 +18,20 @@ export type PostCardData = {
     avatarUrl: string | null;
   };
   likeCount: number;
+  initiallyLiked: boolean;
 };
 
 function toTitleCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-export function PostCard({ post }: { post: PostCardData }) {
+type PostCardProps = {
+  post: PostCardData;
+  isAuthenticated: boolean;
+  googleAuthConfigured: boolean;
+};
+
+export function PostCard({ post, isAuthenticated, googleAuthConfigured }: PostCardProps) {
   const href = postCanonicalPath(post.id, post.slug);
 
   return (
@@ -81,10 +89,14 @@ export function PostCard({ post }: { post: PostCardData }) {
             </span>
           </Link>
 
-          <div className="flex items-center gap-1 text-sm text-gray-500">
-            <Heart className="size-3.5" />
-            <span>{post.likeCount}</span>
-          </div>
+          <PostLikeButton
+            postId={post.id}
+            initialLikeCount={post.likeCount}
+            initiallyLiked={post.initiallyLiked}
+            isAuthenticated={isAuthenticated}
+            googleAuthConfigured={googleAuthConfigured}
+            compact
+          />
         </div>
       </div>
     </article>

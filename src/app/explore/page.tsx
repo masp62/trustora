@@ -2,14 +2,14 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { PenLine } from "lucide-react";
 
-import { auth } from "@/auth";
+import { auth, googleAuthConfigured } from "@/auth";
 import { db } from "@/lib/db";
 import { PostCard, type PostCardData } from "@/components/post-card";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
 
-async function getExplorePosts(): Promise<PostCardData[]> {
+async function getExplorePosts(viewerId: string | null): Promise<PostCardData[]> {
   const posts = (await db.experiencePost.findMany({
     orderBy: { createdAt: "desc" },
     take: 20,
@@ -22,6 +22,21 @@ async function getExplorePosts(): Promise<PostCardData[]> {
     tripType: string;
     authorId: string;
   }>;
+
+  const postIds = posts.map((post) => post.id);
+  const likedPostIds = new Set<string>();
+
+  if (viewerId && postIds.length > 0) {
+    const likedPosts = (await db.like.findMany({
+      where: {
+        userId: viewerId,
+        postId: { in: postIds },
+      },
+      select: { postId: true },
+    })) as Array<{ postId: string }>;
+
+    likedPosts.forEach((entry) => likedPostIds.add(entry.postId));
+  }
 
   const cards: PostCardData[] = [];
 
@@ -51,6 +66,7 @@ async function getExplorePosts(): Promise<PostCardData[]> {
       leadImageUrl: images[0]?.cloudinaryUrl ?? null,
       author,
       likeCount,
+      initiallyLiked: likedPostIds.has(post.id),
     });
   }
 
@@ -58,7 +74,9 @@ async function getExplorePosts(): Promise<PostCardData[]> {
 }
 
 export default async function ExplorePage() {
-  const [session, posts] = await Promise.all([auth(), getExplorePosts()]);
+  const session = await auth();
+  const posts = await getExplorePosts(session?.user?.id ?? null);
+  const isAuthenticated = !!session?.user;
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
@@ -103,7 +121,12 @@ export default async function ExplorePage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard
+                key={post.id}
+                post={post}
+                isAuthenticated={isAuthenticated}
+                googleAuthConfigured={googleAuthConfigured}
+              />
             ))}
           </div>
         )}

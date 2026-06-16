@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 
-import { auth } from "@/auth";
+import { auth, googleAuthConfigured } from "@/auth";
 import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-data";
+import { PostLikeButton } from "@/components/post-like-button";
+import { db } from "@/lib/db";
 
 import { PhotoGallery } from "./photo-gallery";
 import { PostAuthorActions } from "./post-author-actions";
@@ -75,6 +77,10 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
   const session = await auth();
   const isAuthor = session?.user?.id === post.authorId;
+  const likeCount = await db.like.count({ where: { postId: post.id } });
+  const userLikeCount = session?.user?.id
+    ? await db.like.count({ where: { postId: post.id, userId: session.user.id } })
+    : 0;
 
   return (
     <main className="flex flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 sm:py-12">
@@ -135,9 +141,16 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         </section>
 
         <section className="space-y-2 rounded-2xl border border-gray-200 p-4 sm:p-5" aria-label="Post stats">
-          <p className="text-sm text-gray-700">
-            <span className="font-semibold text-gray-900">{post.likeCount}</span> likes
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-gray-700">Likes</p>
+            <PostLikeButton
+              postId={post.id}
+              initialLikeCount={likeCount}
+              initiallyLiked={userLikeCount > 0}
+              isAuthenticated={!!session?.user}
+              googleAuthConfigured={googleAuthConfigured}
+            />
+          </div>
           <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
         </section>
 
