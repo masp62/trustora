@@ -611,6 +611,7 @@ const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5
 
 function createBaselineInMemoryStore(): InMemoryStore {
   const now = new Date();
+  const minutesAgo = (value: number) => new Date(now.getTime() - value * 60 * 1000);
 
   const users: InMemoryUser[] = [
     {
@@ -872,6 +873,41 @@ function createBaselineInMemoryStore(): InMemoryStore {
     },
   ];
 
+  const comments: InMemoryComment[] = [
+    {
+      id: "cmt_1",
+      body: "Loved this write-up. Adding this place to my shortlist for late summer.",
+      postId: "post_l_1",
+      authorId: "usr_anna",
+      createdAt: minutesAgo(45),
+      updatedAt: minutesAgo(45),
+    },
+    {
+      id: "cmt_2",
+      body: "Great practical details, especially about location and transport.",
+      postId: "post_l_2",
+      authorId: "usr_anna",
+      createdAt: minutesAgo(30),
+      updatedAt: minutesAgo(30),
+    },
+    {
+      id: "cmt_3",
+      body: "Thanks for sharing this. The photos and notes made planning super easy.",
+      postId: "post_a_1",
+      authorId: "usr_lukas",
+      createdAt: minutesAgo(20),
+      updatedAt: minutesAgo(20),
+    },
+    {
+      id: "cmt_4",
+      body: "This sounds exactly like the kind of stay I was looking for.",
+      postId: "post_a_2",
+      authorId: "usr_lukas",
+      createdAt: minutesAgo(10),
+      updatedAt: minutesAgo(10),
+    },
+  ];
+
   return {
     users,
     experiencePosts,
@@ -879,7 +915,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     tags,
     postTags,
     likes,
-    comments: [],
+    comments,
     follows: [],
     reports: [],
     passwordResetTokens: [],

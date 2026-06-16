@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 import { auth, googleAuthConfigured } from "@/auth";
 import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-data";
+import { PostComments } from "@/components/post-comments";
 import { PostLikeButton } from "@/components/post-like-button";
 import { db } from "@/lib/db";
 
@@ -76,6 +77,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   }
 
   const session = await auth();
+  const currentUserId = session?.user?.id ?? null;
   const isAuthor = session?.user?.id === post.authorId;
   const likeCount = await db.like.count({ where: { postId: post.id } });
   const userLikeCount = session?.user?.id
@@ -154,32 +156,18 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
         </section>
 
-        <section className="space-y-4" aria-label="Comments">
-          <h2 className="font-heading text-2xl text-gray-900">Comments ({post.comments.length})</h2>
-          {post.comments.length === 0 ? (
-            <p className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-              No comments yet.
-            </p>
-          ) : (
-            <ul className="space-y-3">
-              {post.comments.map((comment) => (
-                <li key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    {comment.author ? (
-                      <Link href={`/u/${comment.author.username}`} className="text-sm font-semibold text-gray-800 hover:text-brand">
-                        {comment.author.displayName} (@{comment.author.username})
-                      </Link>
-                    ) : (
-                      <span className="text-sm font-semibold text-gray-600">Deleted user</span>
-                    )}
-                    <time className="text-xs text-gray-500">{formatDate(comment.createdAt)}</time>
-                  </div>
-                  <p className="whitespace-pre-wrap text-sm leading-6 text-gray-800">{comment.body}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        <PostComments
+          postId={post.id}
+          currentUserId={currentUserId}
+          isAuthenticated={!!session?.user}
+          googleAuthConfigured={googleAuthConfigured}
+          initialComments={post.comments.map((comment) => ({
+            id: comment.id,
+            body: comment.body,
+            createdAt: comment.createdAt.toISOString(),
+            author: comment.author,
+          }))}
+        />
       </article>
     </main>
   );

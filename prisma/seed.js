@@ -309,9 +309,39 @@ async function main() {
         ...firstPosts.slice(0, 2).map((post) => ({ userId: second.id, postId: post.id })),
       ],
     });
+
+    await prisma.comment.deleteMany({
+      where: {
+        OR: [
+          { authorId: first.id, postId: { in: secondPosts.map((p) => p.id) } },
+          { authorId: second.id, postId: { in: firstPosts.map((p) => p.id) } },
+        ],
+      },
+    });
+
+    await prisma.comment.createMany({
+      data: [
+        ...secondPosts.slice(0, 2).map((post, index) => ({
+          authorId: first.id,
+          postId: post.id,
+          body:
+            index === 0
+              ? "Loved this write-up. Adding this place to my shortlist for late summer."
+              : "Great practical details, especially about location and transport.",
+        })),
+        ...firstPosts.slice(0, 2).map((post, index) => ({
+          authorId: second.id,
+          postId: post.id,
+          body:
+            index === 0
+              ? "Thanks for sharing this. The photos and notes made planning super easy."
+              : "This sounds exactly like the kind of stay I was looking for.",
+        })),
+      ],
+    });
   }
 
-  console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, and baseline stories.`);
+  console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, likes, and comments.`);
 
   await prisma.$disconnect();
 }

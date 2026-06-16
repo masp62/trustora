@@ -5,6 +5,7 @@ export type PostDetailComment = {
   body: string;
   createdAt: Date;
   author: {
+    id: string;
     username: string;
     displayName: string;
     avatarUrl: string | null;
@@ -88,7 +89,7 @@ export async function getPostDetailById(id: string): Promise<PostDetailData | nu
     db.like.count({ where: { postId: post.id } }),
     db.comment.findMany({
       where: { postId: post.id },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       select: { id: true, body: true, authorId: true, createdAt: true },
     }) as Promise<Array<{ id: string; body: string; authorId: string; createdAt: Date }>>,
   ]);
