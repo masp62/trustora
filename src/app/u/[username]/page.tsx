@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, MapPin, PenLine } from "lucide-react";
 
 import { auth, googleAuthConfigured } from "@/auth";
 import { db } from "@/lib/db";
@@ -171,6 +171,18 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                     isAuthenticated={!!session?.user}
                     googleAuthConfigured={googleAuthConfigured}
                   />
+                </div>
+              )}
+
+              {isOwnProfile && (
+                <div className="mt-5">
+                  <Link
+                    href={`/u/${user.username}/edit`}
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  >
+                    <PenLine className="size-3.5" />
+                    Edit profile
+                  </Link>
                 </div>
               )}
             </div>
