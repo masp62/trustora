@@ -1,4 +1,5 @@
 import { PrismaClient, ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
+import baselineData from "../../prisma/baseline-data.json";
 
 type InMemoryUser = {
   id: string;
@@ -590,22 +591,40 @@ const useInMemoryDb = process.env.USE_IN_MEMORY_DB === "true" && process.env.NOD
 
 const globalForInMemory = globalThis as unknown as {
   inMemoryStore: InMemoryStore | undefined;
+  inMemoryBaselineLogged: boolean | undefined;
 };
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const BASELINE_TAGS = [
-  "beach",
-  "city-break",
-  "countryside",
-  "luxury",
-  "budget",
-  "pet-friendly",
-  "unique-stay",
-  "remote-work",
-] as const;
+const BASELINE_TAGS = baselineData.TAGS as string[];
+const BASELINE_USERS = baselineData.BASELINE_USERS as Array<{
+  email: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  location: string;
+  avatarUrl: string;
+  stories: Array<{
+    title: string;
+    body: string;
+    locationCity: string;
+    locationCountry: string;
+    propertyName: string;
+    tripType: string;
+    tags: string[];
+    images: string[];
+  }>;
+}>;
+
+const TRIP_TYPE_BY_KEY: Record<string, TripType> = {
+  solo: TripType.solo,
+  couple: TripType.couple,
+  family: TripType.family,
+  friends: TripType.friends,
+  business: TripType.business,
+};
 
 const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5Fa947p1Njc/C";
 
@@ -613,36 +632,40 @@ function createBaselineInMemoryStore(): InMemoryStore {
   const now = new Date();
   const minutesAgo = (value: number) => new Date(now.getTime() - value * 60 * 1000);
 
-  const users: InMemoryUser[] = [
-    {
-      id: "usr_anna",
-      email: "anna@realbnb.local",
-      username: "annawanders",
-      displayName: "Anna Mueller",
-      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
-      bio: "Coffee first, then city walks and hidden guesthouse gems.",
-      location: "Berlin, Germany",
-      role: UserRole.user,
-      passwordHash: BASELINE_PASSWORD_HASH,
-      isBanned: false,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: "usr_lukas",
-      email: "lukas@realbnb.local",
-      username: "lukasontheroad",
-      displayName: "Lukas Schneider",
-      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
-      bio: "Chasing mountain air, surf spots, and practical stays for longer trips.",
-      location: "Munich, Germany",
-      role: UserRole.user,
-      passwordHash: BASELINE_PASSWORD_HASH,
-      isBanned: false,
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+  const toSlug = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 64);
+
+  const preferredUserIds: Record<string, string> = {
+    "anna@realbnb.local": "usr_anna",
+    "lukas@realbnb.local": "usr_lukas",
+    "sofia@realbnb.local": "usr_sofia",
+    "marco@realbnb.local": "usr_marco",
+    "yuki@realbnb.local": "usr_yuki",
+    "clara@realbnb.local": "usr_clara",
+    "james@realbnb.local": "usr_james",
+  };
+
+  const users: InMemoryUser[] = BASELINE_USERS.map((seedUser, index) => ({
+    id: preferredUserIds[seedUser.email] ?? `usr_${index + 1}`,
+    email: seedUser.email,
+    username: seedUser.username,
+    displayName: seedUser.displayName,
+    avatarUrl: seedUser.avatarUrl,
+    bio: seedUser.bio,
+    location: seedUser.location,
+    role: UserRole.user,
+    passwordHash: BASELINE_PASSWORD_HASH,
+    isBanned: false,
+    createdAt: now,
+    updatedAt: now,
+  }));
+
+  const userIdByEmail = new Map(users.map((user) => [user.email, user.id]));
 
   const tags: InMemoryTag[] = BASELINE_TAGS.map((name, index) => ({
     id: `tag_${index + 1}`,
@@ -650,6 +673,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
   }));
   const tagByName = new Map(tags.map((tag) => [tag.name, tag.id]));
 
+  const slugCounts = new Map<string, number>();
   const postSeeds: Array<{
     id: string;
     slug: string;
@@ -662,162 +686,33 @@ function createBaselineInMemoryStore(): InMemoryStore {
     authorId: string;
     tags: string[];
     images: string[];
-  }> = [
-    {
-      id: "post_a_1",
-      slug: "sunrise-rooftop-in-lisbon",
-      title: "Sunrise Rooftop in Lisbon",
-      body: "Quiet mornings, orange rooftops, and a tiny balcony that became my office for three days.",
-      locationCity: "Lisbon",
-      locationCountry: "Portugal",
-      propertyName: "Alfama Rooftop Studio",
-      tripType: TripType.solo,
-      authorId: "usr_anna",
-      tags: ["city-break", "remote-work"],
-      images: [
-        "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
-        "https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_a_2",
-      slug: "slow-weekend-at-lake-como",
-      title: "Slow Weekend at Lake Como",
-      body: "A small villa near the water with mountain views and zero urge to check emails.",
-      locationCity: "Como",
-      locationCountry: "Italy",
-      propertyName: "Villa Bellavista",
-      tripType: TripType.couple,
-      authorId: "usr_anna",
-      tags: ["luxury", "countryside"],
-      images: [
-        "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_a_3",
-      slug: "rainy-nights-in-kyoto",
-      title: "Rainy Nights in Kyoto",
-      body: "Tatami floors, tea every evening, and a calm neighborhood close to tiny ramen bars.",
-      locationCity: "Kyoto",
-      locationCountry: "Japan",
-      propertyName: "Gion Garden Inn",
-      tripType: TripType.solo,
-      authorId: "usr_anna",
-      tags: ["city-break", "unique-stay"],
-      images: [
-        "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_a_4",
-      slug: "budget-gem-in-valencia",
-      title: "Budget Gem in Valencia",
-      body: "Small room, great host, free bikes, and incredible local market food around the corner.",
-      locationCity: "Valencia",
-      locationCountry: "Spain",
-      propertyName: "Ruzafa Guest Rooms",
-      tripType: TripType.friends,
-      authorId: "usr_anna",
-      tags: ["budget", "city-break"],
-      images: [
-        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1400&q=80",
-        "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_a_5",
-      slug: "work-sprint-in-tallinn",
-      title: "Work Sprint in Tallinn",
-      body: "Fast wifi, minimalist apartment, and enough cafes nearby for a full week of focus.",
-      locationCity: "Tallinn",
-      locationCountry: "Estonia",
-      propertyName: "Old Town Loft",
-      tripType: TripType.business,
-      authorId: "usr_anna",
-      tags: ["remote-work", "city-break"],
-      images: [
-        "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_l_1",
-      slug: "surf-house-in-ericeira",
-      title: "Surf House in Ericeira",
-      body: "Shared kitchen, sunset cliffs, and walking distance to two beginner-friendly beaches.",
-      locationCity: "Ericeira",
-      locationCountry: "Portugal",
-      propertyName: "Blue Tide Surf House",
-      tripType: TripType.friends,
-      authorId: "usr_lukas",
-      tags: ["beach", "budget"],
-      images: [
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
-        "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_l_2",
-      slug: "alpine-cabin-near-innsbruck",
-      title: "Alpine Cabin near Innsbruck",
-      body: "Wood interiors, fresh snow, and a sauna with mountain views after long hiking days.",
-      locationCity: "Innsbruck",
-      locationCountry: "Austria",
-      propertyName: "Nordkette Cabin",
-      tripType: TripType.couple,
-      authorId: "usr_lukas",
-      tags: ["countryside", "luxury"],
-      images: [
-        "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_l_3",
-      slug: "family-week-in-copenhagen",
-      title: "Family Week in Copenhagen",
-      body: "Bright apartment, stroller-friendly neighborhood, and parks in every direction.",
-      locationCity: "Copenhagen",
-      locationCountry: "Denmark",
-      propertyName: "Norrebro Family Flat",
-      tripType: TripType.family,
-      authorId: "usr_lukas",
-      tags: ["city-break", "pet-friendly"],
-      images: [
-        "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_l_4",
-      slug: "remote-month-in-tbilisi",
-      title: "Remote Month in Tbilisi",
-      body: "Affordable loft, super welcoming host, and plenty of coworking spots nearby.",
-      locationCity: "Tbilisi",
-      locationCountry: "Georgia",
-      propertyName: "Mtatsminda Loft",
-      tripType: TripType.business,
-      authorId: "usr_lukas",
-      tags: ["remote-work", "budget"],
-      images: [
-        "https://images.unsplash.com/photo-1544989164-31b2b9a3161f?auto=format&fit=crop&w=1400&q=80",
-        "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-    {
-      id: "post_l_5",
-      slug: "island-pause-in-hvar",
-      title: "Island Pause in Hvar",
-      body: "Stone house, crystal water, and simple evenings with local food and no schedule.",
-      locationCity: "Hvar",
-      locationCountry: "Croatia",
-      propertyName: "Old Port Retreat",
-      tripType: TripType.couple,
-      authorId: "usr_lukas",
-      tags: ["beach", "unique-stay"],
-      images: [
-        "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1400&q=80",
-      ],
-    },
-  ];
+  }> = BASELINE_USERS.flatMap((seedUser, userIndex) => {
+    const authorId = userIdByEmail.get(seedUser.email);
+    if (!authorId) {
+      return [];
+    }
+
+    return seedUser.stories.map((story, storyIndex) => {
+      const baseSlug = toSlug(story.title);
+      const collisionCount = slugCounts.get(baseSlug) ?? 0;
+      slugCounts.set(baseSlug, collisionCount + 1);
+      const slug = collisionCount === 0 ? baseSlug : `${baseSlug}-${String(collisionCount + 1).padStart(2, "0")}`;
+
+      return {
+        id: `post_${userIndex + 1}_${storyIndex + 1}`,
+        slug,
+        title: story.title,
+        body: story.body,
+        locationCity: story.locationCity,
+        locationCountry: story.locationCountry,
+        propertyName: story.propertyName,
+        tripType: TRIP_TYPE_BY_KEY[story.tripType] ?? TripType.solo,
+        authorId,
+        tags: story.tags,
+        images: story.images,
+      };
+    });
+  });
 
   const experiencePosts: InMemoryExperiencePost[] = postSeeds.map((post) => ({
     id: post.id,
@@ -852,61 +747,61 @@ function createBaselineInMemoryStore(): InMemoryStore {
       })),
   );
 
-  const likes: InMemoryLike[] = [
-    {
-      id: "like_1",
-      userId: "usr_anna",
-      postId: "post_l_1",
-      createdAt: now,
-    },
-    {
-      id: "like_2",
-      userId: "usr_anna",
-      postId: "post_l_3",
-      createdAt: now,
-    },
-    {
-      id: "like_3",
-      userId: "usr_lukas",
-      postId: "post_a_1",
-      createdAt: now,
-    },
+  const likes: InMemoryLike[] = experiencePosts.slice(0, 18).map((post, index) => {
+    const fallbackUser = users[index % users.length];
+    const liker = users.find((user) => user.id !== post.authorId) ?? fallbackUser;
+
+    return {
+      id: `like_${index + 1}`,
+      userId: liker.id,
+      postId: post.id,
+      createdAt: minutesAgo(180 - index * 5),
+    };
+  });
+
+  const commentBodies = [
+    "Super useful notes. Keeping this one for my next trip planning.",
+    "Great vibe in the photos and really practical details.",
+    "Exactly the kind of stay review I like to read.",
+    "Adding this to my saved list right now.",
   ];
 
-  const comments: InMemoryComment[] = [
-    {
-      id: "cmt_1",
-      body: "Loved this write-up. Adding this place to my shortlist for late summer.",
-      postId: "post_l_1",
-      authorId: "usr_anna",
-      createdAt: minutesAgo(45),
-      updatedAt: minutesAgo(45),
-    },
-    {
-      id: "cmt_2",
-      body: "Great practical details, especially about location and transport.",
-      postId: "post_l_2",
-      authorId: "usr_anna",
-      createdAt: minutesAgo(30),
-      updatedAt: minutesAgo(30),
-    },
-    {
-      id: "cmt_3",
-      body: "Thanks for sharing this. The photos and notes made planning super easy.",
-      postId: "post_a_1",
-      authorId: "usr_lukas",
-      createdAt: minutesAgo(20),
-      updatedAt: minutesAgo(20),
-    },
-    {
-      id: "cmt_4",
-      body: "This sounds exactly like the kind of stay I was looking for.",
-      postId: "post_a_2",
-      authorId: "usr_lukas",
-      createdAt: minutesAgo(10),
-      updatedAt: minutesAgo(10),
-    },
-  ];
+  const comments: InMemoryComment[] = experiencePosts.slice(0, 16).map((post, index) => {
+    const fallbackUser = users[(index + 1) % users.length];
+    const author = users.find((user) => user.id !== post.authorId) ?? fallbackUser;
+    const createdAt = minutesAgo(120 - index * 4);
+
+    return {
+      id: `cmt_${index + 1}`,
+      body: commentBodies[index % commentBodies.length],
+      postId: post.id,
+      authorId: author.id,
+      createdAt,
+      updatedAt: createdAt,
+    };
+  });
+
+  const follows: InMemoryFollow[] = [];
+  let followIndex = 1;
+  for (let i = 0; i < users.length; i += 1) {
+    for (let j = i + 1; j < users.length; j += 1) {
+      follows.push({
+        id: `fll_${followIndex++}`,
+        followerId: users[i].id,
+        followingId: users[j].id,
+        createdAt: now,
+      });
+
+      if (j % 2 === 0) {
+        follows.push({
+          id: `fll_${followIndex++}`,
+          followerId: users[j].id,
+          followingId: users[i].id,
+          createdAt: now,
+        });
+      }
+    }
+  }
 
   return {
     users,
@@ -916,7 +811,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     postTags,
     likes,
     comments,
-    follows: [],
+    follows,
     reports: [],
     passwordResetTokens: [],
   };
@@ -952,6 +847,23 @@ export const db = useInMemoryDb
   : prisma;
 
 if (useInMemoryDb && process.env.NODE_ENV !== "production") {
+  if (!globalForInMemory.inMemoryBaselineLogged) {
+    console.info(
+      "[in-memory-db] Baseline loaded:",
+      JSON.stringify({
+        users: inMemoryStore.users.length,
+        posts: inMemoryStore.experiencePosts.length,
+        images: inMemoryStore.postImages.length,
+        tags: inMemoryStore.tags.length,
+        postTags: inMemoryStore.postTags.length,
+        likes: inMemoryStore.likes.length,
+        comments: inMemoryStore.comments.length,
+        follows: inMemoryStore.follows.length,
+      }),
+    );
+    globalForInMemory.inMemoryBaselineLogged = true;
+  }
+
   globalForInMemory.inMemoryStore = inMemoryStore;
 }
 

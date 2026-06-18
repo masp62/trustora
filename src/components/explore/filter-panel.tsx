@@ -173,7 +173,7 @@ export function FilterPanel() {
   return (
     <div className="relative">
       {/* Desktop: always visible top bar */}
-      <div className="hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:block">
+      <div className="hidden sm:block">
         {filterControls}
 
         {activeCount > 0 && (

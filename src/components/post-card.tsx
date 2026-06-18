@@ -1,7 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 
-import { postCanonicalPath } from "@/app/post/post-detail-data";
 import { PostLikeButton } from "@/components/post-like-button";
 
 export type PostCardData = {
@@ -32,7 +33,7 @@ type PostCardProps = {
 };
 
 export function PostCard({ post, isAuthenticated, googleAuthConfigured }: PostCardProps) {
-  const href = postCanonicalPath(post.id, post.slug);
+  const href = `/post/${post.id}/${post.slug}`;
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md">

@@ -1,188 +1,6 @@
 const { hash } = require("bcryptjs");
 
-const TAGS = [
-  "beach",
-  "city-break",
-  "countryside",
-  "luxury",
-  "budget",
-  "pet-friendly",
-  "unique-stay",
-  "remote-work",
-];
-
-const BASELINE_USERS = [
-  {
-    email: "anna@realbnb.local",
-    username: "annawanders",
-    displayName: "Anna Mueller",
-    bio: "Coffee first, then city walks and hidden guesthouse gems.",
-    location: "Berlin, Germany",
-    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
-    stories: [
-      {
-        title: "Sunrise Rooftop in Lisbon",
-        body: "Quiet mornings, orange rooftops, and a tiny balcony that became my office for three days.",
-        locationCity: "Lisbon",
-        locationCountry: "Portugal",
-        propertyName: "Alfama Rooftop Studio",
-        tripType: "solo",
-        tags: ["city-break", "remote-work"],
-        images: [
-          "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Slow Weekend at Lake Como",
-        body: "A small villa near the water with mountain views and zero urge to check emails.",
-        locationCity: "Como",
-        locationCountry: "Italy",
-        propertyName: "Villa Bellavista",
-        tripType: "couple",
-        tags: ["luxury", "countryside"],
-        images: [
-          "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Rainy Nights in Kyoto",
-        body: "Tatami floors, tea every evening, and a calm neighborhood close to tiny ramen bars.",
-        locationCity: "Kyoto",
-        locationCountry: "Japan",
-        propertyName: "Gion Garden Inn",
-        tripType: "solo",
-        tags: ["city-break", "unique-stay"],
-        images: [
-          "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Budget Gem in Valencia",
-        body: "Small room, great host, free bikes, and incredible local market food around the corner.",
-        locationCity: "Valencia",
-        locationCountry: "Spain",
-        propertyName: "Ruzafa Guest Rooms",
-        tripType: "friends",
-        tags: ["budget", "city-break"],
-        images: [
-          "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Countryside Reset in Devon",
-        body: "A converted barn, long walks, and a fireplace that made every evening feel like winter cinema.",
-        locationCity: "Exeter",
-        locationCountry: "United Kingdom",
-        propertyName: "Moorland Barn Stay",
-        tripType: "family",
-        tags: ["countryside", "pet-friendly"],
-        images: [
-          "https://images.unsplash.com/photo-1475855581690-80accde3a8a1?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Work Sprint in Tallinn",
-        body: "Fast wifi, minimalist apartment, and enough cafes nearby for a full week of focus.",
-        locationCity: "Tallinn",
-        locationCountry: "Estonia",
-        propertyName: "Old Town Loft",
-        tripType: "business",
-        tags: ["remote-work", "city-break"],
-        images: [
-          "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-    ],
-  },
-  {
-    email: "lukas@realbnb.local",
-    username: "lukasontheroad",
-    displayName: "Lukas Schneider",
-    bio: "Chasing mountain air, surf spots, and practical stays for longer trips.",
-    location: "Munich, Germany",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
-    stories: [
-      {
-        title: "Surf House in Ericeira",
-        body: "Shared kitchen, sunset cliffs, and walking distance to two beginner-friendly beaches.",
-        locationCity: "Ericeira",
-        locationCountry: "Portugal",
-        propertyName: "Blue Tide Surf House",
-        tripType: "friends",
-        tags: ["beach", "budget"],
-        images: [
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Alpine Cabin near Innsbruck",
-        body: "Wood interiors, fresh snow, and a sauna with mountain views after long hiking days.",
-        locationCity: "Innsbruck",
-        locationCountry: "Austria",
-        propertyName: "Nordkette Cabin",
-        tripType: "couple",
-        tags: ["countryside", "luxury"],
-        images: [
-          "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Family Week in Copenhagen",
-        body: "Bright apartment, stroller-friendly neighborhood, and parks in every direction.",
-        locationCity: "Copenhagen",
-        locationCountry: "Denmark",
-        propertyName: "Norrebro Family Flat",
-        tripType: "family",
-        tags: ["city-break", "pet-friendly"],
-        images: [
-          "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Remote Month in Tbilisi",
-        body: "Affordable loft, super welcoming host, and plenty of coworking spots nearby.",
-        locationCity: "Tbilisi",
-        locationCountry: "Georgia",
-        propertyName: "Mtatsminda Loft",
-        tripType: "business",
-        tags: ["remote-work", "budget"],
-        images: [
-          "https://images.unsplash.com/photo-1544989164-31b2b9a3161f?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Design Stay in Rotterdam",
-        body: "Modern studio with huge windows and easy tram access to the whole city.",
-        locationCity: "Rotterdam",
-        locationCountry: "Netherlands",
-        propertyName: "Cube Quarter Studio",
-        tripType: "solo",
-        tags: ["city-break", "unique-stay"],
-        images: [
-          "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1400&q=80",
-          "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-      {
-        title: "Island Pause in Hvar",
-        body: "Stone house, crystal water, and simple evenings with local food and no schedule.",
-        locationCity: "Hvar",
-        locationCountry: "Croatia",
-        propertyName: "Old Port Retreat",
-        tripType: "couple",
-        tags: ["beach", "unique-stay"],
-        images: [
-          "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1400&q=80",
-        ],
-      },
-    ],
-  },
-];
+const { TAGS, BASELINE_USERS } = require("./baseline-data.json");
 
 function toSlug(value) {
   return value
@@ -289,56 +107,62 @@ async function main() {
   }
 
   const users = await prisma.user.findMany({ where: { email: { in: BASELINE_USERS.map((u) => u.email) } } });
-  if (users.length === 2) {
-    const [first, second] = users;
-    const firstPosts = await prisma.experiencePost.findMany({ where: { authorId: first.id }, select: { id: true } });
-    const secondPosts = await prisma.experiencePost.findMany({ where: { authorId: second.id }, select: { id: true } });
+  if (users.length >= 2) {
+    // Create cross-user likes and comments for richer seed data
+    const allPosts = await prisma.experiencePost.findMany({ select: { id: true, authorId: true } });
 
-    await prisma.like.deleteMany({
-      where: {
-        OR: [
-          { userId: first.id, postId: { in: secondPosts.map((p) => p.id) } },
-          { userId: second.id, postId: { in: firstPosts.map((p) => p.id) } },
-        ],
-      },
-    });
+    // Each user likes posts from other users
+    const likeData = [];
+    const commentBodies = [
+      "Loved this write-up. Adding this place to my shortlist for late summer.",
+      "Great practical details, especially about location and transport.",
+      "Thanks for sharing this. The photos and notes made planning super easy.",
+      "This sounds exactly like the kind of stay I was looking for.",
+      "Beautiful photos! How long did you stay?",
+      "Bookmarked. Planning a similar trip next spring.",
+      "The description of the neighborhood is so helpful.",
+      "Would you go back? Thinking about a longer stay.",
+      "This is the kind of honest review that's hard to find.",
+      "Perfect timing — I was just researching this area.",
+    ];
+    const commentData = [];
 
-    await prisma.like.createMany({
-      data: [
-        ...secondPosts.slice(0, 3).map((post) => ({ userId: first.id, postId: post.id })),
-        ...firstPosts.slice(0, 2).map((post) => ({ userId: second.id, postId: post.id })),
-      ],
-    });
-
-    await prisma.comment.deleteMany({
-      where: {
-        OR: [
-          { authorId: first.id, postId: { in: secondPosts.map((p) => p.id) } },
-          { authorId: second.id, postId: { in: firstPosts.map((p) => p.id) } },
-        ],
-      },
-    });
-
-    await prisma.comment.createMany({
-      data: [
-        ...secondPosts.slice(0, 2).map((post, index) => ({
-          authorId: first.id,
+    for (const user of users) {
+      const otherPosts = allPosts.filter((p) => p.authorId !== user.id);
+      // Each user likes ~5 random posts from others
+      const postsToLike = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 5);
+      for (const post of postsToLike) {
+        likeData.push({ userId: user.id, postId: post.id });
+      }
+      // Each user comments on ~2 posts from others
+      const postsToComment = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 2);
+      for (const post of postsToComment) {
+        commentData.push({
+          authorId: user.id,
           postId: post.id,
-          body:
-            index === 0
-              ? "Loved this write-up. Adding this place to my shortlist for late summer."
-              : "Great practical details, especially about location and transport.",
-        })),
-        ...firstPosts.slice(0, 2).map((post, index) => ({
-          authorId: second.id,
-          postId: post.id,
-          body:
-            index === 0
-              ? "Thanks for sharing this. The photos and notes made planning super easy."
-              : "This sounds exactly like the kind of stay I was looking for.",
-        })),
-      ],
-    });
+          body: commentBodies[Math.floor(Math.random() * commentBodies.length)],
+        });
+      }
+    }
+
+    await prisma.like.deleteMany({ where: { userId: { in: users.map((u) => u.id) } } });
+    await prisma.comment.deleteMany({ where: { authorId: { in: users.map((u) => u.id) } } });
+
+    await prisma.like.createMany({ data: likeData, skipDuplicates: true });
+    await prisma.comment.createMany({ data: commentData });
+
+    // Create some follow relationships
+    const followData = [];
+    for (let i = 0; i < users.length; i++) {
+      for (let j = i + 1; j < users.length; j++) {
+        followData.push({ followerId: users[i].id, followingId: users[j].id });
+        if (j % 2 === 0) {
+          followData.push({ followerId: users[j].id, followingId: users[i].id });
+        }
+      }
+    }
+    await prisma.follow.deleteMany({ where: { followerId: { in: users.map((u) => u.id) } } });
+    await prisma.follow.createMany({ data: followData, skipDuplicates: true });
   }
 
   console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, likes, and comments.`);

@@ -1,0 +1,1045 @@
+{
+  "TAGS": [
+    "beach",
+    "city-break",
+    "countryside",
+    "luxury",
+    "budget",
+    "pet-friendly",
+    "unique-stay",
+    "remote-work"
+  ],
+  "BASELINE_USERS": [
+    {
+      "email": "anna@realbnb.local",
+      "username": "annawanders",
+      "displayName": "Anna Mueller",
+      "bio": "Coffee first, then city walks and hidden guesthouse gems.",
+      "location": "Berlin, Germany",
+      "avatarUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Sunrise Rooftop in Lisbon",
+          "body": "Quiet mornings, orange rooftops, and a tiny balcony that became my office for three days.",
+          "locationCity": "Lisbon",
+          "locationCountry": "Portugal",
+          "propertyName": "Alfama Rooftop Studio",
+          "tripType": "solo",
+          "tags": [
+            "city-break",
+            "remote-work"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Slow Weekend at Lake Como",
+          "body": "A small villa near the water with mountain views and zero urge to check emails.",
+          "locationCity": "Como",
+          "locationCountry": "Italy",
+          "propertyName": "Villa Bellavista",
+          "tripType": "couple",
+          "tags": [
+            "luxury",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Rainy Nights in Kyoto",
+          "body": "Tatami floors, tea every evening, and a calm neighborhood close to tiny ramen bars.",
+          "locationCity": "Kyoto",
+          "locationCountry": "Japan",
+          "propertyName": "Gion Garden Inn",
+          "tripType": "solo",
+          "tags": [
+            "city-break",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Budget Gem in Valencia",
+          "body": "Small room, great host, free bikes, and incredible local market food around the corner.",
+          "locationCity": "Valencia",
+          "locationCountry": "Spain",
+          "propertyName": "Ruzafa Guest Rooms",
+          "tripType": "friends",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Countryside Reset in Devon",
+          "body": "A converted barn, long walks, and a fireplace that made every evening feel like winter cinema.",
+          "locationCity": "Exeter",
+          "locationCountry": "United Kingdom",
+          "propertyName": "Moorland Barn Stay",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Work Sprint in Tallinn",
+          "body": "Fast wifi, minimalist apartment, and enough cafes nearby for a full week of focus.",
+          "locationCity": "Tallinn",
+          "locationCountry": "Estonia",
+          "propertyName": "Old Town Loft",
+          "tripType": "business",
+          "tags": [
+            "remote-work",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "lukas@realbnb.local",
+      "username": "lukasontheroad",
+      "displayName": "Lukas Schneider",
+      "bio": "Chasing mountain air, surf spots, and practical stays for longer trips.",
+      "location": "Munich, Germany",
+      "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Surf House in Ericeira",
+          "body": "Shared kitchen, sunset cliffs, and walking distance to two beginner-friendly beaches.",
+          "locationCity": "Ericeira",
+          "locationCountry": "Portugal",
+          "propertyName": "Blue Tide Surf House",
+          "tripType": "friends",
+          "tags": [
+            "beach",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Alpine Cabin near Innsbruck",
+          "body": "Wood interiors, fresh snow, and a sauna with mountain views after long hiking days.",
+          "locationCity": "Innsbruck",
+          "locationCountry": "Austria",
+          "propertyName": "Nordkette Cabin",
+          "tripType": "couple",
+          "tags": [
+            "countryside",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Family Week in Copenhagen",
+          "body": "Bright apartment, stroller-friendly neighborhood, and parks in every direction.",
+          "locationCity": "Copenhagen",
+          "locationCountry": "Denmark",
+          "propertyName": "Norrebro Family Flat",
+          "tripType": "family",
+          "tags": [
+            "city-break",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Remote Month in Tbilisi",
+          "body": "Affordable loft, super welcoming host, and plenty of coworking spots nearby.",
+          "locationCity": "Tbilisi",
+          "locationCountry": "Georgia",
+          "propertyName": "Mtatsminda Loft",
+          "tripType": "business",
+          "tags": [
+            "remote-work",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Design Stay in Rotterdam",
+          "body": "Modern studio with huge windows and easy tram access to the whole city.",
+          "locationCity": "Rotterdam",
+          "locationCountry": "Netherlands",
+          "propertyName": "Cube Quarter Studio",
+          "tripType": "solo",
+          "tags": [
+            "city-break",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Island Pause in Hvar",
+          "body": "Stone house, crystal water, and simple evenings with local food and no schedule.",
+          "locationCity": "Hvar",
+          "locationCountry": "Croatia",
+          "propertyName": "Old Port Retreat",
+          "tripType": "couple",
+          "tags": [
+            "beach",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "sofia@realbnb.local",
+      "username": "sofiatravels",
+      "displayName": "Sofia Petersen",
+      "bio": "Architecture nerd. I travel for buildings, stay for the food.",
+      "location": "Copenhagen, Denmark",
+      "avatarUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Art Deco Heaven in Miami",
+          "body": "Pastel buildings, ocean breeze, and a perfectly restored deco apartment two blocks from the beach.",
+          "locationCity": "Miami",
+          "locationCountry": "United States",
+          "propertyName": "South Beach Deco Suite",
+          "tripType": "couple",
+          "tags": [
+            "beach",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1514214246283-d427a95c5d2f?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Hidden Courtyard in Marrakech",
+          "body": "A riad with hand-carved doors, rooftop breakfast, and silence despite being steps from the medina.",
+          "locationCity": "Marrakech",
+          "locationCountry": "Morocco",
+          "propertyName": "Riad Zayane",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Canal-Side Studio in Amsterdam",
+          "body": "Tiny but perfect. Huge windows overlooking the canal, a market downstairs, and bikes everywhere.",
+          "locationCity": "Amsterdam",
+          "locationCountry": "Netherlands",
+          "propertyName": "Jordaan Canal View",
+          "tripType": "solo",
+          "tags": [
+            "city-break",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Modernist Flat in Barcelona",
+          "body": "Mosaic floors, high ceilings, and Gaudi-inspired tiles everywhere. Walking distance to Sagrada Familia.",
+          "locationCity": "Barcelona",
+          "locationCountry": "Spain",
+          "propertyName": "Eixample Design Flat",
+          "tripType": "friends",
+          "tags": [
+            "city-break",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Winter Cabin in Tromsø",
+          "body": "Northern lights from the hot tub, snow on the roof, and absolute silence for miles.",
+          "locationCity": "Tromsø",
+          "locationCountry": "Norway",
+          "propertyName": "Aurora Mountain Cabin",
+          "tripType": "couple",
+          "tags": [
+            "unique-stay",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1520681279154-51b3fb4ea0f7?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Warehouse Loft in Melbourne",
+          "body": "Industrial chic with exposed brick, street art views, and a rooftop garden shared with neighbors.",
+          "locationCity": "Melbourne",
+          "locationCountry": "Australia",
+          "propertyName": "Fitzroy Warehouse Loft",
+          "tripType": "business",
+          "tags": [
+            "city-break",
+            "remote-work"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Greek Island Simplicity",
+          "body": "Whitewashed walls, blue shutters, and a terrace where you can watch boats until the sun goes down.",
+          "locationCity": "Santorini",
+          "locationCountry": "Greece",
+          "propertyName": "Oia Cliff House",
+          "tripType": "couple",
+          "tags": [
+            "beach",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Brownstone Charm in Brooklyn",
+          "body": "A full floor of a historic brownstone. Quiet street, great coffee shops, and the subway a block away.",
+          "locationCity": "New York",
+          "locationCountry": "United States",
+          "propertyName": "Park Slope Brownstone",
+          "tripType": "friends",
+          "tags": [
+            "city-break",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Minimalist Ryokan in Tokyo",
+          "body": "Futon on tatami, communal onsen, and the most thoughtful hospitality I have ever experienced.",
+          "locationCity": "Tokyo",
+          "locationCountry": "Japan",
+          "propertyName": "Yanaka Quiet Ryokan",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1480796927426-f609979314bd?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Portuguese Farmhouse Escape",
+          "body": "Cork trees, homemade bread from the host, and a pool that felt like it was only ours.",
+          "locationCity": "Évora",
+          "locationCountry": "Portugal",
+          "propertyName": "Monte da Serralheira",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "marco@realbnb.local",
+      "username": "marcoexplores",
+      "displayName": "Marco Ricci",
+      "bio": "Italian food lover turned travel writer. Slow trips only.",
+      "location": "Florence, Italy",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Trulli Stay in Alberobello",
+          "body": "Sleeping inside a stone cone felt like time travel. The host left fresh figs every morning.",
+          "locationCity": "Alberobello",
+          "locationCountry": "Italy",
+          "propertyName": "Trullo del Sole",
+          "tripType": "couple",
+          "tags": [
+            "unique-stay",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Weekend Jazz in New Orleans",
+          "body": "Creole cottage with a porch, live music drifting from three directions, and beignets for breakfast.",
+          "locationCity": "New Orleans",
+          "locationCountry": "United States",
+          "propertyName": "Frenchmen Street Cottage",
+          "tripType": "friends",
+          "tags": [
+            "city-break",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1568402102990-bc541580b59f?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Fishing Village in the Lofoten",
+          "body": "Red cabin on stilts over the water. Cod drying outside, mountains behind, and endless summer light.",
+          "locationCity": "Reine",
+          "locationCountry": "Norway",
+          "propertyName": "Rorbuer Reine",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Seaside Apartment in Nice",
+          "body": "Blue sea from the balcony, daily market trips, and a kitchen good enough to cook provençal dinners.",
+          "locationCity": "Nice",
+          "locationCountry": "France",
+          "propertyName": "Promenade View Flat",
+          "tripType": "couple",
+          "tags": [
+            "beach",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Tea Plantation Lodge in Sri Lanka",
+          "body": "Woke up in the clouds, hiked through tea fields, and fell asleep to the sound of rain on a tin roof.",
+          "locationCity": "Ella",
+          "locationCountry": "Sri Lanka",
+          "propertyName": "Hilltop Tea Bungalow",
+          "tripType": "solo",
+          "tags": [
+            "countryside",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1546587348-d12660c30c50?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Backstreet Gem in Hanoi",
+          "body": "Narrow staircase to a rooftop terrace, street food at the doorstep, and a hammock for afternoon naps.",
+          "locationCity": "Hanoi",
+          "locationCountry": "Vietnam",
+          "propertyName": "Old Quarter Hideaway",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Tuscan Vineyard Cottage",
+          "body": "Rolling hills, a cellar full of wine, and dinners under the pergola with the owner's family.",
+          "locationCity": "Montepulciano",
+          "locationCountry": "Italy",
+          "propertyName": "Podere San Luca",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1523528283115-9bf9b1699245?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1474722883778-792e7990302f?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Houseboat in Kerala",
+          "body": "Drifting through backwaters, eating fresh fish cooked on board, and watching village life from the deck.",
+          "locationCity": "Alleppey",
+          "locationCountry": "India",
+          "propertyName": "Kumarakom Houseboat",
+          "tripType": "couple",
+          "tags": [
+            "unique-stay",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Coastal Path Cottage in Cornwall",
+          "body": "Stone walls, wild garden, and a footpath to the cliffs right from the back gate.",
+          "locationCity": "St Ives",
+          "locationCountry": "United Kingdom",
+          "propertyName": "Porthmeor Cottage",
+          "tripType": "family",
+          "tags": [
+            "beach",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Desert Camp near Merzouga",
+          "body": "Sleeping under stars on sand dunes, camel trek at dawn, and mint tea by a fire in the evening.",
+          "locationCity": "Merzouga",
+          "locationCountry": "Morocco",
+          "propertyName": "Sahara Luxury Camp",
+          "tripType": "friends",
+          "tags": [
+            "unique-stay",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "yuki@realbnb.local",
+      "username": "yukistays",
+      "displayName": "Yuki Tanaka",
+      "bio": "Remote worker exploring Asia one city at a time. Need good wifi and quiet corners.",
+      "location": "Osaka, Japan",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Co-Living Space in Bali",
+          "body": "Rice field views from the desk, pool breaks between calls, and a community of like-minded nomads.",
+          "locationCity": "Ubud",
+          "locationCountry": "Indonesia",
+          "propertyName": "Canggu Colive Hub",
+          "tripType": "business",
+          "tags": [
+            "remote-work",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "High-Rise Focus in Singapore",
+          "body": "35th floor, floor-to-ceiling windows, a gym downstairs, and the fastest internet I have ever used.",
+          "locationCity": "Singapore",
+          "locationCountry": "Singapore",
+          "propertyName": "Marina Bay Tower Suite",
+          "tripType": "business",
+          "tags": [
+            "remote-work",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Mountain Retreat in Chiang Mai",
+          "body": "Wooden house surrounded by jungle, monkeys on the roof, and a desk facing the valley.",
+          "locationCity": "Chiang Mai",
+          "locationCountry": "Thailand",
+          "propertyName": "Doi Suthep Hideout",
+          "tripType": "solo",
+          "tags": [
+            "remote-work",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Capsule Hotel Surprise in Tokyo",
+          "body": "Expected cramped, got cozy. Perfect for one-night layovers with onsen access and convenience store dinner.",
+          "locationCity": "Tokyo",
+          "locationCountry": "Japan",
+          "propertyName": "Shinjuku Nine Hours",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Beachfront Villa in Da Nang",
+          "body": "Private beach access, Vietnamese coffee every morning, and motorbike rides to marble mountains.",
+          "locationCity": "Da Nang",
+          "locationCountry": "Vietnam",
+          "propertyName": "An Bang Beach Villa",
+          "tripType": "couple",
+          "tags": [
+            "beach",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1559628233-100c798642d4?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Penthouse Month in Kuala Lumpur",
+          "body": "Infinity pool on the roof, coworking in the lobby, and street food hawker centers in every direction.",
+          "locationCity": "Kuala Lumpur",
+          "locationCountry": "Malaysia",
+          "propertyName": "KLCC Sky Residence",
+          "tripType": "business",
+          "tags": [
+            "remote-work",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Onsen Town Escape",
+          "body": "Traditional inn with private hot spring bath, kaiseki dinner, and snow falling outside the window.",
+          "locationCity": "Hakone",
+          "locationCountry": "Japan",
+          "propertyName": "Gora Kadan Annex",
+          "tripType": "couple",
+          "tags": [
+            "luxury",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Seoul Hanok Experience",
+          "body": "Sleeping on heated floors in a 200-year-old house, surrounded by modern cafes and galleries.",
+          "locationCity": "Seoul",
+          "locationCountry": "South Korea",
+          "propertyName": "Bukchon Hanok Stay",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Island Hopping Base in Philippines",
+          "body": "Basic bamboo hut but the turquoise water and friendly locals made up for everything.",
+          "locationCity": "El Nido",
+          "locationCountry": "Philippines",
+          "propertyName": "Nacpan Beach Hut",
+          "tripType": "friends",
+          "tags": [
+            "beach",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Taipei Night Market Flat",
+          "body": "Fifth-floor walk-up above a night market. Noisy until midnight but the dumplings at 2am made it worth it.",
+          "locationCity": "Taipei",
+          "locationCountry": "Taiwan",
+          "propertyName": "Shilin Market Flat",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "clara@realbnb.local",
+      "username": "clarabnb",
+      "displayName": "Clara Johansson",
+      "bio": "Family travel specialist. If it works with two kids, it works for anyone.",
+      "location": "Stockholm, Sweden",
+      "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Family Farm in Provence",
+          "body": "Lavender everywhere, goats the kids adored, and a pool we never wanted to leave.",
+          "locationCity": "Aix-en-Provence",
+          "locationCountry": "France",
+          "propertyName": "Mas des Oliviers",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Treehouse Hotel in Costa Rica",
+          "body": "Monkeys woke us up, zip lines nearby, and the kids still talk about the suspension bridges.",
+          "locationCity": "Monteverde",
+          "locationCountry": "Costa Rica",
+          "propertyName": "Cloud Forest Treehouse",
+          "tripType": "family",
+          "tags": [
+            "unique-stay",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "All-Inclusive Beach in Crete",
+          "body": "Sandy beach, kids club, and parents actually getting time to read a book by the pool.",
+          "locationCity": "Chania",
+          "locationCountry": "Greece",
+          "propertyName": "Blue Lagoon Family Resort",
+          "tripType": "family",
+          "tags": [
+            "beach",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Canal Boat in Amsterdam with Kids",
+          "body": "The kids loved sleeping on a boat. Central location, duck feeding every morning, and a park next door.",
+          "locationCity": "Amsterdam",
+          "locationCountry": "Netherlands",
+          "propertyName": "Houseboat Prinsengracht",
+          "tripType": "family",
+          "tags": [
+            "unique-stay",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Scottish Highland Cottage",
+          "body": "Stone cottage, sheep outside the window, and endless trails for little adventurers.",
+          "locationCity": "Inverness",
+          "locationCountry": "United Kingdom",
+          "propertyName": "Glen Affric Bothy",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Safari Lodge in Kenya",
+          "body": "Giraffes at breakfast, lion sightings, and the most magical sunset the whole family agreed on.",
+          "locationCity": "Nairobi",
+          "locationCountry": "Kenya",
+          "propertyName": "Masai Mara Family Lodge",
+          "tripType": "family",
+          "tags": [
+            "unique-stay",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Lake Cabin in Sweden",
+          "body": "Our own dock, wild blueberries, and the kids swimming from morning to evening every single day.",
+          "locationCity": "Dalarna",
+          "locationCountry": "Sweden",
+          "propertyName": "Siljan Stuga",
+          "tripType": "family",
+          "tags": [
+            "countryside",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "City Apartment in Vienna",
+          "body": "Spacious rooms, a playground across the street, and the best Schnitzel within walking distance.",
+          "locationCity": "Vienna",
+          "locationCountry": "Austria",
+          "propertyName": "Prater Family Flat",
+          "tripType": "family",
+          "tags": [
+            "city-break",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Beach House in Algarve",
+          "body": "Warm water, calm waves perfect for small swimmers, and a terrace for evening barbecues.",
+          "locationCity": "Lagos",
+          "locationCountry": "Portugal",
+          "propertyName": "Praia da Luz House",
+          "tripType": "family",
+          "tags": [
+            "beach",
+            "pet-friendly"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Winter Week in Lapland",
+          "body": "Glass igloo, reindeer rides, Santa village, and the kids believing in magic all over again.",
+          "locationCity": "Rovaniemi",
+          "locationCountry": "Finland",
+          "propertyName": "Arctic Glass Igloo",
+          "tripType": "family",
+          "tags": [
+            "unique-stay",
+            "luxury"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    },
+    {
+      "email": "james@realbnb.local",
+      "username": "jamesbackpack",
+      "displayName": "James Okonkwo",
+      "bio": "Budget traveler and hostel veteran. Proving you don't need luxury to have great stays.",
+      "location": "London, United Kingdom",
+      "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80",
+      "stories": [
+        {
+          "title": "Hostel Rooftop in Bangkok",
+          "body": "Cheapest bed in town but the rooftop bar had a skyline view that rivaled five-star hotels.",
+          "locationCity": "Bangkok",
+          "locationCountry": "Thailand",
+          "propertyName": "Khao San Skybar Hostel",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Converted Bus in Portugal",
+          "body": "Someone turned a school bus into a tiny home parked between olive trees. Best shower view ever.",
+          "locationCity": "Faro",
+          "locationCountry": "Portugal",
+          "propertyName": "Algarve Bus Stay",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Mountain Hut Trek in Nepal",
+          "body": "Basic teahouse lodges along the Annapurna trail. Cold nights, warm dal bhat, unforgettable people.",
+          "locationCity": "Pokhara",
+          "locationCountry": "Nepal",
+          "propertyName": "Annapurna Teahouse",
+          "tripType": "friends",
+          "tags": [
+            "budget",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1486911278844-a81c5267e227?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Surf Camp in Morocco",
+          "body": "Board rental, yoga sessions, communal dinners, and a bed for less than a London coffee.",
+          "locationCity": "Taghazout",
+          "locationCountry": "Morocco",
+          "propertyName": "Taghazout Wave Camp",
+          "tripType": "friends",
+          "tags": [
+            "beach",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Night Train Cabin Across Europe",
+          "body": "Not a traditional stay, but the sleeper from Paris to Barcelona counts. Fell asleep in France, woke up in Spain.",
+          "locationCity": "Barcelona",
+          "locationCountry": "Spain",
+          "propertyName": "SNCF Nightjet Cabin",
+          "tripType": "solo",
+          "tags": [
+            "unique-stay",
+            "budget"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Hammock Hostel in Colombia",
+          "body": "Open-air dorm, hammocks under palms, and salsa lessons from the owner every Thursday.",
+          "locationCity": "Cartagena",
+          "locationCountry": "Colombia",
+          "propertyName": "Getsemani Hammock House",
+          "tripType": "friends",
+          "tags": [
+            "budget",
+            "beach"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Capsule Pod in Osaka",
+          "body": "Futuristic sleeping pod, surprisingly comfortable, and walking distance to the best takoyaki in town.",
+          "locationCity": "Osaka",
+          "locationCountry": "Japan",
+          "propertyName": "Dotonbori Capsule Inn",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Eco Lodge in Ecuador",
+          "body": "Composting toilets, solar showers, and hummingbirds during breakfast. Simple and perfect.",
+          "locationCity": "Mindo",
+          "locationCountry": "Ecuador",
+          "propertyName": "Cloud Forest Eco Lodge",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "countryside"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Free Camping at Iceland Hot Spring",
+          "body": "Wild camped legally near a geothermal river. No walls, no roof, just a tent and natural hot water.",
+          "locationCity": "Reykjavik",
+          "locationCountry": "Iceland",
+          "propertyName": "Reykjadalur Wild Camp",
+          "tripType": "friends",
+          "tags": [
+            "budget",
+            "unique-stay"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1504829857797-ddff29c27927?auto=format&fit=crop&w=1400&q=80",
+            "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1400&q=80"
+          ]
+        },
+        {
+          "title": "Shared Apartment in Berlin",
+          "body": "WG-style flat with rotating travelers. Shared kitchen conversations better than any guided tour.",
+          "locationCity": "Berlin",
+          "locationCountry": "Germany",
+          "propertyName": "Kreuzberg Community Flat",
+          "tripType": "solo",
+          "tags": [
+            "budget",
+            "city-break"
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1400&q=80"
+          ]
+        }
+      ]
+    }
+  ]
+}
