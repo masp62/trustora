@@ -5,12 +5,44 @@ import { PenLine } from "lucide-react";
 import { auth, googleAuthConfigured } from "@/auth";
 import { db } from "@/lib/db";
 import { PostCard, type PostCardData } from "@/components/post-card";
+import { ExploreEmpty, ExploreNoResults } from "@/components/explore/empty-state";
+import { FilterPanel } from "@/components/explore/filter-panel";
+import { parseFiltersFromParams } from "@/lib/explore-filters";
+import { PostCardSkeletonGrid } from "@/components/explore/post-card-skeleton";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
 
-async function getExplorePosts(viewerId: string | null): Promise<PostCardData[]> {
+interface ExploreSearchParams {
+  country?: string;
+  city?: string;
+  tripType?: string;
+  tags?: string;
+}
+
+async function getExplorePosts(
+  viewerId: string | null,
+  filters: { country: string; city: string; tripType: string; tags: string[] },
+): Promise<PostCardData[]> {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const where: any = {};
+
+  if (filters.country) {
+    where.locationCountry = {
+      contains: filters.country,
+      mode: "insensitive",
+    };
+  }
+  if (filters.city) {
+    where.locationCity = { contains: filters.city, mode: "insensitive" };
+  }
+  if (filters.tripType) {
+    where.tripType = filters.tripType;
+  }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   const posts = (await db.experiencePost.findMany({
+    where,
     orderBy: { createdAt: "desc" },
     take: 20,
   })) as Array<{
@@ -23,7 +55,31 @@ async function getExplorePosts(viewerId: string | null): Promise<PostCardData[]>
     authorId: string;
   }>;
 
-  const postIds = posts.map((post) => post.id);
+  // If tag filter is active, fetch postTags and filter in-memory
+  let filteredPosts = posts;
+  if (filters.tags.length > 0) {
+    const tagRecords = (await db.tag.findMany({
+      where: { name: { in: filters.tags } },
+    })) as Array<{ id: string; name: string }>;
+
+    const tagIds = new Set(tagRecords.map((t) => t.id));
+    if (tagIds.size > 0) {
+      const postTagEntries = (await db.postTag.findMany({
+        where: { postId: { in: posts.map((p) => p.id) } },
+      })) as Array<{ postId: string; tagId: string }>;
+
+      const postIdsWithTags = new Set(
+        postTagEntries
+          .filter((pt) => tagIds.has(pt.tagId))
+          .map((pt) => pt.postId),
+      );
+      filteredPosts = posts.filter((p) => postIdsWithTags.has(p.id));
+    } else {
+      filteredPosts = [];
+    }
+  }
+
+  const postIds = filteredPosts.map((post) => post.id);
   const likedPostIds = new Set<string>();
 
   if (viewerId && postIds.length > 0) {
@@ -40,7 +96,7 @@ async function getExplorePosts(viewerId: string | null): Promise<PostCardData[]>
 
   const cards: PostCardData[] = [];
 
-  for (const post of posts) {
+  for (const post of filteredPosts) {
     const [author, images, likeCount] = await Promise.all([
       db.user.findUnique({
         where: { id: post.authorId },
@@ -73,9 +129,27 @@ async function getExplorePosts(viewerId: string | null): Promise<PostCardData[]>
   return cards;
 }
 
-export default async function ExplorePage() {
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<ExploreSearchParams>;
+}) {
   const session = await auth();
-  const posts = await getExplorePosts(session?.user?.id ?? null);
+  const params = await searchParams;
+  const sp = new URLSearchParams();
+  if (params.country) sp.set("country", params.country);
+  if (params.city) sp.set("city", params.city);
+  if (params.tripType) sp.set("tripType", params.tripType);
+  if (params.tags) sp.set("tags", params.tags);
+
+  const filters = parseFiltersFromParams(sp);
+  const hasActiveFilters =
+    !!filters.country ||
+    !!filters.city ||
+    !!filters.tripType ||
+    filters.tags.length > 0;
+
+  const posts = await getExplorePosts(session?.user?.id ?? null, filters);
   const isAuthenticated = !!session?.user;
 
   return (
@@ -111,15 +185,23 @@ export default async function ExplorePage() {
         )}
       </section>
 
+      {/* Filter Panel */}
+      <section className="mx-auto mb-6 w-full max-w-[1760px]">
+        <Suspense>
+          <FilterPanel />
+        </Suspense>
+      </section>
+
       {/* Post Feed */}
       <section className="mx-auto w-full max-w-[1760px]">
         {posts.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center">
-            <p className="font-heading text-xl text-gray-600">No stories yet.</p>
-            <p className="mt-2 text-sm text-gray-500">Be the first to share your travel experience!</p>
-          </div>
+          hasActiveFilters ? (
+            <ExploreNoResults />
+          ) : (
+            <ExploreEmpty />
+          )
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <PostCard
                 key={post.id}
@@ -128,6 +210,16 @@ export default async function ExplorePage() {
                 googleAuthConfigured={googleAuthConfigured}
               />
             ))}
+          </div>
+        )}
+
+        {/* Infinite scroll loading indicator (preview — triggers will be wired in #16) */}
+        {posts.length >= 20 && (
+          <div className="mt-8">
+            <PostCardSkeletonGrid count={3} />
+            <p className="mt-4 text-center text-sm text-gray-400">
+              Loading more stories…
+            </p>
           </div>
         )}
       </section>
