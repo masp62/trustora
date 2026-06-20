@@ -14,13 +14,13 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const filters = parseFiltersFromParams(url.searchParams);
 
-  const offsetParam = Number.parseInt(url.searchParams.get("offset") ?? "0", 10);
   const limitParam = Number.parseInt(url.searchParams.get("limit") ?? `${EXPLORE_PAGE_SIZE}`, 10);
+  const cursorParam = url.searchParams.get("cursor");
 
-  const offset = Number.isNaN(offsetParam) ? 0 : Math.max(0, offsetParam);
   const limit = clampLimit(limitParam);
+  const cursor = cursorParam && cursorParam.trim().length > 0 ? cursorParam : null;
 
-  const result = await getExplorePostsPage(session?.user?.id ?? null, filters, offset, limit);
+  const result = await getExplorePostsPage(session?.user?.id ?? null, filters, cursor, limit);
 
   return NextResponse.json(result);
 }

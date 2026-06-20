@@ -35,8 +35,12 @@ export default async function ExplorePage({
     !!filters.city ||
     !!filters.tripType ||
     filters.tags.length > 0;
+  const feedKey = JSON.stringify(filters);
 
-  const { posts, hasMore } = await getExplorePostsPage(session?.user?.id ?? null, filters);
+  const { posts, hasMore, nextCursor } = await getExplorePostsPage(
+    session?.user?.id ?? null,
+    filters,
+  );
   const isAuthenticated = !!session?.user;
 
   return (
@@ -72,8 +76,10 @@ export default async function ExplorePage({
       {/* Post Feed */}
       <section className="mx-auto w-full max-w-[1760px]">
         <ExploreFeedClient
+          key={feedKey}
           initialPosts={posts}
           initialHasMore={hasMore}
+          initialNextCursor={nextCursor}
           isAuthenticated={isAuthenticated}
           googleAuthConfigured={googleAuthConfigured}
           filters={filters}

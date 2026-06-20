@@ -1,29 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 
 import { parseFiltersFromParams, type FilterState } from "@/lib/explore-filters";
+import { PREDEFINED_TAGS, TRIP_TYPES } from "@/lib/post-constants";
 
-const TRIP_TYPES = [
-  { value: "solo", label: "Solo" },
-  { value: "couple", label: "Couple" },
-  { value: "family", label: "Family" },
-  { value: "friends", label: "Friends" },
-  { value: "business", label: "Business" },
-] as const;
-
-const TAGS = [
-  "beach",
-  "city-break",
-  "countryside",
-  "luxury",
-  "budget",
-  "pet-friendly",
-  "unique-stay",
-  "remote-work",
-] as const;
+const TRIP_TYPE_OPTIONS = TRIP_TYPES.map((value) => ({
+  value,
+  label: toLabel(value),
+}));
 
 function toLabel(tag: string) {
   return tag
@@ -50,6 +37,11 @@ export function FilterPanel() {
     () => parseFiltersFromParams(searchParams),
     [searchParams],
   );
+  const latestFiltersRef = useRef<FilterState>(currentFilters);
+
+  useEffect(() => {
+    latestFiltersRef.current = currentFilters;
+  }, [currentFilters]);
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -61,6 +53,7 @@ export function FilterPanel() {
 
   const applyFilters = useCallback(
     (next: FilterState) => {
+      latestFiltersRef.current = next;
       const params = filtersToParams(next);
       const qs = params.toString();
       startTransition(() => {
@@ -75,22 +68,23 @@ export function FilterPanel() {
   }, [applyFilters]);
 
   const setCountry = (value: string) =>
-    applyFilters({ ...currentFilters, country: value });
+    applyFilters({ ...latestFiltersRef.current, country: value });
 
   const setCity = (value: string) =>
-    applyFilters({ ...currentFilters, city: value });
+    applyFilters({ ...latestFiltersRef.current, city: value });
 
   const toggleTripType = (value: string) =>
     applyFilters({
-      ...currentFilters,
-      tripType: currentFilters.tripType === value ? "" : value,
+      ...latestFiltersRef.current,
+      tripType: latestFiltersRef.current.tripType === value ? "" : value,
     });
 
   const toggleTag = (tag: string) => {
-    const next = currentFilters.tags.includes(tag)
-      ? currentFilters.tags.filter((t) => t !== tag)
-      : [...currentFilters.tags, tag];
-    applyFilters({ ...currentFilters, tags: next });
+    const base = latestFiltersRef.current;
+    const next = base.tags.includes(tag)
+      ? base.tags.filter((t) => t !== tag)
+      : [...base.tags, tag];
+    applyFilters({ ...base, tags: next });
   };
 
   const filterControls = (
@@ -125,7 +119,7 @@ export function FilterPanel() {
           Trip type
         </p>
         <div className="flex flex-wrap gap-2">
-          {TRIP_TYPES.map(({ value, label }) => (
+          {TRIP_TYPE_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
               type="button"
@@ -148,7 +142,7 @@ export function FilterPanel() {
           Tags
         </p>
         <div className="flex flex-wrap gap-2">
-          {TAGS.map((tag) => {
+          {PREDEFINED_TAGS.map((tag) => {
             const active = currentFilters.tags.includes(tag);
             return (
               <button

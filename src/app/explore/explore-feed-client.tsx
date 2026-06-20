@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PostCard, type PostCardData } from "@/components/post-card";
 import { ExploreEmpty, ExploreNoResults } from "@/components/explore/empty-state";
@@ -11,6 +11,7 @@ import { EXPLORE_PAGE_SIZE } from "@/lib/explore-feed";
 type ExploreFeedClientProps = {
   initialPosts: PostCardData[];
   initialHasMore: boolean;
+  initialNextCursor: string | null;
   isAuthenticated: boolean;
   googleAuthConfigured: boolean;
   filters: FilterState;
@@ -20,11 +21,13 @@ type ExploreFeedClientProps = {
 type ExploreApiResponse = {
   posts: PostCardData[];
   hasMore: boolean;
+  nextCursor: string | null;
 };
 
 export function ExploreFeedClient({
   initialPosts,
   initialHasMore,
+  initialNextCursor,
   isAuthenticated,
   googleAuthConfigured,
   filters,
@@ -32,21 +35,10 @@ export function ExploreFeedClient({
 }: ExploreFeedClientProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [hasMore, setHasMore] = useState(initialHasMore);
+  const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const filterKey = useMemo(
-    () => JSON.stringify(filters),
-    [filters],
-  );
-
-  useEffect(() => {
-    setPosts(initialPosts);
-    setHasMore(initialHasMore);
-    setIsLoading(false);
-    setError(null);
-  }, [filterKey, initialHasMore, initialPosts]);
 
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) {
@@ -62,8 +54,8 @@ export function ExploreFeedClient({
       if (filters.city) params.set("city", filters.city);
       if (filters.tripType) params.set("tripType", filters.tripType);
       if (filters.tags.length > 0) params.set("tags", filters.tags.join(","));
-      params.set("offset", String(posts.length));
       params.set("limit", String(EXPLORE_PAGE_SIZE));
+      if (nextCursor) params.set("cursor", nextCursor);
 
       const response = await fetch(`/api/explore?${params.toString()}`, {
         cache: "no-store",
@@ -80,12 +72,13 @@ export function ExploreFeedClient({
         return [...current, ...incoming];
       });
       setHasMore(data.hasMore);
+      setNextCursor(data.nextCursor);
     } catch {
       setError("Could not load more stories. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [filters, hasMore, isLoading, posts.length]);
+  }, [filters, hasMore, isLoading, nextCursor]);
 
   useEffect(() => {
     const target = sentinelRef.current;
