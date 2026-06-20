@@ -3,6 +3,12 @@ const { hash } = require("bcryptjs");
 const { TAGS, BASELINE_USERS } = require("./baseline-data.json");
 const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
 
+function randomDateWithinLast30Days() {
+  const now = Date.now();
+  const maxMs = 30 * 24 * 60 * 60 * 1000;
+  return new Date(now - Math.floor(Math.random() * maxMs));
+}
+
 function toSlug(value) {
   return value
     .toLowerCase()
@@ -58,6 +64,7 @@ async function main() {
         role,
         passwordHash,
         isBanned: false,
+        createdAt: randomDateWithinLast30Days(),
       },
       create: {
         email: userSeed.email,
@@ -69,6 +76,7 @@ async function main() {
         role,
         passwordHash,
         isBanned: false,
+        createdAt: randomDateWithinLast30Days(),
       },
     });
 
@@ -87,6 +95,7 @@ async function main() {
           propertyName: story.propertyName,
           tripType: story.tripType,
           authorId: user.id,
+          createdAt: randomDateWithinLast30Days(),
         },
       });
 
@@ -145,6 +154,7 @@ async function main() {
           authorId: user.id,
           postId: post.id,
           body: commentBodies[Math.floor(Math.random() * commentBodies.length)],
+          createdAt: randomDateWithinLast30Days(),
         });
       }
     }
@@ -167,6 +177,64 @@ async function main() {
     }
     await prisma.follow.deleteMany({ where: { followerId: { in: users.map((u) => u.id) } } });
     await prisma.follow.createMany({ data: followData, skipDuplicates: true });
+
+    const reportReasons = [
+      "Spam or promotional content",
+      "Harassment in the text",
+      "Misleading stay description",
+      "Inappropriate language",
+      "Potential scam indicators",
+      "Off-topic content",
+    ];
+
+    const reportsByBaselineUsers = await prisma.report.findMany({
+      where: { reporterId: { in: users.map((u) => u.id) } },
+      select: { id: true },
+    });
+
+    if (reportsByBaselineUsers.length > 0) {
+      await prisma.report.deleteMany({ where: { id: { in: reportsByBaselineUsers.map((r) => r.id) } } });
+    }
+
+    const commentsForReports = await prisma.comment.findMany({
+      where: { authorId: { in: users.map((u) => u.id) } },
+      select: { id: true, authorId: true },
+      take: 24,
+    });
+
+    const reportTargets = [
+      ...allPosts.map((post) => ({
+        targetType: "post",
+        targetId: post.id,
+        authorId: post.authorId,
+      })),
+      ...commentsForReports.map((comment) => ({
+        targetType: "comment",
+        targetId: comment.id,
+        authorId: comment.authorId,
+      })),
+    ];
+
+    const statuses = ["pending", "resolved", "dismissed"];
+
+    const reportData = reportTargets.slice(0, 20).map((target, index) => {
+      const reporterPool = users.filter((user) => user.id !== target.authorId);
+      const reporter = reporterPool[index % reporterPool.length] ?? users[index % users.length];
+      const createdAt = randomDateWithinLast30Days();
+
+      return {
+        reporterId: reporter.id,
+        targetType: target.targetType,
+        targetId: target.targetId,
+        reason: reportReasons[index % reportReasons.length],
+        status: statuses[index % statuses.length],
+        createdAt,
+      };
+    });
+
+    if (reportData.length > 0) {
+      await prisma.report.createMany({ data: reportData });
+    }
   }
 
   console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, likes, and comments.`);

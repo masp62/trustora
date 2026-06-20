@@ -151,6 +151,8 @@ test.describe("Story 23 admin dashboard", () => {
     await signIn(adminPage, ADMIN_CREDENTIALS);
     await adminPage.goto("/admin");
 
+    await expect(adminPage.getByRole("heading", { name: "Admin dashboard" })).toBeVisible();
+    await adminPage.getByRole("tab", { name: /Reports \(/ }).click();
     await expect(adminPage.getByRole("heading", { name: "Report queue" })).toBeVisible();
 
     const dismissItem = adminPage.locator("tr, li").filter({ hasText: REASON_DISMISS }).first();

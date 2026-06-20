@@ -631,7 +631,10 @@ const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
 
 function createBaselineInMemoryStore(): InMemoryStore {
   const now = new Date();
-  const minutesAgo = (value: number) => new Date(now.getTime() - value * 60 * 1000);
+  const randomDateWithinLast30Days = () => {
+    const maxMs = 30 * 24 * 60 * 60 * 1000;
+    return new Date(now.getTime() - Math.floor(Math.random() * maxMs));
+  };
 
   const toSlug = (value: string) =>
     value
@@ -662,7 +665,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     role: seedUser.email === BASELINE_ADMIN_EMAIL ? UserRole.admin : UserRole.user,
     passwordHash: BASELINE_PASSWORD_HASH,
     isBanned: false,
-    createdAt: now,
+    createdAt: randomDateWithinLast30Days(),
     updatedAt: now,
   }));
 
@@ -725,7 +728,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     propertyName: post.propertyName,
     tripType: post.tripType,
     authorId: post.authorId,
-    createdAt: now,
+    createdAt: randomDateWithinLast30Days(),
     updatedAt: now,
   }));
 
@@ -756,7 +759,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
       id: `like_${index + 1}`,
       userId: liker.id,
       postId: post.id,
-      createdAt: minutesAgo(180 - index * 5),
+      createdAt: randomDateWithinLast30Days(),
     };
   });
 
@@ -770,7 +773,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
   const comments: InMemoryComment[] = experiencePosts.slice(0, 16).map((post, index) => {
     const fallbackUser = users[(index + 1) % users.length];
     const author = users.find((user) => user.id !== post.authorId) ?? fallbackUser;
-    const createdAt = minutesAgo(120 - index * 4);
+    const createdAt = randomDateWithinLast30Days();
 
     return {
       id: `cmt_${index + 1}`,
@@ -804,6 +807,47 @@ function createBaselineInMemoryStore(): InMemoryStore {
     }
   }
 
+  const reportReasons = [
+    "Spam or promotional content",
+    "Harassment in the text",
+    "Misleading stay description",
+    "Inappropriate language",
+    "Potential scam indicators",
+    "Off-topic content",
+  ];
+
+  const reportTargets = [
+    ...experiencePosts.slice(0, 8).map((post) => ({
+      targetType: ReportTargetType.post,
+      targetId: post.id,
+      authorId: post.authorId,
+    })),
+    ...comments.slice(0, 8).map((comment) => ({
+      targetType: ReportTargetType.comment,
+      targetId: comment.id,
+      authorId: comment.authorId,
+    })),
+  ];
+
+  const statuses = [ReportStatus.pending, ReportStatus.resolved, ReportStatus.dismissed] as const;
+
+  const reports: InMemoryReport[] = reportTargets.map((target, index) => {
+    const reporterPool = users.filter((user) => user.id !== target.authorId);
+    const reporter = reporterPool[index % reporterPool.length] ?? users[index % users.length];
+    const createdAt = randomDateWithinLast30Days();
+
+    return {
+      id: `rpt_${index + 1}`,
+      reporterId: reporter.id,
+      targetType: target.targetType,
+      targetId: target.targetId,
+      reason: reportReasons[index % reportReasons.length],
+      status: statuses[index % statuses.length],
+      createdAt,
+      updatedAt: createdAt,
+    };
+  });
+
   return {
     users,
     experiencePosts,
@@ -813,7 +857,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     likes,
     comments,
     follows,
-    reports: [],
+    reports,
     passwordResetTokens: [],
   };
 }

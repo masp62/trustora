@@ -15,6 +15,51 @@ export type AdminQueueItem = {
   targetAuthorUsername: string | null;
 };
 
+type ActivityPoint = {
+  label: string;
+  count: number;
+};
+
+type RankedEntry = {
+  label: string;
+  secondaryLabel: string;
+  count: number;
+};
+
+type LocationEntry = {
+  label: string;
+  count: number;
+};
+
+export type AdminOverviewData = {
+  totals: {
+    totalUsers: number;
+    totalPosts: number;
+    totalComments: number;
+    totalLikes: number;
+    activeReports: number;
+    bannedUsers: number;
+  };
+  activity: {
+    registrations: ActivityPoint[];
+    posts: ActivityPoint[];
+    comments: ActivityPoint[];
+    reports: ActivityPoint[];
+  };
+  topContent: {
+    mostLikedPosts: RankedEntry[];
+    mostCommentedPosts: RankedEntry[];
+  };
+  engagement: {
+    mostActiveAuthors: RankedEntry[];
+    mostActiveCommenters: RankedEntry[];
+  };
+  geography: {
+    topCountries: LocationEntry[];
+    topCities: LocationEntry[];
+  };
+};
+
 function truncate(value: string, maxLength: number) {
   if (value.length <= maxLength) {
     return value;
@@ -137,4 +182,240 @@ export async function getPendingAdminQueue(): Promise<AdminQueueItem[]> {
       targetAuthorUsername: targetAuthor?.username ?? null,
     };
   });
+}
+
+function startOfDay(value: Date) {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function dateLabel(value: Date) {
+  return value.toISOString().slice(0, 10);
+}
+
+function buildLastNDaysRange(days: number) {
+  const today = startOfDay(new Date());
+  const dates: Date[] = [];
+
+  for (let index = days - 1; index >= 0; index -= 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - index);
+    dates.push(date);
+  }
+
+  return dates;
+}
+
+function buildDailySeries(entries: Date[], days: number): ActivityPoint[] {
+  const range = buildLastNDaysRange(days);
+  const counter = new Map<string, number>();
+
+  for (const entry of entries) {
+    const label = dateLabel(startOfDay(entry));
+    counter.set(label, (counter.get(label) ?? 0) + 1);
+  }
+
+  return range.map((date) => {
+    const label = dateLabel(date);
+    return { label, count: counter.get(label) ?? 0 };
+  });
+}
+
+function rankByCount(
+  counts: Map<string, number>,
+  resolve: (id: string) => { label: string; secondaryLabel: string } | null,
+  limit: number,
+): RankedEntry[] {
+  return [...counts.entries()]
+    .sort((left, right) => {
+      if (right[1] !== left[1]) {
+        return right[1] - left[1];
+      }
+      return left[0].localeCompare(right[0]);
+    })
+    .slice(0, limit)
+    .map(([id, count]) => {
+      const resolved = resolve(id);
+      if (!resolved) {
+        return null;
+      }
+
+      return {
+        label: resolved.label,
+        secondaryLabel: resolved.secondaryLabel,
+        count,
+      };
+    })
+    .filter((entry): entry is RankedEntry => Boolean(entry));
+}
+
+function rankLocations(counts: Map<string, number>, limit: number): LocationEntry[] {
+  return [...counts.entries()]
+    .sort((left, right) => {
+      if (right[1] !== left[1]) {
+        return right[1] - left[1];
+      }
+      return left[0].localeCompare(right[0]);
+    })
+    .slice(0, limit)
+    .map(([label, count]) => ({ label, count }));
+}
+
+export async function getAdminOverviewData(): Promise<AdminOverviewData> {
+  const [totalUsers, totalPosts, totalComments, totalLikes, activeReports, bannedUsers] = await Promise.all([
+    db.user.count(),
+    db.experiencePost.count(),
+    db.comment.count(),
+    db.like.count(),
+    db.report.count({ where: { status: ReportStatus.pending } }),
+    db.user.count({ where: { isBanned: true } }),
+  ]);
+
+  const [users, posts, comments, likes, reports] = await Promise.all([
+    db.user.findMany({
+      select: { id: true, username: true, createdAt: true },
+    }) as Promise<Array<{ id: string; username: string; createdAt: Date }>>,
+    db.experiencePost.findMany({
+      select: {
+        id: true,
+        title: true,
+        authorId: true,
+        locationCountry: true,
+        locationCity: true,
+        createdAt: true,
+      },
+    }) as Promise<
+      Array<{
+        id: string;
+        title: string;
+        authorId: string;
+        locationCountry: string;
+        locationCity: string;
+        createdAt: Date;
+      }>
+    >,
+    db.comment.findMany({
+      select: { id: true, authorId: true, postId: true, createdAt: true },
+    }) as Promise<Array<{ id: string; authorId: string; postId: string; createdAt: Date }>>,
+    db.like.findMany({
+      select: { id: true, postId: true },
+    }) as Promise<Array<{ id: string; postId: string }>>,
+    db.report.findMany({
+      select: { id: true, createdAt: true },
+    }) as Promise<Array<{ id: string; createdAt: Date }>>,
+  ]);
+
+  const userById = new Map(users.map((user) => [user.id, user]));
+  const postById = new Map(posts.map((post) => [post.id, post]));
+
+  const likesByPost = new Map<string, number>();
+  for (const like of likes) {
+    likesByPost.set(like.postId, (likesByPost.get(like.postId) ?? 0) + 1);
+  }
+
+  const commentsByPost = new Map<string, number>();
+  const commentsByAuthor = new Map<string, number>();
+  for (const comment of comments) {
+    commentsByPost.set(comment.postId, (commentsByPost.get(comment.postId) ?? 0) + 1);
+    commentsByAuthor.set(comment.authorId, (commentsByAuthor.get(comment.authorId) ?? 0) + 1);
+  }
+
+  const postsByAuthor = new Map<string, number>();
+  const countries = new Map<string, number>();
+  const cities = new Map<string, number>();
+  for (const post of posts) {
+    postsByAuthor.set(post.authorId, (postsByAuthor.get(post.authorId) ?? 0) + 1);
+    countries.set(post.locationCountry, (countries.get(post.locationCountry) ?? 0) + 1);
+    cities.set(post.locationCity, (cities.get(post.locationCity) ?? 0) + 1);
+  }
+
+  const mostLikedPosts = rankByCount(
+    likesByPost,
+    (postId) => {
+      const post = postById.get(postId);
+      if (!post) {
+        return null;
+      }
+      const author = userById.get(post.authorId);
+      return {
+        label: post.title,
+        secondaryLabel: `@${author?.username ?? "unknown"}`,
+      };
+    },
+    5,
+  );
+
+  const mostCommentedPosts = rankByCount(
+    commentsByPost,
+    (postId) => {
+      const post = postById.get(postId);
+      if (!post) {
+        return null;
+      }
+      const author = userById.get(post.authorId);
+      return {
+        label: post.title,
+        secondaryLabel: `@${author?.username ?? "unknown"}`,
+      };
+    },
+    5,
+  );
+
+  const mostActiveAuthors = rankByCount(
+    postsByAuthor,
+    (userId) => {
+      const user = userById.get(userId);
+      if (!user) {
+        return null;
+      }
+      return {
+        label: `@${user.username}`,
+        secondaryLabel: "Posts",
+      };
+    },
+    5,
+  );
+
+  const mostActiveCommenters = rankByCount(
+    commentsByAuthor,
+    (userId) => {
+      const user = userById.get(userId);
+      if (!user) {
+        return null;
+      }
+      return {
+        label: `@${user.username}`,
+        secondaryLabel: "Comments",
+      };
+    },
+    5,
+  );
+
+  return {
+    totals: {
+      totalUsers,
+      totalPosts,
+      totalComments,
+      totalLikes,
+      activeReports,
+      bannedUsers,
+    },
+    activity: {
+      registrations: buildDailySeries(users.map((user) => user.createdAt), 30),
+      posts: buildDailySeries(posts.map((post) => post.createdAt), 30),
+      comments: buildDailySeries(comments.map((comment) => comment.createdAt), 30),
+      reports: buildDailySeries(reports.map((report) => report.createdAt), 30),
+    },
+    topContent: {
+      mostLikedPosts,
+      mostCommentedPosts,
+    },
+    engagement: {
+      mostActiveAuthors,
+      mostActiveCommenters,
+    },
+    geography: {
+      topCountries: rankLocations(countries, 10),
+      topCities: rankLocations(cities, 10),
+    },
+  };
 }
