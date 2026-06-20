@@ -9,11 +9,11 @@ Build tag discovery pages at `/explore/tags/[tag]` for each of the 8 predefined 
 
 ## Acceptance criteria
 
-- [ ] `/explore/tags/[tag]` is accessible for each predefined tag: beach, city-break, countryside, luxury, budget, pet-friendly, unique-stay, remote-work
-- [ ] Each tag page lists all Experience Posts with that tag, using the standard post card format, sorted reverse-chronologically
-- [ ] Visiting a tag slug that is not in the predefined set returns a 404
-- [ ] Each page is server-rendered with a unique meta title (e.g. "Beach Experiences — RealBnB"), meta description, and Open Graph tags
-- [ ] Tag pages are accessible without authentication
+- [x] `/explore/tags/[tag]` is accessible for each predefined tag: beach, city-break, countryside, luxury, budget, pet-friendly, unique-stay, remote-work
+- [x] Each tag page lists all Experience Posts with that tag, using the standard post card format, sorted reverse-chronologically
+- [x] Visiting a tag slug that is not in the predefined set returns a 404
+- [x] Each page is server-rendered with a unique meta title (e.g. "Beach Experiences — RealBnB"), meta description, and Open Graph tags
+- [x] Tag pages are accessible without authentication
 
 ## Blocked by
 
