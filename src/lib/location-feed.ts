@@ -83,7 +83,9 @@ export async function getLocationPosts(
   }
 
   const postIds = posts.map((post) => post.id);
+  const authorIds = [...new Set(posts.map((post) => post.authorId))];
   const likedPostIds = new Set<string>();
+  const ratingByPostAndAuthor = new Map<string, number>();
 
   if (viewerId && postIds.length > 0) {
     const likedPosts = (await db.like.findMany({
@@ -95,6 +97,24 @@ export async function getLocationPosts(
     })) as Array<{ postId: string }>;
 
     likedPosts.forEach((entry) => likedPostIds.add(entry.postId));
+  }
+
+  if (postIds.length > 0) {
+    const ratings = (await db.accommodationRating.findMany({
+      where: {
+        postId: { in: postIds },
+        userId: { in: authorIds },
+      },
+      select: {
+        postId: true,
+        userId: true,
+        overallScore: true,
+      },
+    })) as Array<{ postId: string; userId: string; overallScore: number }>;
+
+    ratings.forEach((rating) => {
+      ratingByPostAndAuthor.set(`${rating.postId}:${rating.userId}`, rating.overallScore);
+    });
   }
 
   const cards: Array<PostCardData | null> = await Promise.all(
@@ -127,6 +147,7 @@ export async function getLocationPosts(
         author,
         likeCount,
         initiallyLiked: likedPostIds.has(post.id),
+        accommodationRating: ratingByPostAndAuthor.get(`${post.id}:${post.authorId}`) ?? null,
       };
     }),
   );

@@ -9,6 +9,100 @@ function randomDateWithinLast30Days() {
   return new Date(now - Math.floor(Math.random() * maxMs));
 }
 
+function weightedScore(weights) {
+  const roll = Math.random();
+  let cumulative = 0;
+
+  for (const [score, weight] of weights) {
+    cumulative += weight;
+    if (roll <= cumulative) {
+      return score;
+    }
+  }
+
+  return weights[weights.length - 1][0];
+}
+
+function randomCategoryScore(category) {
+  // Realistic creator ratings: mostly 4/5, occasional 3.
+  const defaultWeights = [
+    [3, 0.14],
+    [4, 0.52],
+    [5, 0.34],
+  ];
+
+  // Category-specific tendencies for more plausible baseline data.
+  const categoryWeights = {
+    communication: [
+      [3, 0.09],
+      [4, 0.48],
+      [5, 0.43],
+    ],
+    checkIn: [
+      [3, 0.1],
+      [4, 0.5],
+      [5, 0.4],
+    ],
+    location: [
+      [3, 0.12],
+      [4, 0.5],
+      [5, 0.38],
+    ],
+    value: [
+      [3, 0.22],
+      [4, 0.56],
+      [5, 0.22],
+    ],
+    facilities: [
+      [3, 0.2],
+      [4, 0.54],
+      [5, 0.26],
+    ],
+  };
+
+  return weightedScore(categoryWeights[category] ?? defaultWeights);
+}
+
+function buildRandomAccommodationRating() {
+  const cleanliness = randomCategoryScore("cleanliness");
+  const accuracy = randomCategoryScore("accuracy");
+  const checkIn = randomCategoryScore("checkIn");
+  const communication = randomCategoryScore("communication");
+  const location = randomCategoryScore("location");
+  const value = randomCategoryScore("value");
+  const comfort = randomCategoryScore("comfort");
+  const facilities = randomCategoryScore("facilities");
+
+  const categories = [
+    cleanliness,
+    accuracy,
+    checkIn,
+    communication,
+    location,
+    value,
+    comfort,
+    facilities,
+  ];
+
+  const overallScore =
+    Math.round((categories.reduce((sum, score) => sum + score, 0) / categories.length) * 10) / 10;
+
+  return {
+    overallScore,
+    cleanliness,
+    accuracy,
+    checkIn,
+    communication,
+    location,
+    value,
+    comfort,
+    facilities,
+    wouldStayAgain: Math.random() > 0.08,
+    reviewText: null,
+    isVerifiedStay: false,
+  };
+}
+
 function toSlug(value) {
   return value
     .toLowerCase()
@@ -115,6 +209,15 @@ async function main() {
             postId: post.id,
             tagId: tag.id,
           })),
+      });
+
+      await prisma.accommodationRating.create({
+        data: {
+          postId: post.id,
+          userId: user.id,
+          ...buildRandomAccommodationRating(),
+          createdAt: randomDateWithinLast30Days(),
+        },
       });
     }
   }
@@ -237,7 +340,7 @@ async function main() {
     }
   }
 
-  console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, likes, and comments.`);
+  console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, ratings, likes, and comments.`);
 
   await prisma.$disconnect();
 }

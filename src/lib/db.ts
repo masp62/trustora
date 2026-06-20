@@ -81,6 +81,26 @@ type InMemoryReport = {
   updatedAt: Date;
 };
 
+type InMemoryAccommodationRating = {
+  id: string;
+  postId: string;
+  userId: string;
+  overallScore: number;
+  cleanliness: number;
+  accuracy: number;
+  checkIn: number;
+  communication: number;
+  location: number;
+  value: number;
+  comfort: number;
+  facilities: number;
+  wouldStayAgain: boolean;
+  reviewText: string | null;
+  isVerifiedStay: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 type InMemoryPasswordResetToken = {
   id: string;
   token: string;
@@ -100,6 +120,7 @@ type InMemoryStore = {
   comments: InMemoryComment[];
   follows: InMemoryFollow[];
   reports: InMemoryReport[];
+  accommodationRatings: InMemoryAccommodationRating[];
   passwordResetTokens: InMemoryPasswordResetToken[];
 };
 
@@ -557,6 +578,55 @@ function createInMemoryDb(store: InMemoryStore) {
         return store.reports.filter((entry) => matchesWhere(entry, args.where)).length;
       },
     },
+    accommodationRating: {
+      async findUnique(args: FindArgs) {
+        const entry = store.accommodationRatings.find((rating) => matchesWhere(rating, args.where));
+        return entry ? applySelect(entry, args.select) : null;
+      },
+      async findMany(args: FindArgs = {}) {
+        const filtered = store.accommodationRatings.filter((entry) => matchesWhere(entry, args.where));
+        const ordered = sortEntries(filtered, args.orderBy);
+        return paginate(ordered.map((entry) => applySelect(entry, args.select)), args.skip, args.take);
+      },
+      async create(args: {
+        data: Omit<InMemoryAccommodationRating, "id" | "createdAt" | "updatedAt" | "isVerifiedStay"> & {
+          isVerifiedStay?: boolean;
+        };
+      }) {
+        if (
+          store.accommodationRatings.some(
+            (entry) => entry.postId === args.data.postId && entry.userId === args.data.userId,
+          )
+        ) {
+          throw new Error("In-memory accommodation rating already exists.");
+        }
+
+        const now = new Date();
+        const created: InMemoryAccommodationRating = {
+          ...args.data,
+          id: nextId("rat"),
+          isVerifiedStay: args.data.isVerifiedStay ?? false,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        store.accommodationRatings.push(created);
+        return created;
+      },
+      async update(args: { where: Record<string, unknown>; data: Partial<InMemoryAccommodationRating> }) {
+        const target = store.accommodationRatings.find((entry) => matchesWhere(entry, args.where));
+
+        if (!target) {
+          throw new Error("In-memory accommodation rating not found.");
+        }
+
+        Object.assign(target, args.data, { updatedAt: new Date() });
+        return target;
+      },
+      async count(args: { where?: Record<string, unknown> } = {}) {
+        return store.accommodationRatings.filter((entry) => matchesWhere(entry, args.where)).length;
+      },
+    },
     passwordResetToken: {
       async findUnique(args: FindArgs) {
         const entry = store.passwordResetTokens.find((t) => matchesWhere(t, args.where));
@@ -634,6 +704,99 @@ function createBaselineInMemoryStore(): InMemoryStore {
   const randomDateWithinLast30Days = () => {
     const maxMs = 30 * 24 * 60 * 60 * 1000;
     return new Date(now.getTime() - Math.floor(Math.random() * maxMs));
+  };
+
+  const weightedScore = (weights: Array<[number, number]>) => {
+    const roll = Math.random();
+    let cumulative = 0;
+
+    for (const [score, weight] of weights) {
+      cumulative += weight;
+      if (roll <= cumulative) {
+        return score;
+      }
+    }
+
+    return weights[weights.length - 1][0];
+  };
+
+  const randomCategoryScore = (category: string) => {
+    // Realistic creator ratings: mostly 4/5, occasional 3.
+    const defaultWeights: Array<[number, number]> = [
+      [3, 0.14],
+      [4, 0.52],
+      [5, 0.34],
+    ];
+
+    const categoryWeights: Record<string, Array<[number, number]>> = {
+      communication: [
+        [3, 0.09],
+        [4, 0.48],
+        [5, 0.43],
+      ],
+      checkIn: [
+        [3, 0.1],
+        [4, 0.5],
+        [5, 0.4],
+      ],
+      location: [
+        [3, 0.12],
+        [4, 0.5],
+        [5, 0.38],
+      ],
+      value: [
+        [3, 0.22],
+        [4, 0.56],
+        [5, 0.22],
+      ],
+      facilities: [
+        [3, 0.2],
+        [4, 0.54],
+        [5, 0.26],
+      ],
+    };
+
+    return weightedScore(categoryWeights[category] ?? defaultWeights);
+  };
+
+  const buildRandomAccommodationRating = () => {
+    const cleanliness = randomCategoryScore("cleanliness");
+    const accuracy = randomCategoryScore("accuracy");
+    const checkIn = randomCategoryScore("checkIn");
+    const communication = randomCategoryScore("communication");
+    const location = randomCategoryScore("location");
+    const value = randomCategoryScore("value");
+    const comfort = randomCategoryScore("comfort");
+    const facilities = randomCategoryScore("facilities");
+
+    const categories = [
+      cleanliness,
+      accuracy,
+      checkIn,
+      communication,
+      location,
+      value,
+      comfort,
+      facilities,
+    ];
+
+    const overallScore =
+      Math.round((categories.reduce((sum, score) => sum + score, 0) / categories.length) * 10) / 10;
+
+    return {
+      overallScore,
+      cleanliness,
+      accuracy,
+      checkIn,
+      communication,
+      location,
+      value,
+      comfort,
+      facilities,
+      wouldStayAgain: Math.random() > 0.08,
+      reviewText: null,
+      isVerifiedStay: false,
+    };
   };
 
   const toSlug = (value: string) =>
@@ -848,6 +1011,20 @@ function createBaselineInMemoryStore(): InMemoryStore {
     };
   });
 
+  const accommodationRatings: InMemoryAccommodationRating[] = experiencePosts.map((post, index) => {
+    const rating = buildRandomAccommodationRating();
+    const createdAt = randomDateWithinLast30Days();
+
+    return {
+      id: `rat_${index + 1}`,
+      postId: post.id,
+      userId: post.authorId,
+      ...rating,
+      createdAt,
+      updatedAt: createdAt,
+    };
+  });
+
   return {
     users,
     experiencePosts,
@@ -858,6 +1035,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     comments,
     follows,
     reports,
+    accommodationRatings,
     passwordResetTokens: [],
   };
 }
@@ -876,6 +1054,7 @@ const inMemoryStore =
         comments: [],
         follows: [],
         reports: [],
+        accommodationRatings: [],
         passwordResetTokens: [],
       });
 
@@ -904,6 +1083,7 @@ if (useInMemoryDb && process.env.NODE_ENV !== "production") {
         likes: inMemoryStore.likes.length,
         comments: inMemoryStore.comments.length,
         follows: inMemoryStore.follows.length,
+        accommodationRatings: inMemoryStore.accommodationRatings.length,
       }),
     );
     globalForInMemory.inMemoryBaselineLogged = true;

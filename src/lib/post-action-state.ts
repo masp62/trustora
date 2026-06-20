@@ -5,6 +5,8 @@ export type PostActionFieldErrors = {
   photos?: string;
   tags?: string;
   tripType?: string;
+  accommodationRating?: string;
+  accommodationRatingCategories?: string;
 };
 
 export type PostActionState = {

@@ -51,6 +51,7 @@ model User {
   followers Follow[]         @relation("following")
   following Follow[]         @relation("follower")
   reports   Report[]         @relation("reporter")
+  accommodationRatings AccommodationRating[]
   passwordResetTokens PasswordResetToken[]
 }
 
@@ -72,9 +73,37 @@ model ExperiencePost {
   postTags PostTag[]
   likes    Like[]
   comments Comment[]
+  accommodationRatings AccommodationRating[]
 
   @@index([authorId, createdAt(sort: Desc)])
   @@index([locationCountry, locationCity, createdAt(sort: Desc)])
+}
+
+model AccommodationRating {
+  id            String   @id @default(cuid())
+  postId        String
+  userId        String
+  overallScore  Float
+  cleanliness   Int
+  accuracy      Int
+  checkIn       Int
+  communication Int
+  location      Int
+  value         Int
+  comfort       Int
+  facilities    Int
+  wouldStayAgain Boolean
+  reviewText    String?  @db.VarChar(600)
+  isVerifiedStay Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  post ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([postId, isVerifiedStay, createdAt(sort: Desc)])
 }
 
 model PostImage {

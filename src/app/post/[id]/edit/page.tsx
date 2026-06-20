@@ -47,6 +47,32 @@ async function getPostForEdit(postId: string) {
     }) as Promise<Array<{ tagId: string }>>,
   ]);
 
+  const rating = (await db.accommodationRating.findMany({
+    where: { postId: post.id, userId: post.authorId },
+    take: 1,
+    select: {
+      overallScore: true,
+      cleanliness: true,
+      accuracy: true,
+      checkIn: true,
+      communication: true,
+      location: true,
+      value: true,
+      comfort: true,
+      facilities: true,
+    },
+  })) as Array<{
+    overallScore: number;
+    cleanliness: number;
+    accuracy: number;
+    checkIn: number;
+    communication: number;
+    location: number;
+    value: number;
+    comfort: number;
+    facilities: number;
+  }>;
+
   const tagIds = postTags.map((entry) => entry.tagId);
   const tags =
     tagIds.length > 0
@@ -65,6 +91,28 @@ async function getPostForEdit(postId: string) {
     propertyName: post.propertyName ?? "",
     tripType: post.tripType,
     authorId: post.authorId,
+    categoryRatings:
+      rating.length > 0
+        ? {
+            cleanliness: rating[0].cleanliness,
+            accuracy: rating[0].accuracy,
+            checkIn: rating[0].checkIn,
+            communication: rating[0].communication,
+            location: rating[0].location,
+            value: rating[0].value,
+            comfort: rating[0].comfort,
+            facilities: rating[0].facilities,
+          }
+        : {
+            cleanliness: 0,
+            accuracy: 0,
+            checkIn: 0,
+            communication: 0,
+            location: 0,
+            value: 0,
+            comfort: 0,
+            facilities: 0,
+          },
     images: images.map((img) => img.cloudinaryUrl),
     tags: tags.map((tag) => tag.name),
   };

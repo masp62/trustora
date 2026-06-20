@@ -5,53 +5,41 @@
 
 ## What to build
 
-Introduce a structured accommodation rating system for each stay post, inspired by common patterns from Airbnb, Booking.com, and similar platforms. Logged-in users can submit one overall rating and detailed category ratings, plus optional text feedback.
+Introduce an accommodation rating that is provided by the story creator as part of creating or editing a stay post.
 
-The goal is to make reviews more comparable and useful by separating quality dimensions (cleanliness, accuracy, value, etc.) instead of relying only on free text.
+The goal is to quickly communicate how the author rates the accommodation itself, with an overall star score and category breakdown.
 
-Rating model proposal:
+Rating model:
 
-- Overall score: 1.0 to 5.0 (0.5 steps)
-- Category scores: 1 to 5 (integer)
-- Optional recommendation flag: "Would stay again"
-- Optional written feedback (short text)
-- Optional "Verified stay" marker from #26 shown next to the review
-
-Suggested category criteria (based on Airbnb/Booking patterns):
-
-- Cleanliness
-- Accuracy of listing (photos/description vs reality)
-- Check-in experience
-- Communication with host
-- Location
-- Value for money
-- Comfort (sleep quality, noise, temperature)
-- Facilities & amenities (Wi-Fi, kitchen, bathroom, etc.)
+- Overall score: 1 to 5 stars (integer)
+- Category scores: 1 to 5 stars for cleanliness, accuracy, check-in, communication, location, value, comfort, facilities
+- Overall score is calculated automatically as the equally weighted average of all category scores
+- Rating is entered by the post author when publishing/editing the story
+- Visitors do not submit ratings for this story
 
 Display behavior:
 
-- Post detail page shows aggregated overall score and number of ratings
-- Category averages are shown as a breakdown (e.g. bars or list)
-- Individual review entries show overall score, category scores summary, optional text, reviewer, date, and verified badge if applicable
+- Post detail page shows the creator-provided star rating clearly in the story content
+- Rating is displayed as stars with numeric value (e.g. 4/5)
+- Category ratings are shown in a clear breakdown list (value/5 per category)
 
 Review integrity rules:
 
-- One rating per user per post (user can edit their own rating later)
-- Guests (not logged in) cannot submit ratings
-- If verified stay exists, review is marked as verified; otherwise unverified
+- One accommodation rating per post (owned by the author)
+- Author can update the rating when editing the post
+- Visitors and guests cannot submit a separate accommodation rating
 
 ## Acceptance criteria
 
-- [ ] A logged-in user can submit an overall accommodation rating for a post
-- [ ] A logged-in user can submit category ratings for all defined criteria
-- [ ] Optional review text and "Would stay again" can be submitted
-- [ ] A user can only have one rating per post (duplicate creates are prevented; update flow is supported)
-- [ ] Guests do not see rating submission controls and cannot submit ratings
-- [ ] The post detail page shows aggregated overall rating and total rating count
-- [ ] The post detail page shows category-average breakdown
-- [ ] Individual ratings list shows reviewer, date, overall score, category summary, optional text
-- [ ] Verified-stay status (from #26) is displayed on ratings where applicable
-- [ ] Sorting defaults to newest ratings first, with optional filter for verified-only
+- [x] Story creator can set an accommodation rating (1-5 stars) while creating a post
+- [x] Story creator can set category ratings (1-5 stars) while creating a post
+- [x] Overall rating is derived automatically from category ratings (equal weights)
+- [x] Story creator can update the accommodation rating while editing a post
+- [x] Story creator can update category ratings while editing a post
+- [x] Visitors and guests cannot submit their own accommodation ratings for the story
+- [x] Post detail page displays the creator-provided star rating clearly
+- [x] Rating is rendered as stars and numeric value (e.g. 4/5)
+- [x] Post detail page displays creator-provided category ratings
 
 ## Blocked by
 

@@ -4,6 +4,7 @@ import { TripType } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { ACCOMMODATION_RATING_CATEGORIES } from "@/lib/accommodation-rating-categories";
 import { db } from "@/lib/db";
 import { type PostActionFieldErrors, type PostActionState } from "@/lib/post-action-state";
 import {
@@ -30,6 +31,36 @@ function normalizeSlug(value: string) {
     .replace(/^-|-$/g, "");
 
   return slug || "experience";
+}
+
+function parseCategoryRating(formData: FormData, key: string) {
+  const raw = parseField(formData.get(key));
+  return Number(raw);
+}
+
+function computeOverallAccommodationRating(categoryRatings: {
+  cleanliness: number;
+  accuracy: number;
+  checkIn: number;
+  communication: number;
+  location: number;
+  value: number;
+  comfort: number;
+  facilities: number;
+}) {
+  const values = [
+    categoryRatings.cleanliness,
+    categoryRatings.accuracy,
+    categoryRatings.checkIn,
+    categoryRatings.communication,
+    categoryRatings.location,
+    categoryRatings.value,
+    categoryRatings.comfort,
+    categoryRatings.facilities,
+  ];
+
+  const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+  return Number(average.toFixed(1));
 }
 
 async function generateUniquePostSlug(title: string) {
@@ -81,6 +112,16 @@ export async function createExperiencePost(
   const locationCountry = parseField(formData.get("locationCountry"));
   const propertyName = parseField(formData.get("propertyName"));
   const tripTypeValue = parseField(formData.get("tripType"));
+  const categoryRatings = {
+    cleanliness: parseCategoryRating(formData, "cleanliness"),
+    accuracy: parseCategoryRating(formData, "accuracy"),
+    checkIn: parseCategoryRating(formData, "checkIn"),
+    communication: parseCategoryRating(formData, "communication"),
+    location: parseCategoryRating(formData, "location"),
+    value: parseCategoryRating(formData, "value"),
+    comfort: parseCategoryRating(formData, "comfort"),
+    facilities: parseCategoryRating(formData, "facilities"),
+  };
 
   const selectedTags = formData
     .getAll("tags")
@@ -121,6 +162,14 @@ export async function createExperiencePost(
     fieldErrors.tripType = "Trip type is required.";
   }
 
+  const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
+    const value = categoryRatings[key];
+    return !Number.isInteger(value) || value < 1 || value > 5;
+  });
+  if (hasInvalidCategoryRating) {
+    fieldErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
+  }
+
   if (uniqueTags.length > MAX_TAGS_PER_POST) {
     fieldErrors.tags = `Select up to ${MAX_TAGS_PER_POST} tags.`;
   }
@@ -146,6 +195,8 @@ export async function createExperiencePost(
   if (Object.keys(fieldErrors).length > 0) {
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
+
+  const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const existingPosts = (await db.experiencePost.findMany({
@@ -207,6 +258,25 @@ export async function createExperiencePost(
     });
   }
 
+  await db.accommodationRating.create({
+    data: {
+      postId: createdPost.id,
+      userId: session.user.id,
+      overallScore: accommodationRating,
+      cleanliness: categoryRatings.cleanliness,
+      accuracy: categoryRatings.accuracy,
+      checkIn: categoryRatings.checkIn,
+      communication: categoryRatings.communication,
+      location: categoryRatings.location,
+      value: categoryRatings.value,
+      comfort: categoryRatings.comfort,
+      facilities: categoryRatings.facilities,
+      wouldStayAgain: true,
+      reviewText: null,
+      isVerifiedStay: false,
+    },
+  });
+
   redirect(`/post/${createdPost.id}/${createdPost.slug}`);
 }
 
@@ -244,6 +314,16 @@ export async function updateExperiencePost(
   const locationCountry = parseField(formData.get("locationCountry"));
   const propertyName = parseField(formData.get("propertyName"));
   const tripTypeValue = parseField(formData.get("tripType"));
+  const categoryRatings = {
+    cleanliness: parseCategoryRating(formData, "cleanliness"),
+    accuracy: parseCategoryRating(formData, "accuracy"),
+    checkIn: parseCategoryRating(formData, "checkIn"),
+    communication: parseCategoryRating(formData, "communication"),
+    location: parseCategoryRating(formData, "location"),
+    value: parseCategoryRating(formData, "value"),
+    comfort: parseCategoryRating(formData, "comfort"),
+    facilities: parseCategoryRating(formData, "facilities"),
+  };
 
   const selectedTags = formData
     .getAll("tags")
@@ -284,6 +364,14 @@ export async function updateExperiencePost(
     fieldErrors.tripType = "Trip type is required.";
   }
 
+  const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
+    const value = categoryRatings[key];
+    return !Number.isInteger(value) || value < 1 || value > 5;
+  });
+  if (hasInvalidCategoryRating) {
+    fieldErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
+  }
+
   if (uniqueTags.length > MAX_TAGS_PER_POST) {
     fieldErrors.tags = `Select up to ${MAX_TAGS_PER_POST} tags.`;
   }
@@ -309,6 +397,8 @@ export async function updateExperiencePost(
   if (Object.keys(fieldErrors).length > 0) {
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
+
+  const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const slug = await generateUniquePostSlug(title);
 
@@ -357,6 +447,48 @@ export async function updateExperiencePost(
         postId,
         tagId: tag.id,
       })),
+    });
+  }
+
+  const existingRating = (await db.accommodationRating.findMany({
+    where: { postId, userId: session.user.id },
+    take: 1,
+    select: { id: true },
+  })) as Array<{ id: string }>;
+
+  if (existingRating.length > 0) {
+    await db.accommodationRating.update({
+      where: { id: existingRating[0].id },
+      data: {
+        overallScore: accommodationRating,
+        cleanliness: categoryRatings.cleanliness,
+        accuracy: categoryRatings.accuracy,
+        checkIn: categoryRatings.checkIn,
+        communication: categoryRatings.communication,
+        location: categoryRatings.location,
+        value: categoryRatings.value,
+        comfort: categoryRatings.comfort,
+        facilities: categoryRatings.facilities,
+      },
+    });
+  } else {
+    await db.accommodationRating.create({
+      data: {
+        postId,
+        userId: session.user.id,
+        overallScore: accommodationRating,
+        cleanliness: categoryRatings.cleanliness,
+        accuracy: categoryRatings.accuracy,
+        checkIn: categoryRatings.checkIn,
+        communication: categoryRatings.communication,
+        location: categoryRatings.location,
+        value: categoryRatings.value,
+        comfort: categoryRatings.comfort,
+        facilities: categoryRatings.facilities,
+        wouldStayAgain: true,
+        reviewText: null,
+        isVerifiedStay: false,
+      },
     });
   }
 

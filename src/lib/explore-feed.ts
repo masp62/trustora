@@ -164,7 +164,9 @@ export async function getExplorePostsPage(
     : null;
 
   const pagePostIds = pagePosts.map((post) => post.id);
+  const pageAuthorIds = [...new Set(pagePosts.map((post) => post.authorId))];
   const likedPostIds = new Set<string>();
+  const ratingByPostAndAuthor = new Map<string, number>();
 
   if (viewerId && pagePostIds.length > 0) {
     const likedPosts = (await db.like.findMany({
@@ -176,6 +178,24 @@ export async function getExplorePostsPage(
     })) as Array<{ postId: string }>;
 
     likedPosts.forEach((entry) => likedPostIds.add(entry.postId));
+  }
+
+  if (pagePostIds.length > 0) {
+    const ratings = (await db.accommodationRating.findMany({
+      where: {
+        postId: { in: pagePostIds },
+        userId: { in: pageAuthorIds },
+      },
+      select: {
+        postId: true,
+        userId: true,
+        overallScore: true,
+      },
+    })) as Array<{ postId: string; userId: string; overallScore: number }>;
+
+    ratings.forEach((rating) => {
+      ratingByPostAndAuthor.set(`${rating.postId}:${rating.userId}`, rating.overallScore);
+    });
   }
 
   const cards: Array<PostCardData | null> = await Promise.all(
@@ -208,6 +228,7 @@ export async function getExplorePostsPage(
         author,
         likeCount,
         initiallyLiked: likedPostIds.has(post.id),
+        accommodationRating: ratingByPostAndAuthor.get(`${post.id}:${post.authorId}`) ?? null,
       };
     }),
   );

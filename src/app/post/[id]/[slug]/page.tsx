@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
+import { Star } from "lucide-react";
 
 import { auth, googleAuthConfigured } from "@/auth";
 import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-data";
+import { ACCOMMODATION_RATING_CATEGORIES } from "@/lib/accommodation-rating-categories";
 import { FollowButton } from "@/components/follow-button";
 import { PostComments } from "@/components/post-comments";
 import { PostLikeButton } from "@/components/post-like-button";
@@ -93,6 +95,48 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const userLikeCount = session?.user?.id
     ? await db.like.count({ where: { postId: post.id, userId: session.user.id } })
     : 0;
+  const authorRating = (await db.accommodationRating.findMany({
+    where: { postId: post.id, userId: post.authorId },
+    take: 1,
+    select: {
+      overallScore: true,
+      cleanliness: true,
+      accuracy: true,
+      checkIn: true,
+      communication: true,
+      location: true,
+      value: true,
+      comfort: true,
+      facilities: true,
+    },
+  })) as Array<{
+    overallScore: number;
+    cleanliness: number;
+    accuracy: number;
+    checkIn: number;
+    communication: number;
+    location: number;
+    value: number;
+    comfort: number;
+    facilities: number;
+  }>;
+  const creatorOverall =
+    authorRating.length > 0
+      ? Number(
+          (
+            (authorRating[0].cleanliness +
+              authorRating[0].accuracy +
+              authorRating[0].checkIn +
+              authorRating[0].communication +
+              authorRating[0].location +
+              authorRating[0].value +
+              authorRating[0].comfort +
+              authorRating[0].facilities) /
+            8
+          ).toFixed(1),
+        )
+      : null;
+  const creatorStars = creatorOverall !== null ? Math.max(1, Math.min(5, Math.round(creatorOverall))) : null;
 
   return (
     <main className="flex flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 sm:py-12">
@@ -181,6 +225,47 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             </div>
           )}
           <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
+        </section>
+
+        <section className="space-y-3 rounded-2xl border border-gray-200 p-4 sm:p-5" aria-label="Accommodation rating by story creator">
+          <h2 className="font-heading text-2xl text-gray-900">Accommodation rating</h2>
+          <p className="text-sm text-gray-600">Rated by the story creator as part of publishing this experience.</p>
+          {creatorStars ? (
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2">
+                <div className="flex items-center gap-1" aria-label={`${creatorStars} of 5 stars`}>
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const filled = i < creatorStars;
+                    return (
+                      <Star
+                        key={i}
+                        className={`size-5 ${filled ? "fill-amber-400 text-amber-500" : "text-amber-200"}`}
+                        aria-hidden="true"
+                      />
+                    );
+                  })}
+                </div>
+                <span className="text-sm font-semibold text-amber-700">{creatorOverall?.toFixed(1)}/5</span>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2" aria-label="Accommodation category ratings">
+                {ACCOMMODATION_RATING_CATEGORIES.map((category) => {
+                  const value = authorRating[0][category.key];
+                  return (
+                    <div
+                      key={category.key}
+                      className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
+                    >
+                      <span className="text-sm text-gray-700">{category.label}</span>
+                      <span className="text-sm font-semibold text-gray-900">{value}/5</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No accommodation rating was added for this story.</p>
+          )}
         </section>
 
         <PostComments

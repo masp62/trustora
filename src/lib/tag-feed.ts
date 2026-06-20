@@ -54,8 +54,10 @@ export async function getTagPosts(viewerId: string | null, tag: string): Promise
     where: { id: { in: postIds } },
     orderBy: { createdAt: "desc" },
   })) as TaggedPost[];
+  const authorIds = [...new Set(posts.map((post) => post.authorId))];
 
   const likedPostIds = new Set<string>();
+  const ratingByPostAndAuthor = new Map<string, number>();
   if (viewerId) {
     const likedPosts = (await db.like.findMany({
       where: {
@@ -65,6 +67,24 @@ export async function getTagPosts(viewerId: string | null, tag: string): Promise
       select: { postId: true },
     })) as Array<{ postId: string }>;
     likedPosts.forEach((entry) => likedPostIds.add(entry.postId));
+  }
+
+  if (postIds.length > 0) {
+    const ratings = (await db.accommodationRating.findMany({
+      where: {
+        postId: { in: postIds },
+        userId: { in: authorIds },
+      },
+      select: {
+        postId: true,
+        userId: true,
+        overallScore: true,
+      },
+    })) as Array<{ postId: string; userId: string; overallScore: number }>;
+
+    ratings.forEach((rating) => {
+      ratingByPostAndAuthor.set(`${rating.postId}:${rating.userId}`, rating.overallScore);
+    });
   }
 
   const cards: Array<PostCardData | null> = await Promise.all(
@@ -97,6 +117,7 @@ export async function getTagPosts(viewerId: string | null, tag: string): Promise
         author,
         likeCount,
         initiallyLiked: likedPostIds.has(post.id),
+        accommodationRating: ratingByPostAndAuthor.get(`${post.id}:${post.authorId}`) ?? null,
       };
     }),
   );

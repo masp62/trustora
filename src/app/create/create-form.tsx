@@ -2,8 +2,13 @@
 
 import { useActionState, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { Star } from "lucide-react";
 
 import { createExperiencePost } from "@/lib/post-actions";
+import {
+  ACCOMMODATION_RATING_CATEGORIES,
+  type AccommodationRatingCategoryKey,
+} from "@/lib/accommodation-rating-categories";
 import { initialPostActionState } from "@/lib/post-action-state";
 import {
   MAX_PHOTOS_PER_POST,
@@ -44,6 +49,16 @@ export function CreatePostForm() {
   const [locationCountry, setLocationCountry] = useState("");
   const [propertyName, setPropertyName] = useState("");
   const [tripType, setTripType] = useState<(typeof TRIP_TYPES)[number] | "">("");
+  const [categoryRatings, setCategoryRatings] = useState<Record<AccommodationRatingCategoryKey, number>>({
+    cleanliness: 0,
+    accuracy: 0,
+    checkIn: 0,
+    communication: 0,
+    location: 0,
+    value: 0,
+    comfort: 0,
+    facilities: 0,
+  });
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
@@ -55,10 +70,22 @@ export function CreatePostForm() {
     location?: string;
     photos?: string;
     tags?: string;
+    accommodationRatingCategories?: string;
   }>({});
 
   const titleRemaining = POST_TITLE_MAX_LENGTH - title.length;
   const bodyRemaining = POST_BODY_MAX_LENGTH - body.length;
+  const computedOverallRating = useMemo(() => {
+    const enteredValues = ACCOMMODATION_RATING_CATEGORIES.map(({ key }) => categoryRatings[key]).filter(
+      (value) => Number.isInteger(value) && value >= 1 && value <= 5,
+    );
+
+    if (enteredValues.length === 0) {
+      return null;
+    }
+
+    return Number((enteredValues.reduce((sum, value) => sum + value, 0) / enteredValues.length).toFixed(1));
+  }, [categoryRatings]);
 
   const hasFormBlockingIssue = useMemo(
     () =>
@@ -159,6 +186,14 @@ export function CreatePostForm() {
 
     if (!locationCity.trim() || !locationCountry.trim()) {
       nextErrors.location = "City and country are required.";
+    }
+
+    const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
+      const value = categoryRatings[key];
+      return !Number.isInteger(value) || value < 1 || value > 5;
+    });
+    if (hasInvalidCategoryRating) {
+      nextErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
     }
 
     if (totalPhotos < MIN_PHOTOS_PER_POST) {
@@ -263,6 +298,64 @@ export function CreatePostForm() {
         </select>
         {state.fieldErrors.tripType && <p className="text-sm text-red-700">{state.fieldErrors.tripType}</p>}
       </label>
+
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-semibold text-gray-700">Accommodation rating categories</legend>
+        <p className="text-xs text-gray-500">
+          Overall rating is calculated automatically from all category ratings (equal weight).
+        </p>
+        <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm">
+          <span className="font-medium text-amber-700">Overall</span>
+          <div className="flex items-center gap-1" aria-label={computedOverallRating ? `${computedOverallRating.toFixed(1)} of 5 stars` : "No overall rating yet"}>
+            {Array.from({ length: 5 }, (_, i) => {
+              const rounded = computedOverallRating ? Math.round(computedOverallRating) : 0;
+              const filled = i < rounded;
+              return (
+                <Star
+                  key={i}
+                  className={`size-4 ${filled ? "fill-amber-400 text-amber-500" : "text-amber-200"}`}
+                  aria-hidden="true"
+                />
+              );
+            })}
+          </div>
+          <span className="font-semibold text-amber-800">{computedOverallRating ? `${computedOverallRating.toFixed(1)}/5` : "-"}</span>
+        </div>
+        {ACCOMMODATION_RATING_CATEGORIES.map((category) => (
+          <div key={category.key} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-700">{category.label}</p>
+            <div className="flex items-center gap-2" role="radiogroup" aria-label={category.label}>
+              {Array.from({ length: 5 }, (_, i) => {
+                const value = i + 1;
+                const active = value <= categoryRatings[category.key];
+
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={categoryRatings[category.key] === value}
+                    onClick={() => {
+                      setCategoryRatings((prev) => ({ ...prev, [category.key]: value }));
+                      setClientErrors((prev) => ({ ...prev, accommodationRatingCategories: undefined }));
+                    }}
+                    className="rounded-full p-1 transition hover:bg-gray-100"
+                  >
+                    <Star className={`size-5 ${active ? "fill-amber-400 text-amber-500" : "text-gray-300"}`} />
+                  </button>
+                );
+              })}
+              <span className="ml-1 text-xs text-gray-500">{categoryRatings[category.key] || 0}/5</span>
+            </div>
+            <input type="hidden" name={category.key} value={categoryRatings[category.key] > 0 ? String(categoryRatings[category.key]) : ""} />
+          </div>
+        ))}
+        {(clientErrors.accommodationRatingCategories ?? state.fieldErrors.accommodationRatingCategories) && (
+          <p className="text-sm text-red-700">
+            {clientErrors.accommodationRatingCategories ?? state.fieldErrors.accommodationRatingCategories}
+          </p>
+        )}
+      </fieldset>
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-gray-700">

@@ -18,12 +18,12 @@ Aspects to evaluate:
 
 ## Acceptance criteria
 
-- [ ] Scoring model and category taxonomy reviewed and approved (or change requests issued)
-- [ ] Submission form UX (controls, validation, copy) reviewed and approved
-- [ ] Post-detail display UX for aggregate + individual ratings reviewed and approved
-- [ ] Verified-stay badge behavior and wording reviewed and approved
-- [ ] Sorting/filter behavior reviewed and approved
-- [ ] All design change requests resolved before #23c starts
+- [x] Scoring model and category taxonomy reviewed and approved (or change requests issued)
+- [x] Submission form UX (controls, validation, copy) reviewed and approved
+- [x] Post-detail display UX for aggregate + individual ratings reviewed and approved
+- [x] Verified-stay badge behavior and wording reviewed and approved
+- [x] Sorting/filter behavior reviewed and approved
+- [x] All design change requests resolved before #23c starts
 
 ## Blocked by
 
