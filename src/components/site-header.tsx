@@ -9,6 +9,7 @@ import { UserMenu } from "./user-menu";
 const navLinks = [
   { href: "/explore", label: "Explore" },
   { href: "/create", label: "Share", authRequired: true },
+  { href: "/admin", label: "Admin", authRequired: true, adminOnly: true },
 ] as const;
 
 export async function SiteHeader() {
@@ -16,7 +17,9 @@ export async function SiteHeader() {
   const isAuthenticated = !!session?.user;
 
   const visibleLinks = navLinks.filter(
-    (link) => !("authRequired" in link) || (link.authRequired && isAuthenticated),
+    (link) =>
+      (!("authRequired" in link) || (link.authRequired && isAuthenticated)) &&
+      (!("adminOnly" in link) || (link.adminOnly && session?.user?.role === "admin")),
   );
 
   return (

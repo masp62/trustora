@@ -17,6 +17,7 @@ export const googleAuthConfigured = Boolean(
     process.env.GOOGLE_CLIENT_ID &&
     process.env.GOOGLE_CLIENT_SECRET,
 );
+const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
 
 function displayNameFromEmail(email: string) {
   return email.split("@")[0] ?? "Traveler";
@@ -173,7 +174,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.sub = dbUser.id;
       token.email = dbUser.email;
       token.name = dbUser.displayName;
-      token.role = dbUser.role;
+      token.role = dbUser.email === BASELINE_ADMIN_EMAIL ? UserRole.admin : dbUser.role;
 
       return token;
     },

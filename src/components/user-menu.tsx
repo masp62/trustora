@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CircleHelp, Compass, LogIn, LogOut, Menu, PenLine, User } from "lucide-react";
+import { CircleHelp, Compass, LogIn, LogOut, Menu, PenLine, Shield, User } from "lucide-react";
 
 import { signOutFromApp } from "@/lib/auth-actions";
 import { AuthDialog } from "@/components/auth/auth-dialog";
@@ -27,6 +27,7 @@ type UserMenuProps = {
 const navIcons: Record<string, React.ReactNode> = {
   "/explore": <Compass className="mr-2 size-4" />,
   "/create": <PenLine className="mr-2 size-4" />,
+  "/admin": <Shield className="mr-2 size-4" />,
 };
 
 function getInitials(name: string) {

@@ -1,6 +1,7 @@
 const { hash } = require("bcryptjs");
 
 const { TAGS, BASELINE_USERS } = require("./baseline-data.json");
+const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
 
 function toSlug(value) {
   return value
@@ -44,6 +45,8 @@ async function main() {
   const tagByName = new Map(tags.map((tag) => [tag.name, tag]));
 
   for (const userSeed of BASELINE_USERS) {
+    const role = userSeed.email === BASELINE_ADMIN_EMAIL ? "admin" : "user";
+
     const user = await prisma.user.upsert({
       where: { email: userSeed.email },
       update: {
@@ -52,6 +55,7 @@ async function main() {
         avatarUrl: userSeed.avatarUrl,
         bio: userSeed.bio,
         location: userSeed.location,
+        role,
         passwordHash,
         isBanned: false,
       },
@@ -62,7 +66,7 @@ async function main() {
         avatarUrl: userSeed.avatarUrl,
         bio: userSeed.bio,
         location: userSeed.location,
-        role: "user",
+        role,
         passwordHash,
         isBanned: false,
       },

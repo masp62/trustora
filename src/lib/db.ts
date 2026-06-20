@@ -627,6 +627,7 @@ const TRIP_TYPE_BY_KEY: Record<string, TripType> = {
 };
 
 const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5Fa947p1Njc/C";
+const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
 
 function createBaselineInMemoryStore(): InMemoryStore {
   const now = new Date();
@@ -658,7 +659,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     avatarUrl: seedUser.avatarUrl,
     bio: seedUser.bio,
     location: seedUser.location,
-    role: UserRole.user,
+    role: seedUser.email === BASELINE_ADMIN_EMAIL ? UserRole.admin : UserRole.user,
     passwordHash: BASELINE_PASSWORD_HASH,
     isBanned: false,
     createdAt: now,

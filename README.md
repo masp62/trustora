@@ -49,6 +49,10 @@ The seed creates two users with profiles and 5-8 stories each.
 - Email: `anna@realbnb.local` | Password: `12345678`
 - Email: `lukas@realbnb.local` | Password: `12345678`
 
+Admin account for moderation stories:
+
+- Email: `anna@realbnb.local` | Password: `12345678` | Role: `admin`
+
 `npm run dev` automatically runs the seed first, so baseline data is available each time the app starts.
 
 When `USE_IN_MEMORY_DB=true`, Prisma seed is skipped automatically and the app starts without requiring a PostgreSQL connection. In-memory baseline users and stories are loaded directly from the app's in-memory store initializer.

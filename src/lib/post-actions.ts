@@ -63,6 +63,18 @@ export async function createExperiencePost(
     redirect("/login");
   }
 
+  const currentUser = (await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { isBanned: true },
+  })) as { isBanned: boolean } | null;
+
+  if (currentUser?.isBanned) {
+    return {
+      error: "Your account is banned. You cannot create posts or comments.",
+      fieldErrors: {},
+    };
+  }
+
   const title = parseField(formData.get("title"));
   const body = parseField(formData.get("body"));
   const locationCity = parseField(formData.get("locationCity"));

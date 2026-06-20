@@ -93,6 +93,11 @@ export function PostComments({
           return;
         }
 
+        if (result.error === "BANNED") {
+          setErrorMessage(result.message);
+          return;
+        }
+
         setErrorMessage("Could not post comment. Please try again.");
         return;
       }

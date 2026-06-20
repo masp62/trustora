@@ -20,6 +20,19 @@ export async function addPostComment(postId: string, rawBody: string) {
       return { ok: false as const, error: "AUTH_REQUIRED" as const };
     }
 
+    const currentUser = (await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { isBanned: true },
+    })) as { isBanned: boolean } | null;
+
+    if (currentUser?.isBanned) {
+      return {
+        ok: false as const,
+        error: "BANNED" as const,
+        message: "Your account is banned. You cannot create posts or comments.",
+      };
+    }
+
     const body = parseCommentBody(rawBody);
     if (!body) {
       return {
