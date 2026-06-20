@@ -123,6 +123,7 @@ export function FilterPanel() {
             <button
               key={value}
               type="button"
+              aria-pressed={currentFilters.tripType === value}
               onClick={() => toggleTripType(value)}
               className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
                 currentFilters.tripType === value
@@ -148,6 +149,7 @@ export function FilterPanel() {
               <button
                 key={tag}
                 type="button"
+                aria-pressed={active}
                 onClick={() => toggleTag(tag)}
                 className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
                   active

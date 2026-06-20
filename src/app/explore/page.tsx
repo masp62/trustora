@@ -9,6 +9,27 @@ import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
 import { ExploreFeedClient } from "./explore-feed-client";
 
+function FilterPanelSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="h-10 flex-1 animate-pulse rounded-lg bg-gray-100" />
+        <div className="h-10 flex-1 animate-pulse rounded-lg bg-gray-100" />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="h-9 w-24 animate-pulse rounded-full bg-gray-100" />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {Array.from({ length: 8 }, (_, i) => (
+          <div key={i} className="h-9 w-20 animate-pulse rounded-full bg-gray-100" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface ExploreSearchParams {
   country?: string;
   city?: string;
@@ -67,7 +88,7 @@ export default async function ExplorePage({
         )}
 
         <div className="mt-6 border-t border-gray-100 pt-4">
-          <Suspense>
+          <Suspense fallback={<FilterPanelSkeleton />}>
             <FilterPanel />
           </Suspense>
         </div>
