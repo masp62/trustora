@@ -5,6 +5,7 @@ import { type FocusEvent, type FormEvent, useState, useTransition } from "react"
 
 import { addPostComment, deletePostComment } from "@/lib/comment-actions";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+import { ReportTargetButton } from "@/components/report-target-button";
 
 type PostCommentsProps = {
   postId: string;
@@ -196,6 +197,13 @@ export function PostComments({
 
                   <div className="flex items-center gap-3">
                     <time className="text-xs text-gray-500">{formatDate(comment.createdAt)}</time>
+                    {isAuthenticated && (
+                      <ReportTargetButton
+                        targetType="comment"
+                        targetId={comment.id}
+                        isAuthenticated={isAuthenticated}
+                      />
+                    )}
                     {canDelete && (
                       <button
                         type="button"

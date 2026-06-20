@@ -7,6 +7,7 @@ import { getPostDetailById, postCanonicalPath } from "@/app/post/post-detail-dat
 import { FollowButton } from "@/components/follow-button";
 import { PostComments } from "@/components/post-comments";
 import { PostLikeButton } from "@/components/post-like-button";
+import { ReportTargetButton } from "@/components/report-target-button";
 import { db } from "@/lib/db";
 
 import { PhotoGallery } from "./photo-gallery";
@@ -173,6 +174,12 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
               googleAuthConfigured={googleAuthConfigured}
             />
           </div>
+          {session?.user?.id && (
+            <div className="flex items-center justify-between gap-3 border-t border-gray-200 pt-3">
+              <p className="text-sm font-semibold text-gray-700">Safety</p>
+              <ReportTargetButton targetType="post" targetId={post.id} isAuthenticated />
+            </div>
+          )}
           <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
         </section>
 
