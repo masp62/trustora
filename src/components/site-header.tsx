@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { auth, googleAuthConfigured } from "@/auth";
 
+import { SearchNavForm } from "./search-nav-form";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
@@ -20,7 +21,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
+      <div className="mx-auto flex h-16 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
         <div className="flex items-center gap-8">
           <Link
             href="/explore"
@@ -44,6 +45,7 @@ export async function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <SearchNavForm />
           <ThemeToggle />
           <UserMenu
             isAuthenticated={isAuthenticated}
