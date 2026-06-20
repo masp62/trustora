@@ -9,12 +9,12 @@ Build the `/` home feed showing posts exclusively from users the current user fo
 
 ## Acceptance criteria
 
-- [ ] Authenticated users visiting `/` see posts from the users they follow, sorted reverse-chronologically
-- [ ] Posts are displayed in the same card grid format used by the Explore feed
-- [ ] Cursor-based infinite scroll loads more posts as the user scrolls
-- [ ] A user who follows nobody sees an empty-state prompt with links to discover users or browse `/explore`
-- [ ] Unauthenticated visitors to `/` are redirected to `/explore`
-- [ ] The feed updates to include new posts from followed users without requiring a manual refresh (re-validating on navigation is sufficient)
+- [x] Authenticated users visiting `/` see posts from the users they follow, sorted reverse-chronologically
+- [x] Posts are displayed in the same card grid format used by the Explore feed
+- [x] Cursor-based infinite scroll loads more posts as the user scrolls
+- [x] A user who follows nobody sees an empty-state prompt with links to discover users or browse `/explore`
+- [x] Unauthenticated visitors to `/` are redirected to `/explore`
+- [x] The feed updates to include new posts from followed users without requiring a manual refresh (re-validating on navigation is sufficient)
 
 ## Blocked by
 

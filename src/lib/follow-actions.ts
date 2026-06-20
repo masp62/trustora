@@ -95,6 +95,7 @@ export async function setFollowStatus(targetUserId: string, shouldFollow: boolea
     revalidatePath(`/u/${currentUser.username}`);
     revalidatePath(`/u/${currentUser.username}/followers`);
     revalidatePath(`/u/${currentUser.username}/following`);
+    revalidatePath("/");
 
     return {
       ok: true as const,

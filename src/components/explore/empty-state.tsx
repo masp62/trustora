@@ -43,7 +43,14 @@ export function HomeFeedEmpty() {
           className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-hover"
         >
           <Compass className="size-4" />
-          Explore stories
+          Browse /explore
+        </Link>
+        <Link
+          href="/explore"
+          className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+        >
+          <UserPlus className="size-4" />
+          Discover travelers
         </Link>
       </div>
     </div>
