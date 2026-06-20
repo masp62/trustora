@@ -17,11 +17,11 @@ Aspects to evaluate:
 
 ## Acceptance criteria
 
-- [ ] Report queue layout reviewed and approved (or change requests issued)
-- [ ] Moderation action controls (remove, ban, dismiss) reviewed and approved (or change requests issued)
-- [ ] Confirmation step requirements for destructive actions agreed upon
-- [ ] Admin navigation structure approved
-- [ ] All design change requests resolved before #23 (Admin Dashboard implementation) is started
+- [x] Report queue layout reviewed and approved (or change requests issued)
+- [x] Moderation action controls (remove, ban, dismiss) reviewed and approved (or change requests issued)
+- [x] Confirmation step requirements for destructive actions agreed upon
+- [x] Admin navigation structure approved
+- [x] All design change requests resolved before #23 (Admin Dashboard implementation) is started
 
 ## Blocked by
 
