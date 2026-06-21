@@ -4,20 +4,10 @@ import type { TripType } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { ACCOMMODATION_RATING_CATEGORIES } from "@/lib/accommodation-rating-categories";
 import { db } from "@/lib/db";
-import { type PostActionFieldErrors, type PostActionState } from "@/lib/post-action-state";
-import {
-  MAX_PHOTOS_PER_POST,
-  MAX_POSTS_PER_24H,
-  MAX_TAGS_PER_POST,
-  MIN_PHOTOS_PER_POST,
-  POST_BODY_MAX_LENGTH,
-  POST_TITLE_MAX_LENGTH,
-  PREDEFINED_TAGS,
-  PROPERTY_NAME_MAX_LENGTH,
-  TRIP_TYPES,
-} from "@/lib/post-constants";
+import { type PostActionState } from "@/lib/post-action-state";
+import { validatePostInput, firstValidationError } from "@/lib/post-validation";
+import { MAX_POSTS_PER_24H } from "@/lib/post-constants";
 
 function parseField(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value.trim() : "";
@@ -96,7 +86,6 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
     db.experiencePost.findUnique({
       where: { id: postId },
       select: {
-        id: true,
         title: true,
         body: true,
         locationCity: true,
@@ -105,7 +94,6 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
         tripType: true,
       },
     }) as Promise<{
-      id: string;
       title: string;
       body: string;
       locationCity: string;
@@ -115,8 +103,8 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
     } | null>,
     db.postImage.findMany({
       where: { postId },
-      select: { id: true },
-    }) as Promise<Array<{ id: string }>>,
+      select: { cloudinaryUrl: true },
+    }) as Promise<Array<{ cloudinaryUrl: string }>>,
     db.postTag.findMany({
       where: { postId },
       select: { tagId: true },
@@ -148,6 +136,10 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
     >,
   ]);
 
+  if (!post) {
+    return "Post not found.";
+  }
+
   const postTags =
     postTagEntries.length > 0
       ? ((await db.tag.findMany({
@@ -156,66 +148,36 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
         })) as Array<{ name: string }>)
       : [];
 
-  if (!post) {
-    return "Post not found.";
-  }
+  const ratingRecord = rating[0];
+  const categoryRatings = ratingRecord
+    ? {
+        cleanliness: ratingRecord.cleanliness,
+        accuracy: ratingRecord.accuracy,
+        checkIn: ratingRecord.checkIn,
+        communication: ratingRecord.communication,
+        location: ratingRecord.location,
+        value: ratingRecord.value,
+        comfort: ratingRecord.comfort,
+        facilities: ratingRecord.facilities,
+      }
+    : { cleanliness: 0, accuracy: 0, checkIn: 0, communication: 0, location: 0, value: 0, comfort: 0, facilities: 0 };
 
-  if (!post.title || post.title.length > POST_TITLE_MAX_LENGTH) {
-    return "Draft is missing a valid title.";
-  }
-
-  if (!post.body || post.body.length > POST_BODY_MAX_LENGTH) {
-    return "Draft is missing a valid story.";
-  }
-
-  if (!post.locationCity || !post.locationCountry) {
-    return "Draft is missing location details.";
-  }
-
-  if ((post.propertyName ?? "").length > PROPERTY_NAME_MAX_LENGTH) {
-    return "Draft property name is too long.";
-  }
-
-  if (!TRIP_TYPES.includes(post.tripType as (typeof TRIP_TYPES)[number])) {
-    return "Draft is missing a valid trip type.";
-  }
-
-  if (postImages.length < MIN_PHOTOS_PER_POST || postImages.length > MAX_PHOTOS_PER_POST) {
-    return "Draft does not satisfy photo requirements.";
-  }
-
-  if (postTags.length > MAX_TAGS_PER_POST) {
-    return "Draft has too many tags.";
-  }
-
-  const hasInvalidTag = postTags.some(
-    (entry) => !PREDEFINED_TAGS.includes(entry.name as (typeof PREDEFINED_TAGS)[number]),
+  const result = validatePostInput(
+    {
+      title: post.title,
+      body: post.body,
+      locationCity: post.locationCity,
+      locationCountry: post.locationCountry,
+      propertyName: post.propertyName ?? "",
+      tripType: post.tripType,
+      categoryRatings,
+      tags: postTags.map((t) => t.name),
+      photoUrls: postImages.map((img) => img.cloudinaryUrl),
+    },
+    "publish",
   );
-  if (hasInvalidTag) {
-    return "Draft contains invalid tags.";
-  }
 
-  if (rating.length === 0) {
-    return "Draft is missing accommodation ratings.";
-  }
-
-  const values = [
-    rating[0].cleanliness,
-    rating[0].accuracy,
-    rating[0].checkIn,
-    rating[0].communication,
-    rating[0].location,
-    rating[0].value,
-    rating[0].comfort,
-    rating[0].facilities,
-  ];
-  const hasInvalidCategoryRating = values.some((value) => !Number.isInteger(value) || value < 1 || value > 5);
-
-  if (hasInvalidCategoryRating) {
-    return "Draft is missing complete accommodation ratings.";
-  }
-
-  return null;
+  return firstValidationError(result);
 }
 
 export async function createExperiencePost(
@@ -271,63 +233,12 @@ export async function createExperiencePost(
     .map((value) => value.trim())
     .filter(Boolean);
 
-  const fieldErrors: PostActionFieldErrors = {};
-
-  if (!title) {
-    fieldErrors.title = "Title is required.";
-  } else if (title.length > POST_TITLE_MAX_LENGTH) {
-    fieldErrors.title = `Title must be ${POST_TITLE_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!body) {
-    fieldErrors.body = "Body is required.";
-  } else if (body.length > POST_BODY_MAX_LENGTH) {
-    fieldErrors.body = `Body must be ${POST_BODY_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!locationCity || !locationCountry) {
-    fieldErrors.location = "City and country are required.";
-  }
-
-  if (propertyName.length > PROPERTY_NAME_MAX_LENGTH) {
-    fieldErrors.location = `Property name must be ${PROPERTY_NAME_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!TRIP_TYPES.includes(tripTypeValue as (typeof TRIP_TYPES)[number])) {
-    fieldErrors.tripType = "Trip type is required.";
-  }
-
-  const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
-    const value = categoryRatings[key];
-    return !Number.isInteger(value) || value < 1 || value > 5;
-  });
-  if (hasInvalidCategoryRating) {
-    fieldErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
-  }
-
-  if (uniqueTags.length > MAX_TAGS_PER_POST) {
-    fieldErrors.tags = `Select up to ${MAX_TAGS_PER_POST} tags.`;
-  }
-
-  const hasInvalidTag = uniqueTags.some(
-    (tag) => !PREDEFINED_TAGS.includes(tag as (typeof PREDEFINED_TAGS)[number]),
+  const { valid, fieldErrors } = validatePostInput(
+    { title, body, locationCity, locationCountry, propertyName, tripType: tripTypeValue, categoryRatings, tags: uniqueTags, photoUrls },
+    intent,
   );
-  if (hasInvalidTag) {
-    fieldErrors.tags = "One or more selected tags are invalid.";
-  }
 
-  if (photoUrls.length < MIN_PHOTOS_PER_POST) {
-    fieldErrors.photos = "Upload at least one photo.";
-  } else if (photoUrls.length > MAX_PHOTOS_PER_POST) {
-    fieldErrors.photos = `Upload up to ${MAX_PHOTOS_PER_POST} photos.`;
-  }
-
-  const hasInvalidPhotoUrl = photoUrls.some((url) => !url.startsWith("/uploads/"));
-  if (hasInvalidPhotoUrl) {
-    fieldErrors.photos = "Uploaded photo URLs are invalid.";
-  }
-
-  if (Object.keys(fieldErrors).length > 0) {
+  if (!valid) {
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
 
@@ -476,63 +387,12 @@ export async function updateExperiencePost(
     .map((value) => value.trim())
     .filter(Boolean);
 
-  const fieldErrors: PostActionFieldErrors = {};
-
-  if (!title) {
-    fieldErrors.title = "Title is required.";
-  } else if (title.length > POST_TITLE_MAX_LENGTH) {
-    fieldErrors.title = `Title must be ${POST_TITLE_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!body) {
-    fieldErrors.body = "Body is required.";
-  } else if (body.length > POST_BODY_MAX_LENGTH) {
-    fieldErrors.body = `Body must be ${POST_BODY_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!locationCity || !locationCountry) {
-    fieldErrors.location = "City and country are required.";
-  }
-
-  if (propertyName.length > PROPERTY_NAME_MAX_LENGTH) {
-    fieldErrors.location = `Property name must be ${PROPERTY_NAME_MAX_LENGTH} characters or fewer.`;
-  }
-
-  if (!TRIP_TYPES.includes(tripTypeValue as (typeof TRIP_TYPES)[number])) {
-    fieldErrors.tripType = "Trip type is required.";
-  }
-
-  const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
-    const value = categoryRatings[key];
-    return !Number.isInteger(value) || value < 1 || value > 5;
-  });
-  if (hasInvalidCategoryRating) {
-    fieldErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
-  }
-
-  if (uniqueTags.length > MAX_TAGS_PER_POST) {
-    fieldErrors.tags = `Select up to ${MAX_TAGS_PER_POST} tags.`;
-  }
-
-  const hasInvalidTag = uniqueTags.some(
-    (tag) => !PREDEFINED_TAGS.includes(tag as (typeof PREDEFINED_TAGS)[number]),
+  const { valid, fieldErrors } = validatePostInput(
+    { title, body, locationCity, locationCountry, propertyName, tripType: tripTypeValue, categoryRatings, tags: uniqueTags, photoUrls },
+    intent,
   );
-  if (hasInvalidTag) {
-    fieldErrors.tags = "One or more selected tags are invalid.";
-  }
 
-  if (photoUrls.length < MIN_PHOTOS_PER_POST) {
-    fieldErrors.photos = "Upload at least one photo.";
-  } else if (photoUrls.length > MAX_PHOTOS_PER_POST) {
-    fieldErrors.photos = `Upload up to ${MAX_PHOTOS_PER_POST} photos.`;
-  }
-
-  const hasInvalidPhotoUrl = photoUrls.some((url) => !url.startsWith("/uploads/"));
-  if (hasInvalidPhotoUrl) {
-    fieldErrors.photos = "Uploaded photo URLs are invalid.";
-  }
-
-  if (Object.keys(fieldErrors).length > 0) {
+  if (!valid) {
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
 

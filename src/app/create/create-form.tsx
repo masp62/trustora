@@ -9,7 +9,7 @@ import {
   ACCOMMODATION_RATING_CATEGORIES,
   type AccommodationRatingCategoryKey,
 } from "@/lib/accommodation-rating-categories";
-import { initialPostActionState } from "@/lib/post-action-state";
+import { initialPostActionState, type PostActionFieldErrors } from "@/lib/post-action-state";
 import {
   MAX_PHOTOS_PER_POST,
   MAX_TAGS_PER_POST,
@@ -20,6 +20,7 @@ import {
   PROPERTY_NAME_MAX_LENGTH,
   TRIP_TYPES,
 } from "@/lib/post-constants";
+import { validatePostInput } from "@/lib/post-validation";
 
 type UploadedPhoto = {
   name: string;
@@ -76,14 +77,7 @@ export function CreatePostForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [submitIntent, setSubmitIntent] = useState<"draft" | "publish">("publish");
 
-  const [clientErrors, setClientErrors] = useState<{
-    title?: string;
-    body?: string;
-    location?: string;
-    photos?: string;
-    tags?: string;
-    accommodationRatingCategories?: string;
-  }>({});
+  const [clientErrors, setClientErrors] = useState<PostActionFieldErrors>({});
 
   const titleRemaining = POST_TITLE_MAX_LENGTH - title.length;
   const bodyRemaining = POST_BODY_MAX_LENGTH - body.length;
@@ -184,41 +178,28 @@ export function CreatePostForm() {
   }
 
   function validateBeforeSubmit(event: React.FormEvent<HTMLFormElement>) {
-    const nextErrors: typeof clientErrors = {};
-    const hiddenPhotoInputs = event.currentTarget.querySelectorAll('input[name="photoUrls"]');
-    const totalPhotos = hiddenPhotoInputs.length;
+    const photoUrls = Array.from(
+      event.currentTarget.querySelectorAll<HTMLInputElement>('input[name="photoUrls"]'),
+    ).map((input) => input.value);
 
-    if (!title.trim()) {
-      nextErrors.title = "Title is required.";
-    }
+    const { fieldErrors } = validatePostInput(
+      {
+        title,
+        body,
+        locationCity,
+        locationCountry,
+        propertyName,
+        tripType,
+        categoryRatings,
+        tags: selectedTags,
+        photoUrls,
+      },
+      submitIntent,
+    );
 
-    if (!body.trim()) {
-      nextErrors.body = "Body is required.";
-    }
+    setClientErrors(fieldErrors);
 
-    if (!locationCity.trim() || !locationCountry.trim()) {
-      nextErrors.location = "City and country are required.";
-    }
-
-    const hasInvalidCategoryRating = ACCOMMODATION_RATING_CATEGORIES.some(({ key }) => {
-      const value = categoryRatings[key];
-      return !Number.isInteger(value) || value < 1 || value > 5;
-    });
-    if (hasInvalidCategoryRating) {
-      nextErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
-    }
-
-    if (totalPhotos < MIN_PHOTOS_PER_POST) {
-      nextErrors.photos = "Upload at least one photo.";
-    }
-
-    if (selectedTags.length > MAX_TAGS_PER_POST) {
-      nextErrors.tags = `Select up to ${MAX_TAGS_PER_POST} tags.`;
-    }
-
-    setClientErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length > 0 || isUploading) {
+    if (Object.keys(fieldErrors).length > 0 || isUploading) {
       event.preventDefault();
     }
   }

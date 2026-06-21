@@ -23,13 +23,13 @@ Remove the four inline validation blocks and replace each with a call to `valida
 
 ## Acceptance criteria
 
-- [ ] `src/lib/post-validation.ts` exists and exports `validatePostInput(fields, mode)`
-- [ ] `createExperiencePost` calls `validatePostInput` instead of its inline block
-- [ ] `updateExperiencePost` calls `validatePostInput` instead of its inline block
-- [ ] `validateDraftForPublishing` calls `validatePostInput({ mode: 'publish' })` or is replaced by it
-- [ ] `create-form.tsx` imports and calls the same function for client-side pre-validation
-- [ ] All existing Playwright tests for post creation, editing, and draft publishing continue to pass
-- [ ] Error messages are consistent across create, update, and publish flows
+- [x] `src/lib/post-validation.ts` exists and exports `validatePostInput(fields, mode)`
+- [x] `createExperiencePost` calls `validatePostInput` instead of its inline block
+- [x] `updateExperiencePost` calls `validatePostInput` instead of its inline block
+- [x] `validateDraftForPublishing` calls `validatePostInput({ mode: 'publish' })` or is replaced by it
+- [x] `create-form.tsx` imports and calls the same function for client-side pre-validation
+- [x] All existing Playwright tests for post creation, editing, and draft publishing continue to pass
+- [x] Error messages are consistent across create, update, and publish flows
 
 ## Blocked by
 
