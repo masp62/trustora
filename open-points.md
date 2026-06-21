@@ -1,0 +1,11 @@
+- Ranking of Bewertungen
+- Reality-Check of the post (nonsense oder richtige story)
+- Regeln für die Stories und Bewertung der Qualität der Beiträge
+- Insta-Story erstellen - Kampagne
+- Postgres Datenbank in Docker starten
+- Wie kann ein technisches Monitoring für die App ausehen? Metriken
+- Speichere die Fotos lokal ab und nicht über URLs von der externen Website
+- Länder Dropdown und keine Freitext Liste ebenfalls die Städte auf Echtheit prüfen.
+- Stadt und Land Eingabe umtauschen und voneinander abhängig machen
+- Caroussel der Bilder in der Story ändern zu einer Galerie
+- Video als Medium hochladen erlauben?!

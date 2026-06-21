@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Architecture review — Trustora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+  <style>
+    .seam { stroke-dasharray: 4 4; }
+    .leak { stroke: #dc2626; }
+    .deep { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .module-box { border: 2px solid #475569; border-radius: 6px; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .deep-box { border: 3px solid #0f172a; background: linear-gradient(135deg, #0f172a, #1e293b); color: #f8fafc; border-radius: 6px; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .shallow-box { border: 2px dashed #94a3b8; border-radius: 6px; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+    .leak-box { border: 2px solid #dc2626; border-radius: 6px; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #dc2626; }
+    .diagram-col { display: flex; flex-direction: column; gap: 8px; align-items: center; min-height: 300px; justify-content: center; }
+    .diagram-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+    pre.mermaid { min-height: 0; }
+  </style>
+</head>
+<body class="bg-stone-50 text-slate-900 font-sans">
+<main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-200 pb-8">
+    <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Architecture review</p>
+    <h1 class="text-3xl font-semibold text-slate-900 mb-2">Trustora</h1>
+    <p class="text-slate-500 text-sm">2026-06-21 &nbsp;·&nbsp; 8 candidates</p>
+    <div class="flex gap-6 mt-4 text-xs text-slate-500">
+      <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-4 border-2 border-slate-600 rounded"></span> module</span>
+      <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-0 border-t-2 border-dashed border-slate-500"></span> seam</span>
+      <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-0 border-t-2 border-red-500"></span> leakage</span>
+      <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-4 rounded" style="background:linear-gradient(135deg,#0f172a,#1e293b)"></span> deep module</span>
+      <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-4 border-2 border-dashed border-slate-400 rounded"></span> shallow module</span>
+    </div>
+  </header>
+
+  <!-- CANDIDATES -->
+  <section id="candidates" class="space-y-10">
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-1 Post validation module -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c1" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Strong</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">local-substitutable</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-1 · Deepen the post validation module</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/post-actions.ts</div>
+          <div>src/app/create/create-form.tsx</div>
+        </div>
+      </div>
+
+      <!-- Diagram -->
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Before -->
+          <div>
+            <div class="diagram-label text-center">Before — shallow, scattered</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart TD
+  CF["create-form.tsx\n(client)"] -->|"validateBeforeSubmit"| V1["inline validator #1"]
+  CA["createExperiencePost"] -->|"field-by-field\nif-else block"| V2["inline validator #2"]
+  UA["updateExperiencePost"] -->|"copy-pasted\nvalidation"| V3["inline validator #3"]
+  DP["validateDraftForPublishing"] -->|"same rules\ndiff messages"| V4["inline validator #4"]
+  classDef shallow fill:#f8fafc,stroke:#94a3b8,stroke-dasharray:4 4,color:#64748b
+  class V1,V2,V3,V4 shallow
+              </pre>
+            </div>
+          </div>
+          <!-- After -->
+          <div>
+            <div class="diagram-label text-center">After — deep, single interface</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart TD
+  CF["create-form.tsx\n(client)"] -->|"validatePostInput()"| VM
+  CA["createExperiencePost"] -->|"validatePostInput()"| VM
+  UA["updateExperiencePost"] -->|"validatePostInput()"| VM
+  DP["validateDraftForPublishing"] -->|"validatePostInput({mode:'publish'})"| VM
+  VM["validatePostInput(fields, mode)\n───────────────────────\nfield checks · category ratings\ntag dedup · photo count\nslug rules"]
+  classDef deep fill:#0f172a,stroke:#0f172a,color:#f8fafc
+  class VM deep
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">Post validation logic is defined in 4 places — 3 server-side copies in <code class="font-mono text-xs bg-slate-100 px-1 rounded">post-actions.ts</code> and one client copy in the create form — with diverging error messages already.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">One <code class="font-mono text-xs bg-slate-100 px-1 rounded">validatePostInput(fields, mode)</code> module — <code class="font-mono text-xs bg-slate-100 px-1 rounded">mode: 'draft' | 'publish'</code> controls which rules apply. All 4 call sites import it.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ locality: new rule added once</li>
+            <li>✦ interface shrinks — callers get errors, not conditionals</li>
+            <li>✦ tests cross one seam, not four</li>
+            <li>✦ delete 3 shallow blocks → complexity concentrates</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-2 Feed assembly — PostCardData -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c2" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Strong</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">in-process</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-2 · Deepen PostCardData assembly into one module</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/explore-feed.ts</div>
+          <div>src/lib/home-feed.ts</div>
+          <div>src/lib/tag-feed.ts</div>
+          <div>src/lib/location-feed.ts</div>
+          <div>src/lib/search-feed.ts</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Before: cross-section style -->
+          <div>
+            <div class="diagram-label text-center">Before — N+1 × 5 feeds</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-1.5">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-sm bg-slate-300 flex-shrink-0"></div>
+                <div class="flex-1 h-8 rounded border-2 border-dashed border-slate-300 flex items-center px-3 text-xs text-slate-500 uppercase tracking-wide">explore-feed.ts · PostCardData assembly</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-sm bg-slate-300 flex-shrink-0"></div>
+                <div class="flex-1 h-8 rounded border-2 border-dashed border-slate-300 flex items-center px-3 text-xs text-slate-500 uppercase tracking-wide">home-feed.ts · PostCardData assembly</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-sm bg-slate-300 flex-shrink-0"></div>
+                <div class="flex-1 h-8 rounded border-2 border-dashed border-slate-300 flex items-center px-3 text-xs text-slate-500 uppercase tracking-wide">tag-feed.ts · PostCardData assembly</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-sm bg-slate-300 flex-shrink-0"></div>
+                <div class="flex-1 h-8 rounded border-2 border-dashed border-slate-300 flex items-center px-3 text-xs text-slate-500 uppercase tracking-wide">location-feed.ts · PostCardData assembly</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-sm bg-slate-300 flex-shrink-0"></div>
+                <div class="flex-1 h-8 rounded border-2 border-dashed border-slate-300 flex items-center px-3 text-xs text-slate-500 uppercase tracking-wide">search-feed.ts · PostCardData assembly</div>
+              </div>
+              <p class="text-xs text-red-500 mt-2 px-1">→ 60 DB round-trips per page (3 per post × 20 posts), repeated 5 times</p>
+            </div>
+          </div>
+          <!-- After: mass diagram -->
+          <div>
+            <div class="diagram-label text-center">After — one deep assembler</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 flex flex-col gap-3">
+              <!-- slim interface box -->
+              <div class="border-2 border-slate-600 rounded bg-slate-50 px-3 py-2 text-center">
+                <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">interface</div>
+                <div class="font-mono text-xs text-slate-700">assembleFeedCards(posts[], viewerId)</div>
+              </div>
+              <!-- arrow down -->
+              <div class="flex justify-center">
+                <svg width="20" height="20"><line x1="10" y1="0" x2="10" y2="16" stroke="#475569" stroke-width="2"/><polygon points="5,14 10,20 15,14" fill="#475569"/></svg>
+              </div>
+              <!-- tall implementation box -->
+              <div style="background:linear-gradient(135deg,#0f172a,#1e293b)" class="rounded-lg px-4 py-5 text-slate-300 text-xs space-y-1.5">
+                <div class="text-slate-400 text-xs uppercase tracking-wider mb-2">implementation</div>
+                <div>· batch author lookup (1 query)</div>
+                <div>· batch cover image lookup (1 query)</div>
+                <div>· batch like counts (1 query)</div>
+                <div>· batch viewer liked-status (1 query)</div>
+                <div>· assemble PostCardData[]</div>
+              </div>
+              <p class="text-xs text-emerald-600 px-1">→ 4 batched queries per page regardless of feed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">Five feeds each copy the same per-post author/image/likeCount <code class="font-mono text-xs bg-slate-100 px-1 rounded">Promise.all</code> loop — 60 individual DB round-trips per page load. The <code class="font-mono text-xs bg-slate-100 px-1 rounded">PostCardData</code> shape is implicitly defined by whoever assembles it; silently different between feeds.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">One <code class="font-mono text-xs bg-slate-100 px-1 rounded">assembleFeedCards(posts, viewerId)</code> module that batches all lookups into 4 queries and returns a typed <code class="font-mono text-xs bg-slate-100 px-1 rounded">PostCardData[]</code>. Every feed calls it; none assembles inline.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ leverage: 5 feeds share one deep module</li>
+            <li>✦ locality: N+1 fix is in one place</li>
+            <li>✦ <code class="font-mono text-xs bg-slate-100 px-1 rounded">PostCardData</code> shape is the interface, not implicit</li>
+            <li>✦ tests cross one seam with a DB adapter</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-3 In-memory DB emulator -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c3" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Strong</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">ports &amp; adapters</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-3 · Replace the in-memory Prisma emulator with test-scoped real Postgres</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/db.ts (~500 lines)</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Before -->
+          <div>
+            <div class="diagram-label text-center">Before — two parallel implementations</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart LR
+  DB["db.ts\nseam"]
+  DB -->|prod| PG["PrismaClient\n→ Postgres"]
+  DB -->|dev/test| IM["createInMemoryDb()\n500 lines\nfindMany · findUnique\nupsert · deleteMany\nOR not supported\n↑ silently diverges"]
+  classDef leak stroke:#dc2626,stroke-width:2px,color:#dc2626
+  class IM leak
+              </pre>
+            </div>
+          </div>
+          <!-- After -->
+          <div>
+            <div class="diagram-label text-center">After — one adapter, real DB</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart LR
+  DB["db.ts\nseam"]
+  DB --> PG["PrismaClient\n→ Postgres\n(same in all envs)"]
+  TS["test setup\nbeforeEach"] -->|"transaction rollback\nor schema reset"| PG
+  classDef deep fill:#0f172a,stroke:#0f172a,color:#f8fafc
+  class DB deep
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">The in-memory adapter is a 500-line re-implementation of Prisma's query engine. It silently diverges — no support for <code class="font-mono text-xs bg-slate-100 px-1 rounded">OR</code>, nested relations, or complex <code class="font-mono text-xs bg-slate-100 px-1 rounded">where</code>. Code that passes the in-memory emulator can fail against Postgres in production.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">Delete <code class="font-mono text-xs bg-slate-100 px-1 rounded">createInMemoryDb</code>. Run tests against a real Postgres instance (Docker, <code class="font-mono text-xs bg-slate-100 px-1 rounded">pg</code> test container, or Neon branch). Use transaction rollback or <code class="font-mono text-xs bg-slate-100 px-1 rounded">prisma migrate reset</code> per test suite for isolation.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ delete 500 lines of shallow pass-through</li>
+            <li>✦ locality: schema changes need one migration, not two</li>
+            <li>✦ tests cross the real persistence seam</li>
+            <li>✦ <code class="font-mono text-xs bg-slate-100 px-1 rounded">OR</code>, joins, full-text — all testable</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-4 Explore-feed fake cursor pagination -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c4" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Strong</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">in-process</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-4 · Fix explore-feed's in-memory sort-then-slice pagination</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/explore-feed.ts</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="diagram-label text-center">Before — full table, JS pagination</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+sequenceDiagram
+  participant C as Caller
+  participant F as explore-feed.ts
+  participant DB as Postgres
+  C->>F: getExploreFeed(cursor, page=2)
+  F->>DB: findMany(all published posts, no LIMIT)
+  DB-->>F: 5000 rows
+  F->>DB: findMany(all likes for 5000 posts)
+  DB-->>F: 50000 rows
+  F->>DB: findMany(all comments for 5000 posts)
+  DB-->>F: 20000 rows
+  Note over F: sort by engagementScore in JS
+  Note over F: slice to 20
+  F-->>C: PostCardData[20]
+              </pre>
+            </div>
+          </div>
+          <div>
+            <div class="diagram-label text-center">After — DB-side sort + LIMIT</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+sequenceDiagram
+  participant C as Caller
+  participant F as explore-feed.ts
+  participant DB as Postgres
+  C->>F: getExploreFeed(cursor, page=2)
+  F->>DB: findMany(published, ORDER BY score, SKIP cursor, LIMIT 21)
+  DB-->>F: 21 rows
+  F->>DB: assembleFeedCards(21 posts)
+  DB-->>F: 4 batched queries
+  F-->>C: PostCardData[20] + nextCursor
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">The module exposes a cursor-pagination interface but the implementation loads every matching post into Node.js memory, sorts by engagement score in JS, then slices. The cursor encodes a transient JS sort position and becomes invalid as new likes arrive mid-scroll.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">Persist <code class="font-mono text-xs bg-slate-100 px-1 rounded">engagementScore</code> to the DB (updated by a trigger or on-write). Sort and paginate via DB <code class="font-mono text-xs bg-slate-100 px-1 rounded">orderBy + skip/take</code>. The caller interface doesn't change — only the implementation deepens.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ depth: large complexity hidden behind existing interface</li>
+            <li>✦ locality: pagination semantics in one place</li>
+            <li>✦ O(page size) rows instead of O(all posts)</li>
+            <li>✦ cursor becomes stable across requests</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-5 isBanned enforcement -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c5" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Worth exploring</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">in-process</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-5 · Centralise ban enforcement into one deep module</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/post-actions.ts</div>
+          <div>src/lib/comment-actions.ts</div>
+          <div>src/lib/like-actions.ts  (missing check)</div>
+          <div>src/lib/follow-actions.ts  (missing check)</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <!-- Before/After: call-graph collapse style -->
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="diagram-label text-center">Before — partial enforcement, multiple seams</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-2">
+              <div class="flex items-stretch gap-2">
+                <div class="w-2 bg-emerald-400 rounded-l flex-shrink-0"></div>
+                <div class="shallow-box flex-1">createExperiencePost — checks isBanned ✓</div>
+              </div>
+              <div class="flex items-stretch gap-2">
+                <div class="w-2 bg-emerald-400 rounded-l flex-shrink-0"></div>
+                <div class="shallow-box flex-1">addPostComment — checks isBanned ✓</div>
+              </div>
+              <div class="flex items-stretch gap-2">
+                <div class="w-2 bg-red-400 rounded-l flex-shrink-0"></div>
+                <div class="leak-box flex-1">setPostLikeStatus — no check ✗</div>
+              </div>
+              <div class="flex items-stretch gap-2">
+                <div class="w-2 bg-red-400 rounded-l flex-shrink-0"></div>
+                <div class="leak-box flex-1">setFollowStatus — no check ✗</div>
+              </div>
+              <div class="flex items-stretch gap-2">
+                <div class="w-2 bg-red-400 rounded-l flex-shrink-0"></div>
+                <div class="leak-box flex-1">updateExperiencePost — no check ✗</div>
+              </div>
+              <p class="text-xs text-red-500 mt-1 px-1">Banned users can still like, follow, and edit their posts.</p>
+            </div>
+          </div>
+          <div>
+            <div class="diagram-label text-center">After — one interface, all actions protected</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 flex flex-col gap-3">
+              <div class="flex flex-col gap-1.5">
+                <div class="shallow-box text-center">createExperiencePost</div>
+                <div class="shallow-box text-center">addPostComment</div>
+                <div class="shallow-box text-center">setPostLikeStatus</div>
+                <div class="shallow-box text-center">setFollowStatus</div>
+              </div>
+              <div class="flex justify-center">
+                <svg width="20" height="20"><line x1="10" y1="0" x2="10" y2="16" stroke="#475569" stroke-width="2"/><polygon points="5,14 10,20 15,14" fill="#475569"/></svg>
+              </div>
+              <div style="background:linear-gradient(135deg,#0f172a,#1e293b)" class="rounded-lg px-4 py-3 text-slate-300 text-xs text-center">
+                requireActiveUser(session)<br/>
+                <span class="text-slate-500 text-xs">checks auth + isBanned in one place</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700"><code class="font-mono text-xs bg-slate-100 px-1 rounded">isBanned</code> is checked in 2 of 7 write actions. Banned users can still like content, follow users, and edit posts. Any new write action will silently miss the check — the shallow per-action pattern guarantees it.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">One <code class="font-mono text-xs bg-slate-100 px-1 rounded">requireActiveUser(session)</code> module: checks auth + <code class="font-mono text-xs bg-slate-100 px-1 rounded">isBanned</code> + optional role. All write actions call it first. Alternatively — store <code class="font-mono text-xs bg-slate-100 px-1 rounded">isBanned</code> in the JWT token to avoid the extra DB lookup.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ locality: enforcement in one module</li>
+            <li>✦ leverage: N actions, one check to test</li>
+            <li>✦ new actions can't forget the check</li>
+            <li>✦ JWT option: eliminates DB round-trip per request</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-6 revalidatePath strings -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c6" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Worth exploring</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">local-substitutable</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-6 · Deepen post cache invalidation into one module</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/like-actions.ts</div>
+          <div>src/lib/comment-actions.ts</div>
+          <div>src/lib/admin-actions.ts</div>
+          <div>src/lib/report-actions.ts</div>
+          <div>src/app/post/post-detail-data.ts  (postCanonicalPath)</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="diagram-label text-center">Before — strings scattered, direction inverted</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart LR
+  LA["like-actions.ts"] -->|import| PD["app/post/post-detail-data.ts\npostCanonicalPath()"]
+  CA["comment-actions.ts"] -->|import| PD
+  AA["admin-actions.ts"] -->|import| PD
+  RA["report-actions.ts"] -->|import| PD
+  LA -->|hardcoded| S1["/explore"]
+  CA -->|hardcoded| S2["/post/id"]
+  AA -->|hardcoded| S3["/post/id/slug"]
+  classDef leak stroke:#dc2626,stroke-width:2px,color:#dc2626
+  class PD leak
+              </pre>
+            </div>
+          </div>
+          <div>
+            <div class="diagram-label text-center">After — one module, correct direction</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+flowchart LR
+  PC["lib/post-paths.ts\npostCanonicalPath()\ninvalidatePostCaches()"]
+  LA["like-actions.ts"] --> PC
+  CA["comment-actions.ts"] --> PC
+  AA["admin-actions.ts"] --> PC
+  RA["report-actions.ts"] --> PC
+  classDef deep fill:#0f172a,stroke:#0f172a,color:#f8fafc
+  class PC deep
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700"><code class="font-mono text-xs bg-slate-100 px-1 rounded">revalidatePath</code> strings are hardcoded across 4 action files. <code class="font-mono text-xs bg-slate-100 px-1 rounded">postCanonicalPath</code> lives in <code class="font-mono text-xs bg-slate-100 px-1 rounded">app/</code> but is imported by <code class="font-mono text-xs bg-slate-100 px-1 rounded">lib/</code> — the dependency direction is inverted. Adding a new page requires hunting all 4 files; missing one produces a stale cache bug.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">Move <code class="font-mono text-xs bg-slate-100 px-1 rounded">postCanonicalPath</code> to <code class="font-mono text-xs bg-slate-100 px-1 rounded">lib/</code>. Add <code class="font-mono text-xs bg-slate-100 px-1 rounded">invalidatePostCaches(postId, slug)</code> that encapsulates all <code class="font-mono text-xs bg-slate-100 px-1 rounded">revalidatePath</code> calls. Actions call the module — path knowledge doesn't leak.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ locality: all cache paths in one module</li>
+            <li>✦ fixes inverted <code class="font-mono text-xs bg-slate-100 px-1 rounded">lib/</code> → <code class="font-mono text-xs bg-slate-100 px-1 rounded">app/</code> dependency</li>
+            <li>✦ new page = one edit, one place</li>
+            <li>✦ deletion test passes: delete it → paths scatter again</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-7 Auth: DB read per JWT refresh + user create in 2 places -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c7" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Worth exploring</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">in-process</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-7 · Deepen auth: eliminate per-request DB reads and consolidate user provisioning</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/auth.ts</div>
+          <div>src/lib/auth-actions.ts</div>
+          <div>src/lib/usernames.ts</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="diagram-label text-center">Before — DB read every JWT refresh</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+sequenceDiagram
+  participant Req as Every Request
+  participant JC as jwt() callback
+  participant DB as Postgres
+  Req->>JC: token refresh
+  JC->>DB: findUnique(email)
+  DB-->>JC: {id, role, displayName}
+  Note over JC: re-stamps token
+  JC-->>Req: session
+  Note over DB: Also: Google signIn creates user<br/>auth-actions.ts creates user<br/>two diverging code paths
+              </pre>
+            </div>
+          </div>
+          <div>
+            <div class="diagram-label text-center">After — role in token, provisioning unified</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+              <pre class="mermaid">
+sequenceDiagram
+  participant SU as Sign-up/Sign-in
+  participant UP as provisionUser()
+  participant DB as Postgres
+  participant Token as JWT Token
+  SU->>UP: (any provider)
+  UP->>DB: upsert user + username
+  DB-->>UP: {id, role, isBanned}
+  UP-->>Token: embed id, role, isBanned
+  Note over Token: subsequent requests need no DB read
+  Note over Token: role change → token re-issued
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">The <code class="font-mono text-xs bg-slate-100 px-1 rounded">jwt()</code> callback issues a DB lookup on every request. User creation logic is split across <code class="font-mono text-xs bg-slate-100 px-1 rounded">auth.ts</code> (Google) and <code class="font-mono text-xs bg-slate-100 px-1 rounded">auth-actions.ts</code> (credentials) — two diverging implementations of the same domain operation.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">One <code class="font-mono text-xs bg-slate-100 px-1 rounded">provisionUser(provider, profile)</code> module called by both providers. Embed <code class="font-mono text-xs bg-slate-100 px-1 rounded">role</code> and <code class="font-mono text-xs bg-slate-100 px-1 rounded">isBanned</code> in the JWT token at sign-in; remove the DB read from the <code class="font-mono text-xs bg-slate-100 px-1 rounded">jwt()</code> callback entirely.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ locality: user creation in one module</li>
+            <li>✦ leverage: eliminates N DB reads per session</li>
+            <li>✦ <code class="font-mono text-xs bg-slate-100 px-1 rounded">isBanned</code> in token enables C-5 without extra DB call</li>
+            <li>✦ one seam to test provisioning logic</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- C-8 Search — full table scan -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <article id="c8" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 pt-6 pb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Worth exploring</span>
+          <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full">in-process</span>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-900">C-8 · Push search filtering into the DB — remove full table scan</h2>
+        <div class="mt-2 font-mono text-xs text-slate-500 space-y-0.5">
+          <div>src/lib/search-feed.ts</div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-6">
+        <!-- Mass diagram: interface vs implementation area -->
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="diagram-label text-center">Before — O(n posts) per query in Node.js</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 flex flex-col gap-2">
+              <div class="border-2 border-slate-400 rounded px-3 py-2 text-xs text-slate-600">
+                <span class="font-semibold">interface:</span> searchPosts(viewerId, query) → PostCardData[]
+              </div>
+              <div class="border-2 border-dashed border-red-300 rounded px-3 py-8 text-xs text-red-500 text-center">
+                implementation:<br/>
+                load ALL published posts<br/>
+                → filter in JS<br/>
+                → sort by relevance in JS<br/>
+                → N+1 assembly loop<br/>
+                <span class="text-slate-400">(same hidden cost as C-2)</span>
+              </div>
+              <p class="text-xs text-red-500">O(all posts) rows into Node.js memory per search</p>
+            </div>
+          </div>
+          <div>
+            <div class="diagram-label text-center">After — DB-side pre-filter, JS relevance re-rank</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-4 flex flex-col gap-3">
+              <div class="border-2 border-slate-600 rounded px-3 py-2 text-xs text-slate-600 text-center">
+                interface unchanged: searchPosts(viewerId, query)
+              </div>
+              <div style="background:linear-gradient(135deg,#0f172a,#1e293b)" class="rounded-lg px-4 py-4 text-slate-300 text-xs space-y-1.5">
+                <div class="text-slate-400 uppercase tracking-wider text-xs mb-2">implementation</div>
+                <div>· DB: title/body ILIKE %query% (indexed)</div>
+                <div>· JS: re-rank small candidate set</div>
+                <div>· assembleFeedCards() (batched)</div>
+              </div>
+              <p class="text-xs text-emerald-600">O(matches) rows — 90%+ reduction at scale</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 pt-4 grid grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Problem</p>
+          <p class="text-slate-700">Every search loads every published post into Node.js memory. The <code class="font-mono text-xs bg-slate-100 px-1 rounded">computeRelevance</code> function is pure and testable, but the bug it hides is in the call site: there's no DB-side filtering at all.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Solution</p>
+          <p class="text-slate-700">Add a DB-side pre-filter (<code class="font-mono text-xs bg-slate-100 px-1 rounded">ILIKE</code> or Postgres full-text search) to shrink the candidate set before JS re-ranking. Interface stays the same; implementation deepens behind the seam.</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Wins</p>
+          <ul class="text-slate-700 space-y-1 list-none">
+            <li>✦ depth: same interface, far less surface overhead</li>
+            <li>✦ leverages DB index — O(matches) not O(posts)</li>
+            <li>✦ composable with C-2: feed card assembly batched</li>
+            <li>✦ <code class="font-mono text-xs bg-slate-100 px-1 rounded">computeRelevance</code> stays testable and pure</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- TOP RECOMMENDATION -->
+  <section id="top-recommendation" class="bg-white rounded-xl border-2 border-slate-900 shadow-lg overflow-hidden">
+    <div class="px-6 pt-6 pb-2">
+      <p class="text-xs uppercase tracking-wider text-slate-400 mb-1">Top recommendation</p>
+      <h2 class="text-2xl font-semibold text-slate-900">Start with C-2 + C-1</h2>
+    </div>
+    <div class="px-6 pb-6 pt-3 grid grid-cols-2 gap-8">
+      <div>
+        <p class="text-slate-700 text-sm mb-4">
+          <strong>C-2</strong> (<code class="font-mono text-xs bg-slate-100 px-1 rounded">assembleFeedCards</code>) is the highest-leverage move: it gives you the deepened persistence seam that C-4 and C-8 both depend on, and it stops the N+1 query pattern from being re-introduced whenever a new feed is added. It's also entirely mechanical — no domain decisions, just extracting what already exists in 5 identical places. Deletion test passes clearly.
+        </p>
+        <p class="text-slate-700 text-sm">
+          <strong>C-1</strong> (post validation module) pairs naturally with C-2 as a same-session refactor. It eliminates the highest risk of correctness divergence in the codebase (validation rules defined 4 times, already drifting) and creates a clean seam for publishing-mode rules. Together the two moves delete roughly 200 lines of copy-paste and concentrate the most important business rules in testable modules.
+        </p>
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+          <a href="#c2" class="text-emerald-800 font-semibold text-sm hover:underline">→ C-2 · assembleFeedCards</a>
+          <span class="text-xs text-emerald-600 ml-auto">highest leverage, immediate gain</span>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+          <a href="#c1" class="text-emerald-800 font-semibold text-sm hover:underline">→ C-1 · validatePostInput</a>
+          <span class="text-xs text-emerald-600 ml-auto">correctness risk, clean seam</span>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+          C-3 (drop in-memory emulator) is a prerequisite for C-4 and C-8 at any real scale — defer until test infrastructure is ready for a real Postgres test database.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
