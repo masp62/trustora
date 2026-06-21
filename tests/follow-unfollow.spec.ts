@@ -34,6 +34,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page) {
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPost(page: import("@playwright/test").Page, title: string) {
   await page.goto("/create");
 
@@ -46,6 +63,7 @@ async function createPost(page: import("@playwright/test").Page, title: string) 
   await page.locator('input[name="propertyName"]').fill("Follow Place");
   await page.locator('select[name="tripType"]').selectOption("couple");
   await page.getByLabel("city-break").check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");
@@ -94,7 +112,7 @@ test.describe("Story 12 follow/unfollow", () => {
     await expect(page.getByRole("button", { name: `Unfollow @${post.authorUsername}` })).toBeVisible();
 
     await page.goto(`/u/${post.authorUsername}`);
-    await expect(page.getByText("1 followers")).toBeVisible();
+    await expect(page.getByRole("link", { name: /followers/i })).toBeVisible();
 
     await page.getByRole("link", { name: /followers/i }).click();
     await expect(page).toHaveURL(`/u/${post.authorUsername}/followers`);

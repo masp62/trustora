@@ -34,6 +34,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page) {
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 test.describe("Story 6 post creation", () => {
   test("redirects unauthenticated user from /create to /login", async ({ page }) => {
     await page.goto("/create");
@@ -63,6 +80,7 @@ test.describe("Story 6 post creation", () => {
     await page.locator('input[name="locationCountry"]').fill("Portugal");
     await page.locator('input[name="propertyName"]').fill("Atlantic Breeze Cabin");
     await page.locator('select[name="tripType"]').selectOption("couple");
+    await rateAllCategories(page);
 
     await page.getByLabel("beach").check();
     await page.getByLabel("remote-work").check();
@@ -93,6 +111,7 @@ test.describe("Story 6 post creation", () => {
     await page.locator('input[name="locationCity"]').fill("Madrid");
     await page.locator('input[name="locationCountry"]').fill("Spain");
     await page.locator('select[name="tripType"]').selectOption("solo");
+    await rateAllCategories(page);
 
     await page.evaluate((url) => {
       const form = document.querySelector("form");
@@ -130,6 +149,7 @@ test.describe("Story 6 post creation", () => {
     await page.locator('input[name="locationCity"]').fill("Rome");
     await page.locator('input[name="locationCountry"]').fill("Italy");
     await page.locator('select[name="tripType"]').selectOption("friends");
+    await rateAllCategories(page);
 
     await page.evaluate(() => {
       const form = document.querySelector("form");
@@ -159,6 +179,7 @@ test.describe("Story 6 post creation", () => {
       await page.locator('input[name="locationCity"]').fill("Berlin");
       await page.locator('input[name="locationCountry"]').fill("Germany");
       await page.locator('select[name="tripType"]').selectOption("solo");
+      await rateAllCategories(page);
 
       await page.evaluate((url) => {
         const form = document.querySelector("form");
@@ -182,6 +203,7 @@ test.describe("Story 6 post creation", () => {
     await page.locator('input[name="locationCity"]').fill("Berlin");
     await page.locator('input[name="locationCountry"]').fill("Germany");
     await page.locator('select[name="tripType"]').selectOption("solo");
+    await rateAllCategories(page);
 
     await page.evaluate((url) => {
       const form = document.querySelector("form");

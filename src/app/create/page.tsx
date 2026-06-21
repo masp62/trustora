@@ -18,7 +18,7 @@ export default async function CreatePage() {
           Share your stay story
         </h1>
         <p className="mt-4 text-gray-700">
-          Add photos, destination details, trip type, and tags so other travelers can discover your experience.
+          Add photos, destination details, trip type, and tags. Publish immediately or save as a private draft to finish later.
         </p>
 
         <CreatePostForm />

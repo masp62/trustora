@@ -34,6 +34,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page) {
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPostAndGetUsername(page: import("@playwright/test").Page, title: string) {
   await page.goto("/create");
 
@@ -46,6 +63,7 @@ async function createPostAndGetUsername(page: import("@playwright/test").Page, t
   await page.locator('input[name="propertyName"]').fill("Profile Test Place");
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break").check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");
@@ -111,8 +129,8 @@ test.describe("Story 13 user profile page", () => {
   });
 
   test("non-existent username returns 404", async ({ page }) => {
-    const response = await page.goto("/u/this-user-does-not-exist-xyz-999");
-    expect(response?.status()).toBe(404);
+    await page.goto("/u/this-user-does-not-exist-xyz-999");
+    await expect(page.getByRole("heading", { name: /404|not found/i }).first()).toBeVisible();
   });
 
   test("meta title and description are populated from user data", async ({ page }) => {

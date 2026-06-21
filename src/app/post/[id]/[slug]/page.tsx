@@ -32,7 +32,8 @@ function formatDate(value: Date) {
 
 export async function generateMetadata({ params }: PostDetailPageProps): Promise<Metadata> {
   const { id, slug } = await params;
-  const post = await getPostDetailById(id);
+  const session = await auth();
+  const post = await getPostDetailById(id, session?.user?.id ?? null);
 
   if (!post) {
     return {
@@ -70,7 +71,8 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const { id, slug } = await params;
-  const post = await getPostDetailById(id);
+  const session = await auth();
+  const post = await getPostDetailById(id, session?.user?.id ?? null);
 
   if (!post) {
     notFound();
@@ -80,7 +82,6 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     permanentRedirect(postCanonicalPath(post.id, post.slug));
   }
 
-  const session = await auth();
   const currentUserId = session?.user?.id ?? null;
   const isAuthor = session?.user?.id === post.authorId;
   const currentUserFollowCount = currentUserId
@@ -143,8 +144,15 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
       <article className="mx-auto w-full max-w-[1760px] space-y-8 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm sm:p-10">
         <header className="space-y-3">
           <div className="flex items-start justify-between gap-4">
-            <p className="text-sm font-semibold tracking-[0.16em] text-gray-500 uppercase">Experience</p>
-            {isAuthor && <PostAuthorActions postId={post.id} />}
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold tracking-[0.16em] text-gray-500 uppercase">Experience</p>
+              {isAuthor && post.status === "draft" && (
+                <span className="rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+                  Draft
+                </span>
+              )}
+            </div>
+            {isAuthor && <PostAuthorActions postId={post.id} status={post.status} />}
           </div>
           <h1 className="font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">{post.title}</h1>
           <p className="text-sm text-gray-600">
@@ -224,7 +232,11 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
               <ReportTargetButton targetType="post" targetId={post.id} isAuthenticated />
             </div>
           )}
-          <p className="text-sm text-gray-600">Published {formatDate(post.createdAt)}</p>
+          {post.status === "published" ? (
+            <p className="text-sm text-gray-600">Published {formatDate(post.publishedAt ?? post.createdAt)}</p>
+          ) : (
+            <p className="text-sm text-amber-700">Draft not published yet.</p>
+          )}
         </section>
 
         <section className="space-y-3 rounded-2xl border border-gray-200 p-4 sm:p-5" aria-label="Accommodation rating by story creator">

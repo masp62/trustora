@@ -1,0 +1,235 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "playwright-full-junit",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"playwright",
+				"test",
+				"--reporter=junit",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-junit",
+			"type": "shell",
+			"command": "npx.cmd",
+			"args": [
+				"playwright",
+				"test",
+				"--reporter=junit",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-junit-cmd",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=junit",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-dot-exit",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd playwright test --reporter=dot --workers=1 & echo EXITCODE:%ERRORLEVEL%"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-targeted-404-fixes",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/post-edit-delete.spec.ts",
+				"tests/tag-pages.spec.ts",
+				"tests/user-profile.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-line-final",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-line-final-rerun",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-dot-summary",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=dot",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-line-verify",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-admin-smoke",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/admin-dashboard.spec.ts",
+				"tests/admin-analytics-overview.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-admin-warn-check",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/admin-dashboard.spec.ts",
+				"tests/admin-analytics-overview.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-draft-repro",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/draft-experience-publish.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-draft-regression",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/draft-experience-publish.spec.ts",
+				"tests/post-creation.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-line-confirm",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-dot-log",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=dot",
+				"--workers=1",
+				">",
+				"playwright-full-dot.log",
+				"2>&1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-search-regression",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/full-text-search.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		}
+	]
+}

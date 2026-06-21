@@ -61,6 +61,7 @@ export async function searchPosts(viewerId: string | null, query: string): Promi
   }
 
   const posts = (await db.experiencePost.findMany({
+    where: { status: "published" },
     orderBy: { createdAt: "desc" },
   })) as SearchPost[];
 

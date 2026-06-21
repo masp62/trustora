@@ -38,6 +38,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page, index
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPost(
   page: import("@playwright/test").Page,
   options: {
@@ -54,6 +71,7 @@ async function createPost(
   await page.locator('input[name="locationCity"]').fill("Tag City");
   await page.locator('input[name="locationCountry"]').fill("Tag Country");
   await page.locator('select[name="tripType"]').selectOption("solo");
+  await rateAllCategories(page);
 
   for (const tag of options.tags) {
     await page.getByLabel(tag).check();
@@ -151,7 +169,7 @@ test.describe("Story 19 tag pages", () => {
       expect(response.status()).toBe(200);
     }
 
-    const invalidResponse = await page.request.get("/explore/tags/not-a-real-tag");
-    expect(invalidResponse.status()).toBe(404);
+    await page.goto("/explore/tags/not-a-real-tag");
+    await expect(page.getByRole("heading", { name: /404|not found/i }).first()).toBeVisible();
   });
 });

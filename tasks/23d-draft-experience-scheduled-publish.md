@@ -26,16 +26,16 @@ Suggested model changes:
 
 ## Acceptance criteria
 
-- [ ] A logged-in user can save a new experience as draft (without making it public)
-- [ ] Draft experiences are visible only to their author
-- [ ] Draft experiences are excluded from explore feed, profile public view, search, location pages, and tag pages
-- [ ] The author can edit a draft multiple times before publishing
-- [ ] The author can publish a draft explicitly via a dedicated action
-- [ ] On publish, the experience becomes publicly visible across platform surfaces
-- [ ] Guests and other users cannot access a draft post detail URL (404 or forbidden)
-- [ ] The UI clearly indicates draft vs published status in author-facing views
-- [ ] Publishing enforces the same validation rules as normal post publishing
-- [ ] Existing published posts continue to work unchanged
+- [x] A logged-in user can save a new experience as draft (without making it public)
+- [x] Draft experiences are visible only to their author
+- [x] Draft experiences are excluded from explore feed, profile public view, search, location pages, and tag pages
+- [x] The author can edit a draft multiple times before publishing
+- [x] The author can publish a draft explicitly via a dedicated action
+- [x] On publish, the experience becomes publicly visible across platform surfaces
+- [x] Guests and other users cannot access a draft post detail URL (404 or forbidden)
+- [x] The UI clearly indicates draft vs published status in author-facing views
+- [x] Publishing enforces the same validation rules as normal post publishing
+- [x] Existing published posts continue to work unchanged
 
 ## Blocked by
 

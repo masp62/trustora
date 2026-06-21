@@ -16,7 +16,18 @@ const bodyFont = Source_Sans_3({
   subsets: ["latin"],
 });
 
+function resolveMetadataBase() {
+  const rawUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+  try {
+    return new URL(rawUrl);
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
+  metadataBase: resolveMetadataBase(),
   title: "RealBnB",
   description: "Share and discover real stay experiences from travelers.",
 };

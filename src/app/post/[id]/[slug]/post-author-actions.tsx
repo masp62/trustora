@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, SendHorizontal, Trash2 } from "lucide-react";
 
-import { deleteExperiencePost } from "@/lib/post-actions";
+import { deleteExperiencePost, publishDraftExperiencePost } from "@/lib/post-actions";
 
 type PostAuthorActionsProps = {
   postId: string;
+  status: "draft" | "published";
 };
 
-export function PostAuthorActions({ postId }: PostAuthorActionsProps) {
+export function PostAuthorActions({ postId, status }: PostAuthorActionsProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +27,30 @@ export function PostAuthorActions({ postId }: PostAuthorActionsProps) {
     });
   }
 
+  function handlePublish() {
+    startTransition(async () => {
+      const result = await publishDraftExperiencePost(postId);
+      if (result?.error) {
+        setError(result.error);
+      }
+      // On success, the server action redirects
+    });
+  }
+
   return (
     <>
       <div className="flex items-center gap-3">
+        {status === "draft" && (
+          <button
+            type="button"
+            onClick={handlePublish}
+            disabled={isPending}
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
+          >
+            <SendHorizontal className="h-4 w-4" />
+            {isPending ? "Publishing..." : "Publish now"}
+          </button>
+        )}
         <Link
           href={`/post/${postId}/edit`}
           className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"

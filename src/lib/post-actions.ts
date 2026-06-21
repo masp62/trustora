@@ -38,6 +38,13 @@ function parseCategoryRating(formData: FormData, key: string) {
   return Number(raw);
 }
 
+type SubmissionIntent = "draft" | "publish";
+
+function parseSubmissionIntent(formData: FormData): SubmissionIntent {
+  const intent = parseField(formData.get("intent"));
+  return intent === "draft" ? "draft" : "publish";
+}
+
 function computeOverallAccommodationRating(categoryRatings: {
   cleanliness: number;
   accuracy: number;
@@ -84,6 +91,133 @@ async function generateUniquePostSlug(title: string) {
   return `${base}-${Date.now()}`.slice(0, 80);
 }
 
+async function validateDraftForPublishing(postId: string, authorId: string): Promise<string | null> {
+  const [post, postImages, postTagEntries, rating] = await Promise.all([
+    db.experiencePost.findUnique({
+      where: { id: postId },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        locationCity: true,
+        locationCountry: true,
+        propertyName: true,
+        tripType: true,
+      },
+    }) as Promise<{
+      id: string;
+      title: string;
+      body: string;
+      locationCity: string;
+      locationCountry: string;
+      propertyName: string | null;
+      tripType: string;
+    } | null>,
+    db.postImage.findMany({
+      where: { postId },
+      select: { id: true },
+    }) as Promise<Array<{ id: string }>>,
+    db.postTag.findMany({
+      where: { postId },
+      select: { tagId: true },
+    }) as Promise<Array<{ tagId: string }>>,
+    db.accommodationRating.findMany({
+      where: { postId, userId: authorId },
+      take: 1,
+      select: {
+        cleanliness: true,
+        accuracy: true,
+        checkIn: true,
+        communication: true,
+        location: true,
+        value: true,
+        comfort: true,
+        facilities: true,
+      },
+    }) as Promise<
+      Array<{
+        cleanliness: number;
+        accuracy: number;
+        checkIn: number;
+        communication: number;
+        location: number;
+        value: number;
+        comfort: number;
+        facilities: number;
+      }>
+    >,
+  ]);
+
+  const postTags =
+    postTagEntries.length > 0
+      ? ((await db.tag.findMany({
+          where: { id: { in: postTagEntries.map((entry) => entry.tagId) } },
+          select: { name: true },
+        })) as Array<{ name: string }>)
+      : [];
+
+  if (!post) {
+    return "Post not found.";
+  }
+
+  if (!post.title || post.title.length > POST_TITLE_MAX_LENGTH) {
+    return "Draft is missing a valid title.";
+  }
+
+  if (!post.body || post.body.length > POST_BODY_MAX_LENGTH) {
+    return "Draft is missing a valid story.";
+  }
+
+  if (!post.locationCity || !post.locationCountry) {
+    return "Draft is missing location details.";
+  }
+
+  if ((post.propertyName ?? "").length > PROPERTY_NAME_MAX_LENGTH) {
+    return "Draft property name is too long.";
+  }
+
+  if (!TRIP_TYPES.includes(post.tripType as (typeof TRIP_TYPES)[number])) {
+    return "Draft is missing a valid trip type.";
+  }
+
+  if (postImages.length < MIN_PHOTOS_PER_POST || postImages.length > MAX_PHOTOS_PER_POST) {
+    return "Draft does not satisfy photo requirements.";
+  }
+
+  if (postTags.length > MAX_TAGS_PER_POST) {
+    return "Draft has too many tags.";
+  }
+
+  const hasInvalidTag = postTags.some(
+    (entry) => !PREDEFINED_TAGS.includes(entry.name as (typeof PREDEFINED_TAGS)[number]),
+  );
+  if (hasInvalidTag) {
+    return "Draft contains invalid tags.";
+  }
+
+  if (rating.length === 0) {
+    return "Draft is missing accommodation ratings.";
+  }
+
+  const values = [
+    rating[0].cleanliness,
+    rating[0].accuracy,
+    rating[0].checkIn,
+    rating[0].communication,
+    rating[0].location,
+    rating[0].value,
+    rating[0].comfort,
+    rating[0].facilities,
+  ];
+  const hasInvalidCategoryRating = values.some((value) => !Number.isInteger(value) || value < 1 || value > 5);
+
+  if (hasInvalidCategoryRating) {
+    return "Draft is missing complete accommodation ratings.";
+  }
+
+  return null;
+}
+
 export async function createExperiencePost(
   _prevState: PostActionState,
   formData: FormData,
@@ -112,6 +246,7 @@ export async function createExperiencePost(
   const locationCountry = parseField(formData.get("locationCountry"));
   const propertyName = parseField(formData.get("propertyName"));
   const tripTypeValue = parseField(formData.get("tripType"));
+  const intent = parseSubmissionIntent(formData);
   const categoryRatings = {
     cleanliness: parseCategoryRating(formData, "cleanliness"),
     accuracy: parseCategoryRating(formData, "accuracy"),
@@ -217,6 +352,8 @@ export async function createExperiencePost(
   const createdPost = await db.experiencePost.create({
     data: {
       slug,
+      status: intent === "draft" ? "draft" : "published",
+      publishedAt: intent === "draft" ? null : new Date(),
       title,
       body,
       locationCity,
@@ -225,7 +362,7 @@ export async function createExperiencePost(
       tripType: tripTypeValue as TripType,
       authorId: session.user.id,
     },
-  });
+  }) as { id: string; slug: string };
 
   await Promise.all(
     photoUrls.map((url, index) =>
@@ -277,7 +414,7 @@ export async function createExperiencePost(
     },
   });
 
-  redirect(`/post/${createdPost.id}/${createdPost.slug}`);
+  redirect(`/post/${createdPost.id}`);
 }
 
 export async function updateExperiencePost(
@@ -297,8 +434,8 @@ export async function updateExperiencePost(
 
   const existingPost = (await db.experiencePost.findUnique({
     where: { id: postId },
-    select: { id: true, authorId: true },
-  })) as { id: string; authorId: string } | null;
+    select: { id: true, authorId: true, status: true, publishedAt: true },
+  })) as { id: string; authorId: string; status: "draft" | "published"; publishedAt: Date | null } | null;
 
   if (!existingPost) {
     return { error: "Post not found.", fieldErrors: {} };
@@ -314,6 +451,7 @@ export async function updateExperiencePost(
   const locationCountry = parseField(formData.get("locationCountry"));
   const propertyName = parseField(formData.get("propertyName"));
   const tripTypeValue = parseField(formData.get("tripType"));
+  const intent = parseSubmissionIntent(formData);
   const categoryRatings = {
     cleanliness: parseCategoryRating(formData, "cleanliness"),
     accuracy: parseCategoryRating(formData, "accuracy"),
@@ -401,11 +539,19 @@ export async function updateExperiencePost(
   const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const slug = await generateUniquePostSlug(title);
+  const nextStatus =
+    existingPost.status === "published" ? "published" : intent === "draft" ? "draft" : "published";
+  const nextPublishedAt =
+    nextStatus === "published"
+      ? existingPost.publishedAt ?? new Date()
+      : null;
 
   await db.experiencePost.update({
     where: { id: postId },
     data: {
       slug,
+      status: nextStatus,
+      publishedAt: nextPublishedAt,
       title,
       body,
       locationCity,
@@ -492,7 +638,7 @@ export async function updateExperiencePost(
     });
   }
 
-  redirect(`/post/${postId}/${slug}`);
+  redirect(`/post/${postId}`);
 }
 
 export async function deleteExperiencePost(postId: string): Promise<{ error?: string }> {
@@ -525,4 +671,48 @@ export async function deleteExperiencePost(postId: string): Promise<{ error?: st
   )?.username;
 
   redirect(username ? `/u/${username}` : "/explore");
+}
+
+export async function publishDraftExperiencePost(postId: string): Promise<{ error?: string }> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const existingPost = (await db.experiencePost.findUnique({
+    where: { id: postId },
+    select: { id: true, authorId: true, slug: true, status: true },
+  })) as { id: string; authorId: string; slug: string; status: "draft" | "published" } | null;
+
+  if (!existingPost) {
+    return { error: "Post not found." };
+  }
+
+  if (existingPost.authorId !== session.user.id) {
+    return { error: "You are not authorized to publish this post." };
+  }
+
+  if (existingPost.status === "published") {
+    redirect(`/post/${existingPost.id}`);
+  }
+
+  const validationError = await validateDraftForPublishing(existingPost.id, existingPost.authorId);
+  if (validationError) {
+    return { error: validationError };
+  }
+
+  const updated = await db.experiencePost.update({
+    where: { id: existingPost.id },
+    data: {
+      status: "published",
+      publishedAt: new Date(),
+    },
+    select: {
+      id: true,
+      slug: true,
+    },
+  });
+
+  redirect(`/post/${updated.id}`);
 }

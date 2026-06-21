@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 
 import { banUserFromReport, dismissReport, removeReportedTarget } from "@/lib/admin-actions";
 
@@ -273,6 +273,44 @@ function ActivityList({
   title: string;
   points: Array<{ label: string; count: number }>;
 }) {
+  const chartContainerRef = useRef<HTMLDivElement | null>(null);
+  const [chartSize, setChartSize] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const container = chartContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const next = entries[0];
+      if (!next) {
+        return;
+      }
+
+      const nextWidth = Math.floor(next.contentRect.width);
+      const nextHeight = Math.floor(next.contentRect.height);
+
+      if (nextWidth <= 0 || nextHeight <= 0) {
+        return;
+      }
+
+      setChartSize((prev) => {
+        if (prev && prev.width === nextWidth && prev.height === nextHeight) {
+          return prev;
+        }
+
+        return { width: nextWidth, height: nextHeight };
+      });
+    });
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const chartData = points.map((point) => ({
     ...point,
     xLabel: point.label.slice(5),
@@ -282,9 +320,9 @@ function ActivityList({
     <section className="rounded-xl border border-gray-200 bg-gray-50 p-4">
       <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
       <p className="mt-1 text-xs text-gray-600">Last 30 days</p>
-      <div className="mt-3 h-64 w-full" aria-label={`${title} bar chart`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+      <div ref={chartContainerRef} className="mt-3 h-64 w-full" aria-label={`${title} bar chart`}>
+        {chartSize ? (
+          <BarChart width={chartSize.width} height={chartSize.height} data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey="xLabel"
@@ -304,7 +342,9 @@ function ActivityList({
             />
             <Bar dataKey="count" fill="#0ea5a4" radius={[4, 4, 0, 0]} />
           </BarChart>
-        </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full animate-pulse rounded-lg bg-gray-100" aria-hidden="true" />
+        )}
       </div>
     </section>
   );

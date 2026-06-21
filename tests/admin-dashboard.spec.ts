@@ -54,6 +54,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page, suffi
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPost(page: import("@playwright/test").Page, title: string, suffix: string) {
   await page.goto("/create");
   const photoUrl = await uploadPhotoAndGetUrl(page, suffix);
@@ -65,6 +82,7 @@ async function createPost(page: import("@playwright/test").Page, title: string, 
   await page.locator('input[name="propertyName"]').fill("Admin Moderation Place");
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break", { exact: true }).check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");
@@ -179,6 +197,7 @@ test.describe("Story 23 admin dashboard", () => {
     await userPage.locator('input[name="locationCountry"]').fill("BlockedCountry");
     await userPage.locator('select[name="tripType"]').selectOption("solo");
     await userPage.getByLabel("city-break", { exact: true }).check();
+    await rateAllCategories(userPage);
     await userPage.evaluate((url) => {
       const form = document.querySelector("form");
       if (!form) {

@@ -14,6 +14,7 @@ async function getPostForEdit(postId: string) {
     where: { id: postId },
     select: {
       id: true,
+      status: true,
       title: true,
       body: true,
       locationCity: true,
@@ -24,6 +25,7 @@ async function getPostForEdit(postId: string) {
     },
   })) as {
     id: string;
+    status: "draft" | "published";
     title: string;
     body: string;
     locationCity: string;
@@ -84,6 +86,7 @@ async function getPostForEdit(postId: string) {
 
   return {
     id: post.id,
+    status: post.status,
     title: post.title,
     body: post.body,
     locationCity: post.locationCity,
@@ -143,6 +146,9 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         <h1 className="mt-4 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">
           Update your story
         </h1>
+        <p className="mt-2 inline-flex w-fit rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold tracking-wide text-gray-700 uppercase">
+          Status: {post.status}
+        </p>
         <p className="mt-4 text-gray-700">
           Edit your photos, destination details, trip type, and tags.
         </p>

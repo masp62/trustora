@@ -26,17 +26,28 @@ type UploadedPhoto = {
   url: string;
 };
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
+function SubmitButtons({ disabled, setIntent }: { disabled: boolean; setIntent: (intent: "draft" | "publish") => void }) {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending || disabled}
-      className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
-    >
-      {pending ? "Publishing..." : "Publish experience"}
-    </button>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <button
+        type="submit"
+        onClick={() => setIntent("publish")}
+        disabled={pending || disabled}
+        className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {pending ? "Saving..." : "Publish experience"}
+      </button>
+      <button
+        type="submit"
+        onClick={() => setIntent("draft")}
+        disabled={pending || disabled}
+        className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
+      >
+        {pending ? "Saving..." : "Save as draft"}
+      </button>
+    </div>
   );
 }
 
@@ -63,6 +74,7 @@ export function CreatePostForm() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [submitIntent, setSubmitIntent] = useState<"draft" | "publish">("publish");
 
   const [clientErrors, setClientErrors] = useState<{
     title?: string;
@@ -213,6 +225,7 @@ export function CreatePostForm() {
 
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} className="mt-8 space-y-6">
+      <input type="hidden" name="intent" value={submitIntent} />
       <label className="block space-y-1">
         <span className="text-sm font-semibold text-gray-700">Title</span>
         <input
@@ -426,7 +439,7 @@ export function CreatePostForm() {
 
       {state.error && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>}
 
-      <SubmitButton disabled={hasFormBlockingIssue} />
+      <SubmitButtons disabled={hasFormBlockingIssue} setIntent={setSubmitIntent} />
     </form>
   );
 }

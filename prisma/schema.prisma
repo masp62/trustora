@@ -31,6 +31,11 @@ enum ReportStatus {
   dismissed
 }
 
+enum PostStatus {
+  draft
+  published
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -58,6 +63,8 @@ model User {
 model ExperiencePost {
   id              String   @id @default(cuid())
   slug            String
+  status          PostStatus @default(published)
+  publishedAt     DateTime?
   title           String   @db.VarChar(120)
   body            String   @db.VarChar(5000)
   locationCity    String
@@ -76,6 +83,7 @@ model ExperiencePost {
   accommodationRatings AccommodationRating[]
 
   @@index([authorId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
   @@index([locationCountry, locationCity, createdAt(sort: Desc)])
 }
 

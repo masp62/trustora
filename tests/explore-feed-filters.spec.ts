@@ -38,6 +38,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page) {
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 type CreatedStory = {
   title: string;
   country: string;
@@ -64,6 +81,7 @@ async function createStoryForFilters(page: import("@playwright/test").Page): Pro
 
   await page.getByLabel("beach").check();
   await page.getByLabel("remote-work").check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");

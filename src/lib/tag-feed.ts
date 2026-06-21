@@ -51,7 +51,7 @@ export async function getTagPosts(viewerId: string | null, tag: string): Promise
   }
 
   const posts = (await db.experiencePost.findMany({
-    where: { id: { in: postIds } },
+    where: { id: { in: postIds }, status: "published" },
     orderBy: { createdAt: "desc" },
   })) as TaggedPost[];
   const authorIds = [...new Set(posts.map((post) => post.authorId))];

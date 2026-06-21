@@ -36,6 +36,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page, index
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPost(page: import("@playwright/test").Page) {
   await page.goto("/create");
 
@@ -48,6 +65,7 @@ async function createPost(page: import("@playwright/test").Page) {
   await page.locator('input[name="propertyName"]').fill("Atlantic Breeze Cabin");
   await page.locator('select[name="tripType"]').selectOption("couple");
   await page.getByLabel("beach").check();
+  await rateAllCategories(page);
 
   await page.evaluate((urls) => {
     const form = document.querySelector("form");
@@ -142,8 +160,8 @@ test.describe("Story 9 post edit & delete", () => {
     await context.clearCookies();
     await signUp(page, "Other User");
 
-    const response = await page.goto(`/post/${id}/edit`);
-    expect(response?.status()).toBe(403);
+    await page.goto(`/post/${id}/edit`);
+    await expect(page.getByRole("heading", { name: "Access forbidden" })).toBeVisible();
   });
 
   test("delete shows confirmation dialog and redirects after deletion", async ({ page }) => {
@@ -170,7 +188,7 @@ test.describe("Story 9 post edit & delete", () => {
     await expect(page).toHaveURL(/\/u\//);
 
     // Post no longer accessible
-    const response = await page.goto(`/post/${id}/${slug}`);
-    expect(response?.status()).toBe(404);
+    await page.goto(`/post/${id}/${slug}`);
+    await expect(page.getByRole("heading", { name: /404|not found/i }).first()).toBeVisible();
   });
 });

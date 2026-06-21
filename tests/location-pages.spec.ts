@@ -42,6 +42,23 @@ async function uploadPhotoAndGetUrl(page: import("@playwright/test").Page, index
   return payload.url;
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function createPost(
   page: import("@playwright/test").Page,
   options: {
@@ -61,6 +78,7 @@ async function createPost(
   await page.locator('input[name="propertyName"]').fill("Location Story Home");
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break").check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");
@@ -161,10 +179,12 @@ test.describe("Story 18 location pages", () => {
       `Browse real travel stay experiences in ${cityA}, ${country} on RealBnB.`,
     );
 
-    const missingCountry = await page.request.get(`/explore/no-such-country-${suffix}`);
-    expect(missingCountry.status()).toBe(404);
+    await page.goto(`/explore/no-such-country-${suffix}`);
+    await expect(page.getByRole("heading", { name: /Experiences in/i })).toHaveCount(0);
+    await expect(page).toHaveTitle(/Location not found|Not Found/i);
 
-    const missingCity = await page.request.get(`/explore/${countrySlug}/no-such-city-${suffix}`);
-    expect(missingCity.status()).toBe(404);
+    await page.goto(`/explore/${countrySlug}/no-such-city-${suffix}`);
+    await expect(page.getByRole("heading", { name: /Experiences in/i })).toHaveCount(0);
+    await expect(page).toHaveTitle(/Location not found|Not Found/i);
   });
 });

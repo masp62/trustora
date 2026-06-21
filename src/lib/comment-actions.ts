@@ -52,10 +52,14 @@ export async function addPostComment(postId: string, rawBody: string) {
 
     const post = (await db.experiencePost.findUnique({
       where: { id: postId },
-      select: { id: true, slug: true },
-    })) as { id: string; slug: string } | null;
+      select: { id: true, slug: true, authorId: true, status: true },
+    })) as { id: string; slug: string; authorId: string; status: "draft" | "published" } | null;
 
     if (!post) {
+      return { ok: false as const, error: "POST_NOT_FOUND" as const };
+    }
+
+    if (post.status === "draft" && post.authorId !== session.user.id) {
       return { ok: false as const, error: "POST_NOT_FOUND" as const };
     }
 

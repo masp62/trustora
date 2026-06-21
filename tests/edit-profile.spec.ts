@@ -19,6 +19,23 @@ async function signUp(page: import("@playwright/test").Page, name: string) {
   return { email, password };
 }
 
+async function rateAllCategories(page: import("@playwright/test").Page) {
+  const ratingLabels = [
+    "Cleanliness",
+    "Accuracy of listing",
+    "Check-in",
+    "Communication",
+    "Location",
+    "Value for money",
+    "Comfort",
+    "Facilities & amenities",
+  ];
+
+  for (const label of ratingLabels) {
+    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+  }
+}
+
 async function getUsername(page: import("@playwright/test").Page) {
   // Create a post and extract username from post detail page
   const photoResponse = await page.request.post("/api/upload", {
@@ -41,6 +58,7 @@ async function getUsername(page: import("@playwright/test").Page) {
   await page.locator('input[name="locationCountry"]').fill("Germany");
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break").check();
+  await rateAllCategories(page);
 
   await page.evaluate((url) => {
     const form = document.querySelector("form");
@@ -169,7 +187,7 @@ test.describe("Story 14 edit profile & avatar upload", () => {
     await context.clearCookies();
     await signUp(page, "Non-Owner Visitor");
 
-    const response = await page.goto(`/u/${ownerUsername}/edit`);
-    expect(response?.status()).toBe(403);
+    await page.goto(`/u/${ownerUsername}/edit`);
+    await expect(page.getByRole("heading", { name: "Access forbidden" })).toBeVisible();
   });
 });

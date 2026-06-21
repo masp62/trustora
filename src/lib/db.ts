@@ -19,6 +19,8 @@ type InMemoryUser = {
 type InMemoryExperiencePost = {
   id: string;
   slug: string;
+  status: "draft" | "published";
+  publishedAt: Date | null;
   title: string;
   body: string;
   locationCity: string;
@@ -281,7 +283,10 @@ function createInMemoryDb(store: InMemoryStore) {
         const ordered = sortEntries(filtered, args.orderBy);
         return paginate(ordered.map((entry) => applySelect(entry, args.select)), args.skip, args.take);
       },
-      async create(args: { data: Omit<InMemoryExperiencePost, "id" | "createdAt" | "updatedAt"> }) {
+      async create(args: {
+        data: Omit<InMemoryExperiencePost, "id" | "createdAt" | "updatedAt">;
+        select?: Record<string, boolean>;
+      }) {
         const now = new Date();
         const created: InMemoryExperiencePost = {
           ...args.data,
@@ -290,9 +295,13 @@ function createInMemoryDb(store: InMemoryStore) {
           updatedAt: now,
         };
         store.experiencePosts.push(created);
-        return created;
+        return applySelect(created, args.select);
       },
-      async update(args: { where: Record<string, unknown>; data: Partial<InMemoryExperiencePost> }) {
+      async update(args: {
+        where: Record<string, unknown>;
+        data: Partial<InMemoryExperiencePost>;
+        select?: Record<string, boolean>;
+      }) {
         const target = store.experiencePosts.find((entry) => matchesWhere(entry, args.where));
 
         if (!target) {
@@ -300,7 +309,7 @@ function createInMemoryDb(store: InMemoryStore) {
         }
 
         Object.assign(target, args.data, { updatedAt: new Date() });
-        return target;
+        return applySelect(target, args.select);
       },
       async delete(args: { where: Record<string, unknown> }) {
         const index = store.experiencePosts.findIndex((entry) => matchesWhere(entry, args.where));
@@ -462,7 +471,10 @@ function createInMemoryDb(store: InMemoryStore) {
         const ordered = sortEntries(filtered, args.orderBy);
         return paginate(ordered.map((entry) => applySelect(entry, args.select)), args.skip, args.take);
       },
-      async create(args: { data: Omit<InMemoryComment, "id" | "createdAt" | "updatedAt"> }) {
+      async create(args: {
+        data: Omit<InMemoryComment, "id" | "createdAt" | "updatedAt">;
+        select?: Record<string, boolean>;
+      }) {
         const now = new Date();
         const created: InMemoryComment = {
           ...args.data,
@@ -472,7 +484,7 @@ function createInMemoryDb(store: InMemoryStore) {
         };
 
         store.comments.push(created);
-        return created;
+        return applySelect(created, args.select);
       },
       async update(args: { where: Record<string, unknown>; data: Partial<InMemoryComment> }) {
         const target = store.comments.find((entry) => matchesWhere(entry, args.where));
@@ -881,19 +893,25 @@ function createBaselineInMemoryStore(): InMemoryStore {
     });
   });
 
-  const experiencePosts: InMemoryExperiencePost[] = postSeeds.map((post) => ({
-    id: post.id,
-    slug: post.slug,
-    title: post.title,
-    body: post.body,
-    locationCity: post.locationCity,
-    locationCountry: post.locationCountry,
-    propertyName: post.propertyName,
-    tripType: post.tripType,
-    authorId: post.authorId,
-    createdAt: randomDateWithinLast30Days(),
-    updatedAt: now,
-  }));
+  const experiencePosts: InMemoryExperiencePost[] = postSeeds.map((post) => {
+    const createdAt = randomDateWithinLast30Days();
+
+    return {
+      id: post.id,
+      slug: post.slug,
+      status: "published",
+      publishedAt: createdAt,
+      title: post.title,
+      body: post.body,
+      locationCity: post.locationCity,
+      locationCountry: post.locationCountry,
+      propertyName: post.propertyName,
+      tripType: post.tripType,
+      authorId: post.authorId,
+      createdAt,
+      updatedAt: now,
+    };
+  });
 
   const postImages: InMemoryPostImage[] = postSeeds.flatMap((post) =>
     post.images.map((url, index) => ({
@@ -1065,10 +1083,11 @@ const prisma =
   });
 
 const inMemoryDb = createInMemoryDb(inMemoryStore);
+type DbClient = typeof inMemoryDb;
 
-export const db = useInMemoryDb
+export const db: DbClient = useInMemoryDb
   ? inMemoryDb
-  : prisma;
+  : (prisma as unknown as DbClient);
 
 if (useInMemoryDb && process.env.NODE_ENV !== "production") {
   if (!globalForInMemory.inMemoryBaselineLogged) {

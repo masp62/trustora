@@ -27,8 +27,9 @@ async function getUserProfile(username: string) {
 
   if (!user) return null;
 
-  const [postCount, followerCount, followingCount, posts] = await Promise.all([
+  const [allPostCount, publishedPostCount, followerCount, followingCount, posts] = await Promise.all([
     db.experiencePost.count({ where: { authorId: user.id } }),
+    db.experiencePost.count({ where: { authorId: user.id, status: "published" } }),
     db.follow.count({ where: { followingId: user.id } }),
     db.follow.count({ where: { followerId: user.id } }),
     db.experiencePost.findMany({
@@ -39,6 +40,7 @@ async function getUserProfile(username: string) {
       Array<{
         id: string;
         slug: string;
+        status: "draft" | "published";
         title: string;
         locationCity: string;
         locationCountry: string;
@@ -60,7 +62,12 @@ async function getUserProfile(username: string) {
   return {
     user: {
       ...user,
-      _count: { posts: postCount, followers: followerCount, following: followingCount },
+      _count: {
+        posts: publishedPostCount,
+        allPosts: allPostCount,
+        followers: followerCount,
+        following: followingCount,
+      },
     },
     posts: postsWithImages,
   };
@@ -99,7 +106,8 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
       })
     : 0;
 
-  const { user, posts } = profile;
+  const { user } = profile;
+  const posts = isOwnProfile ? profile.posts : profile.posts.filter((post) => post.status === "published");
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
@@ -149,7 +157,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               {/* Stats */}
               <div className="mt-4 flex items-center justify-center gap-6 text-sm sm:justify-start">
                 <span>
-                  <span className="font-semibold text-gray-900">{user._count.posts}</span>{" "}
+                  <span className="font-semibold text-gray-900">{isOwnProfile ? user._count.allPosts : user._count.posts}</span>{" "}
                   <span className="text-gray-500">posts</span>
                 </span>
                 <Link href={`/u/${user.username}/followers`} className="transition hover:text-brand">
@@ -191,7 +199,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
 
         {/* Post Grid */}
         <section>
-          <h2 className="mb-4 font-heading text-xl text-gray-900">Posts</h2>
+          <h2 className="mb-4 font-heading text-xl text-gray-900">{isOwnProfile ? "Posts & drafts" : "Posts"}</h2>
           {posts.length === 0 ? (
             <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
               <p className="text-sm text-gray-500">No posts yet.</p>
@@ -222,6 +230,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                       <h3 className="line-clamp-1 text-sm font-semibold text-gray-900">
                         {post.title}
                       </h3>
+                      {isOwnProfile && post.status === "draft" && (
+                        <p className="mt-1 text-xs font-semibold tracking-wide text-amber-700 uppercase">Draft</p>
+                      )}
                       <p className="mt-1 text-xs text-gray-500">
                         {post.locationCity}, {post.locationCountry}
                       </p>

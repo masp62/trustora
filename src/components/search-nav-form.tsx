@@ -12,7 +12,7 @@ export function SearchNavForm() {
 
   function submitSearch(rawQuery: string) {
     const trimmed = rawQuery.trim();
-    router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
+    router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/explore");
   }
 
   return (

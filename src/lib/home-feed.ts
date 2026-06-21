@@ -59,6 +59,7 @@ export async function getHomeFeedPage(
   const allPosts = (await db.experiencePost.findMany({
     where: {
       authorId: { in: followedIds },
+      status: "published",
     },
     orderBy: { createdAt: "desc" },
   })) as Array<{

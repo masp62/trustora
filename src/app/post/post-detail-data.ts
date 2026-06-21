@@ -15,6 +15,8 @@ export type PostDetailComment = {
 export type PostDetailData = {
   id: string;
   slug: string;
+  status: "draft" | "published";
+  publishedAt: Date | null;
   title: string;
   body: string;
   locationCity: string;
@@ -38,12 +40,14 @@ export function postCanonicalPath(postId: string, slug: string) {
   return `/post/${postId}/${slug}`;
 }
 
-export async function getPostDetailById(id: string): Promise<PostDetailData | null> {
+export async function getPostDetailById(id: string, viewerId: string | null = null): Promise<PostDetailData | null> {
   const post = (await db.experiencePost.findUnique({
     where: { id },
     select: {
       id: true,
       slug: true,
+      status: true,
+      publishedAt: true,
       title: true,
       body: true,
       locationCity: true,
@@ -57,6 +61,8 @@ export async function getPostDetailById(id: string): Promise<PostDetailData | nu
     | {
         id: string;
         slug: string;
+      status: "draft" | "published";
+      publishedAt: Date | null;
         title: string;
         body: string;
         locationCity: string;
@@ -69,6 +75,10 @@ export async function getPostDetailById(id: string): Promise<PostDetailData | nu
     | null;
 
   if (!post) {
+    return null;
+  }
+
+  if (post.status === "draft" && post.authorId !== viewerId) {
     return null;
   }
 
@@ -121,6 +131,8 @@ export async function getPostDetailById(id: string): Promise<PostDetailData | nu
   return {
     id: post.id,
     slug: post.slug,
+    status: post.status,
+    publishedAt: post.publishedAt,
     title: post.title,
     body: post.body,
     locationCity: post.locationCity,

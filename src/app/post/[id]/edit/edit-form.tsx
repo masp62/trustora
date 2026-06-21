@@ -29,6 +29,7 @@ type UploadedPhoto = {
 type EditPostFormProps = {
   post: {
     id: string;
+    status: "draft" | "published";
     title: string;
     body: string;
     locationCity: string;
@@ -41,17 +42,49 @@ type EditPostFormProps = {
   };
 };
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
+function SubmitButtons({
+  disabled,
+  status,
+  setIntent,
+}: {
+  disabled: boolean;
+  status: "draft" | "published";
+  setIntent: (intent: "draft" | "publish") => void;
+}) {
   const { pending } = useFormStatus();
 
+  if (status === "published") {
+    return (
+      <button
+        type="submit"
+        onClick={() => setIntent("publish")}
+        disabled={pending || disabled}
+        className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {pending ? "Saving..." : "Save changes"}
+      </button>
+    );
+  }
+
   return (
-    <button
-      type="submit"
-      disabled={pending || disabled}
-      className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
-    >
-      {pending ? "Saving..." : "Save changes"}
-    </button>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <button
+        type="submit"
+        onClick={() => setIntent("publish")}
+        disabled={pending || disabled}
+        className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {pending ? "Saving..." : "Publish now"}
+      </button>
+      <button
+        type="submit"
+        onClick={() => setIntent("draft")}
+        disabled={pending || disabled}
+        className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
+      >
+        {pending ? "Saving..." : "Save as draft"}
+      </button>
+    </div>
   );
 }
 
@@ -73,6 +106,9 @@ export function EditPostForm({ post }: EditPostFormProps) {
     post.images.map((url) => ({ name: url.split("/").pop() ?? "photo", url })),
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [submitIntent, setSubmitIntent] = useState<"draft" | "publish">(
+    post.status === "draft" ? "draft" : "publish",
+  );
 
   const [clientErrors, setClientErrors] = useState<{
     title?: string;
@@ -224,6 +260,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} className="mt-8 space-y-6">
       <input type="hidden" name="postId" value={post.id} />
+      <input type="hidden" name="intent" value={submitIntent} />
 
       <label className="block space-y-1">
         <span className="text-sm font-semibold text-gray-700">Title</span>
@@ -438,7 +475,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
 
       {state.error && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>}
 
-      <SubmitButton disabled={hasFormBlockingIssue} />
+      <SubmitButtons disabled={hasFormBlockingIssue} status={post.status} setIntent={setSubmitIntent} />
     </form>
   );
 }
