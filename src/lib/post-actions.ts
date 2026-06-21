@@ -1,6 +1,6 @@
 "use server";
 
-import { TripType } from "@prisma/client";
+import type { TripType } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";

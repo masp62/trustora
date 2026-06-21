@@ -1,6 +1,7 @@
-import { ReportStatus, ReportTargetType } from "@prisma/client";
+import type { ReportTargetType } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { REPORT_STATUS, REPORT_TARGET_TYPE } from "@/lib/prisma-enum-values";
 
 export type AdminQueueItem = {
   id: string;
@@ -70,7 +71,7 @@ function truncate(value: string, maxLength: number) {
 
 export async function getPendingAdminQueue(): Promise<AdminQueueItem[]> {
   const reports = (await db.report.findMany({
-    where: { status: ReportStatus.pending },
+    where: { status: REPORT_STATUS.pending },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
@@ -99,10 +100,10 @@ export async function getPendingAdminQueue(): Promise<AdminQueueItem[]> {
 
   const reporterIds = [...new Set(sortedReports.map((report) => report.reporterId))];
   const postTargetIds = sortedReports
-    .filter((report) => report.targetType === ReportTargetType.post)
+    .filter((report) => report.targetType === REPORT_TARGET_TYPE.post)
     .map((report) => report.targetId);
   const commentTargetIds = sortedReports
-    .filter((report) => report.targetType === ReportTargetType.comment)
+    .filter((report) => report.targetType === REPORT_TARGET_TYPE.comment)
     .map((report) => report.targetId);
 
   const [reporters, posts, comments] = await Promise.all([
@@ -146,7 +147,7 @@ export async function getPendingAdminQueue(): Promise<AdminQueueItem[]> {
   return sortedReports.map((report) => {
     const reporter = reporterById.get(report.reporterId);
 
-    if (report.targetType === ReportTargetType.post) {
+    if (report.targetType === REPORT_TARGET_TYPE.post) {
       const post = postById.get(report.targetId);
       const targetAuthor = post ? targetAuthorById.get(post.authorId) : null;
 
@@ -266,7 +267,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
     db.experiencePost.count(),
     db.comment.count(),
     db.like.count(),
-    db.report.count({ where: { status: ReportStatus.pending } }),
+    db.report.count({ where: { status: REPORT_STATUS.pending } }),
     db.user.count({ where: { isBanned: true } }),
   ]);
 

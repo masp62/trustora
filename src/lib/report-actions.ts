@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ReportStatus, ReportTargetType } from "@prisma/client";
+import type { ReportTargetType } from "@prisma/client";
 
 import { auth } from "@/auth";
 import { postCanonicalPath } from "@/app/post/post-detail-data";
 import { db } from "@/lib/db";
+import { REPORT_STATUS, REPORT_TARGET_TYPE } from "@/lib/prisma-enum-values";
 
 const REPORT_REASON_MAX_LENGTH = 1000;
 
@@ -17,7 +18,7 @@ function parseReason(rawReason: string) {
 }
 
 function toReportTargetType(value: ReportTarget): ReportTargetType {
-  return value === "post" ? ReportTargetType.post : ReportTargetType.comment;
+  return value === "post" ? REPORT_TARGET_TYPE.post : REPORT_TARGET_TYPE.comment;
 }
 
 export async function submitTargetReport({
@@ -85,7 +86,7 @@ export async function submitTargetReport({
           targetType: reportTargetType,
           targetId: trimmedTargetId,
           reason: parsedReason,
-          status: ReportStatus.pending,
+          status: REPORT_STATUS.pending,
         },
       });
 
@@ -116,7 +117,7 @@ export async function submitTargetReport({
           targetType: reportTargetType,
           targetId: trimmedTargetId,
           reason: parsedReason,
-          status: ReportStatus.pending,
+          status: REPORT_STATUS.pending,
         },
       });
 

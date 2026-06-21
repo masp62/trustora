@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { parseFiltersFromParams } from "@/lib/explore-filters";
-import { EXPLORE_PAGE_SIZE, getExplorePostsPage } from "@/lib/explore-feed";
+import { EXPLORE_PAGE_SIZE } from "@/lib/explore-constants";
+import { getExplorePostsPage } from "@/lib/explore-feed";
 
 function clampLimit(value: number) {
   if (Number.isNaN(value)) return EXPLORE_PAGE_SIZE;

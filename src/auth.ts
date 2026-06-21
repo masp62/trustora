@@ -1,4 +1,4 @@
-﻿import { UserRole } from "@prisma/client";
+﻿import type { UserRole } from "@prisma/client";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -6,6 +6,11 @@ import Google from "next-auth/providers/google";
 
 import { db } from "@/lib/db";
 import { generateUniqueUsername } from "@/lib/usernames";
+
+const USER_ROLE = {
+  user: "user",
+  admin: "admin",
+} as const satisfies Record<string, UserRole>;
 
 const authSecret =
   process.env.AUTH_SECRET ??
@@ -127,7 +132,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             avatarUrl: null,
             bio: null,
             location: null,
-            role: UserRole.user,
+            role: USER_ROLE.user,
             passwordHash: null,
             isBanned: false,
           },
@@ -174,7 +179,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.sub = dbUser.id;
       token.email = dbUser.email;
       token.name = dbUser.displayName;
-      token.role = dbUser.email === BASELINE_ADMIN_EMAIL ? UserRole.admin : dbUser.role;
+      token.role = dbUser.email === BASELINE_ADMIN_EMAIL ? USER_ROLE.admin : dbUser.role;
 
       return token;
     },
@@ -184,7 +189,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       session.user.id = token.sub ?? "";
-      session.user.role = token.role === UserRole.admin ? UserRole.admin : UserRole.user;
+      session.user.role = token.role === USER_ROLE.admin ? USER_ROLE.admin : USER_ROLE.user;
       session.user.oauthAvatarUrl = typeof token.oauthAvatarUrl === "string" ? token.oauthAvatarUrl : null;
 
       return session;

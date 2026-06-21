@@ -6,7 +6,7 @@ import { PostCard, type PostCardData } from "@/components/post-card";
 import { ExploreEmpty, ExploreNoResults } from "@/components/explore/empty-state";
 import { PostCardSkeletonGrid } from "@/components/explore/post-card-skeleton";
 import type { FilterState } from "@/lib/explore-filters";
-import { EXPLORE_PAGE_SIZE } from "@/lib/explore-feed";
+import { EXPLORE_PAGE_SIZE } from "@/lib/explore-constants";
 
 type ExploreFeedClientProps = {
   initialPosts: PostCardData[];

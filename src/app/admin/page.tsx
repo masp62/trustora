@@ -1,9 +1,9 @@
 import { forbidden, redirect } from "next/navigation";
-import { UserRole } from "@prisma/client";
 
 import { auth } from "@/auth";
 import { AdminDashboardClient } from "@/app/admin/admin-dashboard-client";
 import { getAdminOverviewData, getPendingAdminQueue } from "@/lib/admin-dashboard";
+import { USER_ROLE } from "@/lib/prisma-enum-values";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
     redirect("/login");
   }
 
-  if (session.user.role !== UserRole.admin) {
+  if (session.user.role !== USER_ROLE.admin) {
     forbidden();
   }
 

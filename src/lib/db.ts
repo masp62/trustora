@@ -1,5 +1,30 @@
-﻿import { PrismaClient, ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
+﻿import { PrismaClient } from "@prisma/client";
+import type { ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
 import baselineData from "../../prisma/baseline-data.json";
+
+const TRIP_TYPE = {
+  solo: "solo",
+  couple: "couple",
+  family: "family",
+  friends: "friends",
+  business: "business",
+} as const satisfies Record<string, TripType>;
+
+const USER_ROLE = {
+  user: "user",
+  admin: "admin",
+} as const satisfies Record<string, UserRole>;
+
+const REPORT_TARGET_TYPE = {
+  post: "post",
+  comment: "comment",
+} as const satisfies Record<string, ReportTargetType>;
+
+const REPORT_STATUS = {
+  pending: "pending",
+  resolved: "resolved",
+  dismissed: "dismissed",
+} as const satisfies Record<string, ReportStatus>;
 
 type InMemoryUser = {
   id: string;
@@ -568,7 +593,7 @@ function createInMemoryDb(store: InMemoryStore) {
         const created: InMemoryReport = {
           ...args.data,
           id: nextId("rpt"),
-          status: args.data.status ?? ReportStatus.pending,
+          status: args.data.status ?? REPORT_STATUS.pending,
           createdAt: now,
           updatedAt: now,
         };
@@ -701,11 +726,11 @@ const BASELINE_USERS = baselineData.BASELINE_USERS as Array<{
 }>;
 
 const TRIP_TYPE_BY_KEY: Record<string, TripType> = {
-  solo: TripType.solo,
-  couple: TripType.couple,
-  family: TripType.family,
-  friends: TripType.friends,
-  business: TripType.business,
+  solo: TRIP_TYPE.solo,
+  couple: TRIP_TYPE.couple,
+  family: TRIP_TYPE.family,
+  friends: TRIP_TYPE.friends,
+  business: TRIP_TYPE.business,
 };
 
 const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5Fa947p1Njc/C";
@@ -837,7 +862,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     avatarUrl: seedUser.avatarUrl,
     bio: seedUser.bio,
     location: seedUser.location,
-    role: seedUser.email === BASELINE_ADMIN_EMAIL ? UserRole.admin : UserRole.user,
+    role: seedUser.email === BASELINE_ADMIN_EMAIL ? USER_ROLE.admin : USER_ROLE.user,
     passwordHash: BASELINE_PASSWORD_HASH,
     isBanned: false,
     createdAt: randomDateWithinLast30Days(),
@@ -885,7 +910,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
         locationCity: story.locationCity,
         locationCountry: story.locationCountry,
         propertyName: story.propertyName,
-        tripType: TRIP_TYPE_BY_KEY[story.tripType] ?? TripType.solo,
+        tripType: TRIP_TYPE_BY_KEY[story.tripType] ?? TRIP_TYPE.solo,
         authorId,
         tags: story.tags,
         images: story.images,
@@ -999,18 +1024,18 @@ function createBaselineInMemoryStore(): InMemoryStore {
 
   const reportTargets = [
     ...experiencePosts.slice(0, 8).map((post) => ({
-      targetType: ReportTargetType.post,
+      targetType: REPORT_TARGET_TYPE.post,
       targetId: post.id,
       authorId: post.authorId,
     })),
     ...comments.slice(0, 8).map((comment) => ({
-      targetType: ReportTargetType.comment,
+      targetType: REPORT_TARGET_TYPE.comment,
       targetId: comment.id,
       authorId: comment.authorId,
     })),
   ];
 
-  const statuses = [ReportStatus.pending, ReportStatus.resolved, ReportStatus.dismissed] as const;
+  const statuses = [REPORT_STATUS.pending, REPORT_STATUS.resolved, REPORT_STATUS.dismissed] as const;
 
   const reports: InMemoryReport[] = reportTargets.map((target, index) => {
     const reporterPool = users.filter((user) => user.id !== target.authorId);
@@ -1076,11 +1101,12 @@ const inMemoryStore =
         passwordResetTokens: [],
       });
 
-const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+const prisma = useInMemoryDb
+  ? null
+  : globalForPrisma.prisma ??
+    new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
 
 const inMemoryDb = createInMemoryDb(inMemoryStore);
 type DbClient = typeof inMemoryDb;
@@ -1111,7 +1137,7 @@ if (useInMemoryDb && process.env.NODE_ENV !== "production") {
   globalForInMemory.inMemoryStore = inMemoryStore;
 }
 
-if (!useInMemoryDb && process.env.NODE_ENV !== "production") {
+if (prisma && process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 

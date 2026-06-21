@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import type { PostCardData } from "@/components/post-card";
-
-export const HOME_PAGE_SIZE = 20;
+import { HOME_PAGE_SIZE } from "@/lib/home-feed-constants";
 
 type HomePageCursor = {
   createdAtMs: number;

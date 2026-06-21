@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { PostCard, type PostCardData } from "@/components/post-card";
 import { HomeFeedEmpty } from "@/components/explore/empty-state";
 import { PostCardSkeletonGrid } from "@/components/explore/post-card-skeleton";
-import { HOME_PAGE_SIZE } from "@/lib/home-feed";
+import { HOME_PAGE_SIZE } from "@/lib/home-feed-constants";
 
 type HomeFeedClientProps = {
   initialPosts: PostCardData[];

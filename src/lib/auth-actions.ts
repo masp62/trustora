@@ -2,7 +2,6 @@
 
 import { randomBytes } from "node:crypto";
 
-import { UserRole } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
@@ -10,6 +9,7 @@ import { AuthError } from "next-auth";
 import { auth, googleAuthConfigured, signIn, signOut } from "@/auth";
 import { type AuthActionState } from "@/lib/auth-action-state";
 import { db } from "@/lib/db";
+import { USER_ROLE } from "@/lib/prisma-enum-values";
 import { generateUniqueUsername } from "@/lib/usernames";
 
 function parseField(value: FormDataEntryValue | null) {
@@ -109,7 +109,7 @@ export async function signUpWithCredentials(
         avatarUrl: null,
         bio: null,
         location: null,
-        role: UserRole.user,
+        role: USER_ROLE.user,
         passwordHash,
         isBanned: false,
       },

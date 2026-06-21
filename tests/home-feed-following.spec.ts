@@ -124,6 +124,32 @@ async function followUserFromProfile(page: import("@playwright/test").Page, user
   }
 }
 
+async function loadFeedUntilTitlesVisible(
+  page: import("@playwright/test").Page,
+  titles: string[],
+  maxScrollAttempts = 6,
+) {
+  for (let attempt = 0; attempt <= maxScrollAttempts; attempt += 1) {
+    const cardTitles = await page.locator("article h3").allTextContents();
+    const hasAllTitles = titles.every((title) => cardTitles.some((cardTitle) => cardTitle.includes(title)));
+    if (hasAllTitles) {
+      return cardTitles;
+    }
+
+    if (attempt === maxScrollAttempts) {
+      return cardTitles;
+    }
+
+    await page.evaluate(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "auto" });
+    });
+
+    await page.waitForTimeout(500);
+  }
+
+  return page.locator("article h3").allTextContents();
+}
+
 test.describe("Story 17 home feed", () => {
   test("redirects unauthenticated visitors from / to /explore", async ({ page }) => {
     await page.goto("/");
@@ -180,12 +206,7 @@ test.describe("Story 17 home feed", () => {
 
     await page.goto("/");
 
-    const olderHeading = page.getByRole("heading", { name: older.title }).first();
-    const newerHeading = page.getByRole("heading", { name: newer.title }).first();
-    await expect(newerHeading).toBeVisible();
-    await expect(olderHeading).toBeVisible();
-
-    const cardTitles = await page.locator("article h3").allTextContents();
+    const cardTitles = await loadFeedUntilTitlesVisible(page, [newer.title, older.title]);
     const olderIndex = cardTitles.findIndex((title) => title.includes(older.title));
     const newerIndex = cardTitles.findIndex((title) => title.includes(newer.title));
     expect(olderIndex).toBeGreaterThanOrEqual(0);

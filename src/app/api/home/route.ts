@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
-import { HOME_PAGE_SIZE, getHomeFeedPage } from "@/lib/home-feed";
+import { HOME_PAGE_SIZE } from "@/lib/home-feed-constants";
+import { getHomeFeedPage } from "@/lib/home-feed";
 
 function clampLimit(value: number) {
   if (Number.isNaN(value)) {

@@ -1,8 +1,7 @@
 import { db } from "@/lib/db";
 import type { PostCardData } from "@/components/post-card";
 import type { FilterState } from "@/lib/explore-filters";
-
-export const EXPLORE_PAGE_SIZE = 20;
+import { EXPLORE_PAGE_SIZE } from "@/lib/explore-constants";
 
 type ExplorePageResult = {
   posts: PostCardData[];
