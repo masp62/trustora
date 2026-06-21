@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-const ONBOARDING_PROMPT_DISMISSED_KEY = "realbnb.onboardingPrompt.dismissed";
+const ONBOARDING_PROMPT_DISMISSED_KEY = "trustora.onboardingPrompt.dismissed";
 
 export function OnboardingPrompt() {
   const searchParams = useSearchParams();
@@ -30,7 +30,7 @@ export function OnboardingPrompt() {
     <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 text-gray-800">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-semibold">Welcome to RealBnB.</p>
+          <p className="font-semibold">Welcome to Trustora.</p>
           <p className="mt-1 text-sm">Try following travelers or create your first post to get started.</p>
         </div>
         <Link
@@ -44,3 +44,4 @@ export function OnboardingPrompt() {
     </div>
   );
 }
+

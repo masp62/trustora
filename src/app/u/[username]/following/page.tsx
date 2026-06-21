@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -72,8 +72,8 @@ export async function generateMetadata({ params }: FollowingPageProps): Promise<
   }
 
   return {
-    title: `Following of @${data.user.username} · RealBnB`,
-    description: `People that ${data.user.displayName} follows on RealBnB.`,
+    title: `Following of @${data.user.username} Â· Trustora`,
+    description: `People that ${data.user.displayName} follows on Trustora.`,
   };
 }
 
@@ -135,3 +135,4 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
     </main>
   );
 }
+

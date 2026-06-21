@@ -1,7 +1,7 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 const ADMIN_CREDENTIALS = {
-  email: "anna@realbnb.local",
+  email: "anna@trustora.local",
   password: "12345678",
 };
 
@@ -63,3 +63,4 @@ test.describe("Story 23a admin analytics overview", () => {
     await expect(page.getByRole("heading", { name: "Access forbidden" })).toBeVisible();
   });
 });
+

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: CountryPageProps): Promise<Me
   }
 
   const title = `Experiences in ${country}`;
-  const description = `Browse real travel stay experiences in ${country} on RealBnB.`;
+  const description = `Browse real travel stay experiences in ${country} on Trustora.`;
   const url = `/explore/${countrySlug}`;
 
   return {
@@ -91,3 +91,4 @@ export default async function CountryExplorePage({ params }: CountryPageProps) {
     </main>
   );
 }
+

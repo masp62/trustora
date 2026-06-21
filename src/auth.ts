@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+﻿import { UserRole } from "@prisma/client";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -17,7 +17,7 @@ export const googleAuthConfigured = Boolean(
     process.env.GOOGLE_CLIENT_ID &&
     process.env.GOOGLE_CLIENT_SECRET,
 );
-const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
+const BASELINE_ADMIN_EMAIL = "anna@trustora.local";
 
 function displayNameFromEmail(email: string) {
   return email.split("@")[0] ?? "Traveler";
@@ -191,3 +191,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail() {
   return `comments-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -152,7 +152,7 @@ test.describe("Story 11 comments", () => {
     await page.goto(post.canonicalPath);
 
     await page.getByLabel("Write a comment").click();
-    await expect(page.getByRole("heading", { name: "Sign in to RealBnB" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sign in to Trustora" })).toBeVisible();
   });
 
   test("rejects empty comment submission with validation message", async ({ page }) => {

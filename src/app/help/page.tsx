@@ -1,4 +1,4 @@
-export default function HelpPage() {
+﻿export default function HelpPage() {
   return (
     <main className="flex flex-1 items-center px-4 py-12 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-12">
@@ -11,10 +11,10 @@ export default function HelpPage() {
         <p className="mt-4 text-gray-600">
           This page is coming soon. In the meantime, feel free to reach out to us at{" "}
           <a
-            href="mailto:support@realbnb.com"
+            href="mailto:support@trustora.com"
             className="font-semibold text-brand hover:text-brand-hover"
           >
-            support@realbnb.com
+            support@trustora.com
           </a>
           .
         </p>
@@ -22,3 +22,4 @@ export default function HelpPage() {
     </main>
   );
 }
+

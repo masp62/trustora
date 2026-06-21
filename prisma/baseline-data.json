@@ -11,7 +11,7 @@
   ],
   "BASELINE_USERS": [
     {
-      "email": "anna@realbnb.local",
+      "email": "anna@trustora.local",
       "username": "annawanders",
       "displayName": "Anna Mueller",
       "bio": "Coffee first, then city walks and hidden guesthouse gems.",
@@ -114,7 +114,7 @@
       ]
     },
     {
-      "email": "lukas@realbnb.local",
+      "email": "lukas@trustora.local",
       "username": "lukasontheroad",
       "displayName": "Lukas Schneider",
       "bio": "Chasing mountain air, surf spots, and practical stays for longer trips.",
@@ -217,7 +217,7 @@
       ]
     },
     {
-      "email": "sofia@realbnb.local",
+      "email": "sofia@trustora.local",
       "username": "sofiatravels",
       "displayName": "Sofia Petersen",
       "bio": "Architecture nerd. I travel for buildings, stay for the food.",
@@ -287,9 +287,9 @@
           ]
         },
         {
-          "title": "Winter Cabin in Tromsø",
+          "title": "Winter Cabin in TromsÃ¸",
           "body": "Northern lights from the hot tub, snow on the roof, and absolute silence for miles.",
-          "locationCity": "Tromsø",
+          "locationCity": "TromsÃ¸",
           "locationCountry": "Norway",
           "propertyName": "Aurora Mountain Cabin",
           "tripType": "couple",
@@ -367,7 +367,7 @@
         {
           "title": "Portuguese Farmhouse Escape",
           "body": "Cork trees, homemade bread from the host, and a pool that felt like it was only ours.",
-          "locationCity": "Évora",
+          "locationCity": "Ã‰vora",
           "locationCountry": "Portugal",
           "propertyName": "Monte da Serralheira",
           "tripType": "family",
@@ -382,7 +382,7 @@
       ]
     },
     {
-      "email": "marco@realbnb.local",
+      "email": "marco@trustora.local",
       "username": "marcoexplores",
       "displayName": "Marco Ricci",
       "bio": "Italian food lover turned travel writer. Slow trips only.",
@@ -438,7 +438,7 @@
         },
         {
           "title": "Seaside Apartment in Nice",
-          "body": "Blue sea from the balcony, daily market trips, and a kitchen good enough to cook provençal dinners.",
+          "body": "Blue sea from the balcony, daily market trips, and a kitchen good enough to cook provenÃ§al dinners.",
           "locationCity": "Nice",
           "locationCountry": "France",
           "propertyName": "Promenade View Flat",
@@ -547,7 +547,7 @@
       ]
     },
     {
-      "email": "yuki@realbnb.local",
+      "email": "yuki@trustora.local",
       "username": "yukistays",
       "displayName": "Yuki Tanaka",
       "bio": "Remote worker exploring Asia one city at a time. Need good wifi and quiet corners.",
@@ -712,7 +712,7 @@
       ]
     },
     {
-      "email": "clara@realbnb.local",
+      "email": "clara@trustora.local",
       "username": "clarabnb",
       "displayName": "Clara Johansson",
       "bio": "Family travel specialist. If it works with two kids, it works for anyone.",
@@ -877,7 +877,7 @@
       ]
     },
     {
-      "email": "james@realbnb.local",
+      "email": "james@trustora.local",
       "username": "jamesbackpack",
       "displayName": "James Okonkwo",
       "bio": "Budget traveler and hostel veteran. Proving you don't need luxury to have great stays.",
@@ -1043,3 +1043,4 @@
     }
   ]
 }
+

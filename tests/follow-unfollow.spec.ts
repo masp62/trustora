@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail() {
   return `follow-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -137,6 +137,7 @@ test.describe("Story 12 follow/unfollow", () => {
     await page.goto(`/u/${post.authorUsername}`);
     await page.getByRole("button", { name: `Follow @${post.authorUsername}` }).click();
 
-    await expect(page.getByRole("heading", { name: "Sign in to RealBnB" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sign in to Trustora" })).toBeVisible();
   });
 });
+

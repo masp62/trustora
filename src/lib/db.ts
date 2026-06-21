@@ -1,4 +1,4 @@
-import { PrismaClient, ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
+﻿import { PrismaClient, ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
 import baselineData from "../../prisma/baseline-data.json";
 
 type InMemoryUser = {
@@ -709,7 +709,7 @@ const TRIP_TYPE_BY_KEY: Record<string, TripType> = {
 };
 
 const BASELINE_PASSWORD_HASH = "$2b$12$XJK5B0hXDm4P4tMG6todnuFPHuKFkF0PhqnLH4DU5Fa947p1Njc/C";
-const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
+const BASELINE_ADMIN_EMAIL = "anna@trustora.local";
 
 function createBaselineInMemoryStore(): InMemoryStore {
   const now = new Date();
@@ -820,13 +820,13 @@ function createBaselineInMemoryStore(): InMemoryStore {
       .slice(0, 64);
 
   const preferredUserIds: Record<string, string> = {
-    "anna@realbnb.local": "usr_anna",
-    "lukas@realbnb.local": "usr_lukas",
-    "sofia@realbnb.local": "usr_sofia",
-    "marco@realbnb.local": "usr_marco",
-    "yuki@realbnb.local": "usr_yuki",
-    "clara@realbnb.local": "usr_clara",
-    "james@realbnb.local": "usr_james",
+    "anna@trustora.local": "usr_anna",
+    "lukas@trustora.local": "usr_lukas",
+    "sofia@trustora.local": "usr_sofia",
+    "marco@trustora.local": "usr_marco",
+    "yuki@trustora.local": "usr_yuki",
+    "clara@trustora.local": "usr_clara",
+    "james@trustora.local": "usr_james",
   };
 
   const users: InMemoryUser[] = BASELINE_USERS.map((seedUser, index) => ({
@@ -1114,3 +1114,4 @@ if (useInMemoryDb && process.env.NODE_ENV !== "production") {
 if (!useInMemoryDb && process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
+

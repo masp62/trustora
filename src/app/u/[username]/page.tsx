@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, MapPin, PenLine } from "lucide-react";
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   if (!profile) return { title: "User not found" };
 
   return {
-    title: `${profile.user.displayName} (@${profile.user.username}) · RealBnB`,
+    title: `${profile.user.displayName} (@${profile.user.username}) Â· Trustora`,
     description: profile.user.bio ?? `Travel stories by ${profile.user.displayName}`,
   };
 }
@@ -247,3 +247,4 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
     </main>
   );
 }
+

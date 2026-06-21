@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import { auth, googleAuthConfigured } from "@/auth";
 import { PostCard } from "@/components/post-card";
@@ -23,12 +23,12 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   if (!query) {
     return {
       title: "Search experiences",
-      description: "Search travel stay experiences on RealBnB.",
+      description: "Search travel stay experiences on Trustora.",
     };
   }
 
-  const title = `Search results for \"${query}\" — RealBnB`;
-  const description = `Discover travel stay experiences matching \"${query}\" on RealBnB.`;
+  const title = `Search results for \"${query}\" â€” Trustora`;
+  const description = `Discover travel stay experiences matching \"${query}\" on Trustora.`;
 
   return {
     title,
@@ -93,3 +93,4 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     </main>
   );
 }
+

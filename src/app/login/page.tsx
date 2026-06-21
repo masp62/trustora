@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { googleAuthConfigured } from "@/auth";
 import { signInWithGoogle } from "@/lib/auth-actions";
@@ -12,7 +12,7 @@ export default function LoginPage() {
         <div>
           <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Welcome back</p>
           <h1 className="mt-4 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">
-            Sign in to RealBnB
+            Sign in to Trustora
           </h1>
           <p className="mt-4 text-gray-700">
             Continue with Google or use your email and password.
@@ -47,3 +47,4 @@ export default function LoginPage() {
     </main>
   );
 }
+

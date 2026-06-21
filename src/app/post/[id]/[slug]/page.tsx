@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { Star } from "lucide-react";
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
   if (!post) {
     return {
       title: "Post not found",
-      description: "The requested RealBnB post does not exist.",
+      description: "The requested Trustora post does not exist.",
     };
   }
 
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
   }));
 
   return {
-    title: `${post.title} · ${post.locationCity}, ${post.locationCountry}`,
+    title: `${post.title} Â· ${post.locationCity}, ${post.locationCountry}`,
     description,
     openGraph: {
       title: post.title,
@@ -156,7 +156,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           </div>
           <h1 className="font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">{post.title}</h1>
           <p className="text-sm text-gray-600">
-            {post.locationCity}, {post.locationCountry} · {toTitleCase(post.tripType)}
+            {post.locationCity}, {post.locationCountry} Â· {toTitleCase(post.tripType)}
           </p>
           {post.propertyName && <p className="text-sm text-gray-600">Property: {post.propertyName}</p>}
         </header>
@@ -296,3 +296,4 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     </main>
   );
 }
+

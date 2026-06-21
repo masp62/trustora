@@ -1,6 +1,6 @@
-# RealBnB
+﻿# Trustora
 
-RealBnB is a Next.js App Router application for sharing travel stay experiences.
+Trustora is a Next.js App Router application for sharing travel stay experiences.
 
 ## Project Foundation Status
 
@@ -46,12 +46,12 @@ npm run dev
 
 The seed creates two users with profiles and 5-8 stories each.
 
-- Email: `anna@realbnb.local` | Password: `12345678`
-- Email: `lukas@realbnb.local` | Password: `12345678`
+- Email: `anna@trustora.local` | Password: `12345678`
+- Email: `lukas@trustora.local` | Password: `12345678`
 
 Admin account for moderation stories:
 
-- Email: `anna@realbnb.local` | Password: `12345678` | Role: `admin`
+- Email: `anna@trustora.local` | Password: `12345678` | Role: `admin`
 
 `npm run dev` automatically runs the seed first, so baseline data is available each time the app starts.
 
@@ -73,3 +73,4 @@ Automatic deploys on push to `main` are enabled after linking this repo to Verce
 3. Confirm production branch is `main`.
 
 After that, every push to `main` triggers a production deployment.
+

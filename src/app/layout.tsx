@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 
 import { SiteHeader } from "@/components/site-header";
@@ -28,7 +28,7 @@ function resolveMetadataBase() {
 
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
-  title: "RealBnB",
+  title: "Trustora",
   description: "Share and discover real stay experiences from travelers.",
 };
 
@@ -51,3 +51,4 @@ export default function RootLayout({
     </html>
   );
 }
+

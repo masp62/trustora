@@ -1,10 +1,10 @@
-# RealBnB — Product Requirements Document
+﻿# Trustora â€” Product Requirements Document
 
 ## Problem Statement
 
 Travelers who book stays through platforms like Airbnb have no dedicated space to share the full story of their experience. Existing options are fragmented and shallow:
 
-- **Airbnb's own reviews** are limited to star ratings and short text, buried inside property listings. There is no social dimension — you can't follow a reviewer, browse their other stays, or discover destinations through their eyes.
+- **Airbnb's own reviews** are limited to star ratings and short text, buried inside property listings. There is no social dimension â€” you can't follow a reviewer, browse their other stays, or discover destinations through their eyes.
 - **Social media (Instagram, TikTok)** is noisy and not purpose-built for travel stays. Posts disappear into general feeds, aren't searchable by destination or trip type, and lack structured travel metadata.
 - **Travel blogs** require significant effort to maintain, are isolated from each other, and offer no community interaction.
 
@@ -12,16 +12,16 @@ The result: valuable first-hand travel knowledge is either locked inside five-st
 
 ## Solution
 
-**RealBnB** is a social media platform where travelers share rich, visual Experience Posts about their stays. It combines the structured discoverability of a travel platform with the social engagement of a modern feed-based app.
+**Trustora** is a social media platform where travelers share rich, visual Experience Posts about their stays. It combines the structured discoverability of a travel platform with the social engagement of a modern feed-based app.
 
-Users create Experience Posts — photo-rich narratives that include where they stayed, what it was like, and what they recommend — and discover others' experiences by location, tags, and trip type. They follow travelers whose taste they trust, like and comment on posts, and browse auto-generated destination pages.
+Users create Experience Posts â€” photo-rich narratives that include where they stayed, what it was like, and what they recommend â€” and discover others' experiences by location, tags, and trip type. They follow travelers whose taste they trust, like and comment on posts, and browse auto-generated destination pages.
 
 The platform is:
 
-- **Public by default** — anyone can browse and search without an account, making content discoverable via search engines.
-- **Visual-first** — at least one photo is required per post; the feed is a photography-forward card grid.
-- **Standalone** — no dependency on Airbnb's API. Users manually share their experiences, and the platform can expand to cover any booking provider.
-- **Web-first** — responsive design for mobile browsers; native apps deferred to post-traction.
+- **Public by default** â€” anyone can browse and search without an account, making content discoverable via search engines.
+- **Visual-first** â€” at least one photo is required per post; the feed is a photography-forward card grid.
+- **Standalone** â€” no dependency on Airbnb's API. Users manually share their experiences, and the platform can expand to cover any booking provider.
+- **Web-first** â€” responsive design for mobile browsers; native apps deferred to post-traction.
 
 ## User Stories
 
@@ -40,7 +40,7 @@ The platform is:
 11. As a user, I want to log in with Google or email/password, so that I can access my account.
 12. As a user, I want to log out, so that I can end my session.
 
-### Experience Posts — Creating
+### Experience Posts â€” Creating
 
 13. As a logged-in user, I want to create an Experience Post with a title (max 120 characters), so that I can headline my story.
 14. As a logged-in user, I want to write a rich-text body (max ~5000 characters) for my post, so that I can tell the full story of my stay.
@@ -53,7 +53,7 @@ The platform is:
 21. As a logged-in user, I want to be prevented from creating more than 5 posts per day, so that spam is discouraged.
 22. As a logged-in user, I want to see a clear validation message if I try to submit a post without a title, body, at least one photo, or a location, so that I know what's missing.
 
-### Experience Posts — Viewing
+### Experience Posts â€” Viewing
 
 23. As any visitor (logged in or not), I want to view the full detail page of an Experience Post, so that I can read the story and see all photos.
 24. As a visitor, I want to see the post's photo gallery, title, body, location, tags, trip type, author info, like count, and comments on the detail page, so that I get the complete picture.
@@ -63,27 +63,27 @@ The platform is:
 28. As a visitor, I want the post detail page to have a SEO-friendly URL with ID and slug (`/post/[id]/[slug]`), so that the page ranks well in search engines and is shareable.
 29. As a visitor, I want to be redirected to the correct slug URL if I visit a post with an incorrect or outdated slug, so that links always resolve properly.
 
-### Experience Posts — Editing & Deleting
+### Experience Posts â€” Editing & Deleting
 
 30. As a post author, I want to edit my own Experience Post (title, body, photos, location, tags, trip type, property name), so that I can fix mistakes or add details.
 31. As a post author, I want to delete my own Experience Post, so that I can remove content I no longer want public.
 32. As a post author, I want a confirmation dialog before deletion, so that I don't accidentally remove a post.
 
-### Social Interactions — Likes
+### Social Interactions â€” Likes
 
 33. As a logged-in user, I want to like an Experience Post, so that I can show appreciation.
 34. As a logged-in user, I want to unlike a previously liked post, so that I can change my mind.
 35. As a visitor, I want to see the total like count on each post, so that I can gauge its popularity.
 36. As a visitor who tries to like a post without being logged in, I want to be prompted to log in, so that I understand why the action failed.
 
-### Social Interactions — Comments
+### Social Interactions â€” Comments
 
 37. As a logged-in user, I want to comment on an Experience Post, so that I can engage in conversation or ask questions.
 38. As a logged-in user, I want to delete my own comment, so that I can remove something I regret posting.
 39. As a visitor, I want to read all comments on a post in chronological order, so that I can follow the discussion.
 40. As a visitor who tries to comment without being logged in, I want to be prompted to log in, so that I understand why the action failed.
 
-### Social Interactions — Following
+### Social Interactions â€” Following
 
 41. As a logged-in user, I want to follow another user from their profile or from a post, so that their future posts appear in my home feed.
 42. As a logged-in user, I want to unfollow a user, so that I can stop seeing their posts in my feed.
@@ -98,13 +98,13 @@ The platform is:
 48. As a logged-in user, I want to upload a new avatar from my device, so that I can personalize my profile.
 49. As a user changing my username, I want to be informed if the new username is already taken, so that I can choose another.
 
-### Feed — Home (Following)
+### Feed â€” Home (Following)
 
 50. As a logged-in user, I want a home feed showing posts from users I follow in reverse chronological order, so that I see the latest content from people I care about.
 51. As a logged-in user who follows nobody, I want to see a prompt to discover users or browse the Explore feed, so that my home feed is never a dead end.
 52. As a logged-in user, I want infinite scroll on the home feed, so that I can keep browsing without clicking pagination.
 
-### Feed — Explore (Discover)
+### Feed â€” Explore (Discover)
 
 53. As any visitor, I want to browse an Explore feed showing posts from all users sorted by recency and engagement, so that I can discover interesting experiences.
 54. As a visitor, I want to filter the Explore feed by location (country, city), so that I can find experiences at a specific destination.
@@ -113,14 +113,14 @@ The platform is:
 57. As a visitor, I want to combine multiple filters (e.g. "beach" + "Portugal" + "couple"), so that I can narrow results precisely.
 58. As a visitor, I want infinite scroll on the Explore feed, so that I can keep browsing seamlessly.
 
-### Discovery — Location Pages
+### Discovery â€” Location Pages
 
 59. As a visitor, I want to browse a location page (e.g. `/explore/portugal/lisbon`) showing all Experience Posts for that city, so that I can research a destination.
 60. As a visitor, I want location pages to be auto-generated when at least one post exists for a city, so that every mentioned destination is browsable.
 61. As a visitor, I want to browse a country-level page (e.g. `/explore/portugal`) showing all posts for that country, so that I can explore broadly.
 62. As a search engine crawler, I want location pages to have proper meta tags (title, description, Open Graph), so that they rank and preview well.
 
-### Discovery — Tag Pages
+### Discovery â€” Tag Pages
 
 63. As a visitor, I want to browse a tag page (e.g. `/explore/tags/beach`) showing all posts with that tag, so that I can discover stays by category.
 64. As a visitor, I want tag pages to be auto-generated from the predefined tag list, so that discovery is consistent.
@@ -146,7 +146,7 @@ The platform is:
 ### Responsive Design
 
 77. As a mobile user, I want the feed to display as a single-column scrollable list of cards, so that it's comfortable on small screens.
-78. As a desktop user, I want the feed to display as a multi-column card grid (2–3 columns), so that I can see more content at once.
+78. As a desktop user, I want the feed to display as a multi-column card grid (2â€“3 columns), so that I can see more content at once.
 79. As a mobile user, I want all forms (create post, edit profile, login) to be fully usable on a small screen, so that I can do everything from my phone.
 
 ### SEO & Public Access
@@ -168,31 +168,31 @@ The platform is:
 - **Styling:** Tailwind CSS with shadcn/ui component library (copy-paste, fully owned components)
 - **Database:** PostgreSQL hosted on Neon (serverless, scales to zero)
 - **ORM:** Prisma (type-safe queries, migration management)
-- **Authentication:** NextAuth.js v5 (Auth.js) — Google OAuth + Credentials provider (email/password)
+- **Authentication:** NextAuth.js v5 (Auth.js) â€” Google OAuth + Credentials provider (email/password)
 - **Image Storage:** Cloudinary (upload, transformation, CDN delivery, NSFW moderation on upload)
 - **Hosting:** Vercel
 
 ### Data Model (Entities & Relationships)
 
-- **User** — `id`, `email`, `username` (unique, auto-generated from display name with random suffix if collision), `displayName`, `avatarUrl`, `bio` (max 280 chars), `location`, `role` (user | admin), `createdAt`
-- **ExperiencePost** — `id`, `slug` (generated from title), `title` (max 120 chars), `body` (max ~5000 chars), `locationCity`, `locationCountry`, `propertyName` (optional), `tripType` (enum: solo, couple, family, friends, business), `authorId` (FK → User), `createdAt`, `updatedAt`
-- **PostImage** — `id`, `postId` (FK → ExperiencePost), `cloudinaryUrl`, `order` (for gallery sequencing)
-- **PostTag** — join table: `postId` (FK) ↔ `tagId` (FK). Max 5 tags per post enforced at application layer.
-- **Tag** — `id`, `name` (unique). Predefined seed set: beach, city-break, countryside, luxury, budget, pet-friendly, unique-stay, remote-work.
-- **Like** — `userId` + `postId` (composite unique). No duplicate likes.
-- **Comment** — `id`, `body`, `postId` (FK), `authorId` (FK → User), `createdAt`
-- **Follow** — `followerId` + `followingId` (composite unique). Self-follow prevented at application layer.
-- **Report** — `id`, `reporterId` (FK → User), `targetType` (post | comment), `targetId`, `reason` (optional text), `status` (pending | resolved | dismissed), `createdAt`
+- **User** â€” `id`, `email`, `username` (unique, auto-generated from display name with random suffix if collision), `displayName`, `avatarUrl`, `bio` (max 280 chars), `location`, `role` (user | admin), `createdAt`
+- **ExperiencePost** â€” `id`, `slug` (generated from title), `title` (max 120 chars), `body` (max ~5000 chars), `locationCity`, `locationCountry`, `propertyName` (optional), `tripType` (enum: solo, couple, family, friends, business), `authorId` (FK â†’ User), `createdAt`, `updatedAt`
+- **PostImage** â€” `id`, `postId` (FK â†’ ExperiencePost), `cloudinaryUrl`, `order` (for gallery sequencing)
+- **PostTag** â€” join table: `postId` (FK) â†” `tagId` (FK). Max 5 tags per post enforced at application layer.
+- **Tag** â€” `id`, `name` (unique). Predefined seed set: beach, city-break, countryside, luxury, budget, pet-friendly, unique-stay, remote-work.
+- **Like** â€” `userId` + `postId` (composite unique). No duplicate likes.
+- **Comment** â€” `id`, `body`, `postId` (FK), `authorId` (FK â†’ User), `createdAt`
+- **Follow** â€” `followerId` + `followingId` (composite unique). Self-follow prevented at application layer.
+- **Report** â€” `id`, `reporterId` (FK â†’ User), `targetType` (post | comment), `targetId`, `reason` (optional text), `status` (pending | resolved | dismissed), `createdAt`
 
 ### Key Relationships
 
-- User 1 → N ExperiencePost (author)
-- ExperiencePost 1 → N PostImage (1–10, enforced at app layer)
-- ExperiencePost N ↔ N Tag (via PostTag, max 5 per post)
-- User N ↔ N ExperiencePost (via Like)
-- User 1 → N Comment
-- ExperiencePost 1 → N Comment
-- User N ↔ N User (via Follow — follower/following)
+- User 1 â†’ N ExperiencePost (author)
+- ExperiencePost 1 â†’ N PostImage (1â€“10, enforced at app layer)
+- ExperiencePost N â†” N Tag (via PostTag, max 5 per post)
+- User N â†” N ExperiencePost (via Like)
+- User 1 â†’ N Comment
+- ExperiencePost 1 â†’ N Comment
+- User N â†” N User (via Follow â€” follower/following)
 
 ### Feed Logic
 
@@ -204,7 +204,7 @@ The platform is:
 
 | Route Pattern | Description |
 |---|---|
-| `/` | Home feed (following) — redirects to `/explore` if not logged in |
+| `/` | Home feed (following) â€” redirects to `/explore` if not logged in |
 | `/explore` | Discover feed |
 | `/explore/[country]/[city]` | Auto-generated location page |
 | `/explore/[country]` | Country-level location page |
@@ -227,7 +227,7 @@ The platform is:
 ### Image Upload
 
 - Uploads go to Cloudinary via their upload widget or server-side SDK.
-- NSFW moderation enabled on upload — images flagged as NSFW are rejected before being attached to a post.
+- NSFW moderation enabled on upload â€” images flagged as NSFW are rejected before being attached to a post.
 - Images are served via Cloudinary CDN with on-the-fly transformations (responsive sizing, format optimization).
 - Minimum 1 photo, maximum 10 photos per post. Enforced at form validation and server-side.
 
@@ -244,7 +244,7 @@ The platform is:
 
 ### UI Layout
 
-- **Desktop feed:** 2–3 column card grid. Each card: lead photo, title, location, author avatar + name, like count.
+- **Desktop feed:** 2â€“3 column card grid. Each card: lead photo, title, location, author avatar + name, like count.
 - **Mobile feed:** Single-column stack of cards.
 - **Post detail:** Full-width photo gallery at top, story body below, metadata (location, tags, trip type) as chips, comments section at bottom.
 - **Design language:** Clean, whitespace-heavy, photography-forward. Warm color palette evoking travel/hospitality.
@@ -253,53 +253,53 @@ The platform is:
 
 ### What Makes a Good Test
 
-Tests should verify **external behavior through public interfaces**, not implementation details. A test should describe what a user or API consumer would observe, not how internal functions are wired. Tests should be resilient to refactoring — if you rename an internal helper, no test should break.
+Tests should verify **external behavior through public interfaces**, not implementation details. A test should describe what a user or API consumer would observe, not how internal functions are wired. Tests should be resilient to refactoring â€” if you rename an internal helper, no test should break.
 
 ### Testing Seams
 
-1. **API Route / Server Action boundary** — Integration tests hitting Next.js API routes and Server Actions against a test PostgreSQL database (Neon branch or local Docker PG). Asserts HTTP status codes, response shapes, and resulting database state. Covers: post CRUD, likes, comments, follows, feed assembly, search, reports, admin moderation actions, rate limiting, access control.
+1. **API Route / Server Action boundary** â€” Integration tests hitting Next.js API routes and Server Actions against a test PostgreSQL database (Neon branch or local Docker PG). Asserts HTTP status codes, response shapes, and resulting database state. Covers: post CRUD, likes, comments, follows, feed assembly, search, reports, admin moderation actions, rate limiting, access control.
 
-2. **Prisma schema + migrations** — Schema-level validation ensuring migrations run cleanly, unique constraints hold (username, like composite key, follow composite key), cascading deletes work correctly (deleting a user removes their posts, comments, likes, follows), and enum values are enforced.
+2. **Prisma schema + migrations** â€” Schema-level validation ensuring migrations run cleanly, unique constraints hold (username, like composite key, follow composite key), cascading deletes work correctly (deleting a user removes their posts, comments, likes, follows), and enum values are enforced.
 
-3. **React component boundary** — Component tests with React Testing Library. Server action / fetch layer is mocked. Covers: post card rendering, form validation (create post, edit profile, login/signup), filter controls, infinite scroll triggering, like/unlike toggle, comment submission, photo gallery navigation, responsive layout breakpoints.
+3. **React component boundary** â€” Component tests with React Testing Library. Server action / fetch layer is mocked. Covers: post card rendering, form validation (create post, edit profile, login/signup), filter controls, infinite scroll triggering, like/unlike toggle, comment submission, photo gallery navigation, responsive layout breakpoints.
 
-4. **Auth boundary** — Integration tests verifying: unauthenticated users can read all public pages; unauthenticated users are prompted to log in when attempting write actions; authenticated users can only edit/delete their own content; admin routes reject non-admin users; OAuth and credentials flows complete successfully.
+4. **Auth boundary** â€” Integration tests verifying: unauthenticated users can read all public pages; unauthenticated users are prompted to log in when attempting write actions; authenticated users can only edit/delete their own content; admin routes reject non-admin users; OAuth and credentials flows complete successfully.
 
-5. **Image upload boundary** — Integration tests against Cloudinary's test/sandbox mode. Validates: accepted file types, file size limits, photo count limits (1–10 per post), NSFW detection rejects flagged images, successful upload returns a CDN URL.
+5. **Image upload boundary** â€” Integration tests against Cloudinary's test/sandbox mode. Validates: accepted file types, file size limits, photo count limits (1â€“10 per post), NSFW detection rejects flagged images, successful upload returns a CDN URL.
 
 ### Prior Art
 
-None — greenfield project. The first set of tests will establish patterns for all subsequent testing.
+None â€” greenfield project. The first set of tests will establish patterns for all subsequent testing.
 
 ## Out of Scope
 
 The following are explicitly excluded from this PRD and deferred to future iterations:
 
-- **Bookmarks / save posts** — Tier 2
-- **Share button (native sharing)** — Tier 2
-- **Notifications (likes, comments, new followers)** — Tier 2
-- **Highlight ratings (1–5 scale for cleanliness, location, host, value)** — Tier 2
-- **Tips section on posts** — Tier 2
-- **Stay dates on posts** — Tier 2
-- **Direct messaging between users** — Tier 3
-- **Collections / curated lists** — Tier 3
-- **Map-based discovery** — Tier 3
-- **Mention other users in posts/comments** — Tier 3
-- **Stories / reels** — No plans
-- **Groups / communities** — No plans
-- **Native mobile app (iOS / Android)** — Post-traction
-- **Airbnb API integration** — Not planned
-- **Email verification** — Deferred until spam becomes a concern
-- **Algorithmic "For You" feed** — Deferred until sufficient data volume
-- **Trending / popular sections** — Deferred
-- **Community moderators / mod roles** — Deferred, admin-only for now
-- **AI-powered content moderation** — Deferred
-- **Appeal process for moderation** — Handled manually via email
-- **Cover / banner photo on profiles** — Low value for MVP
-- **Travel stats / maps on profiles** — Tier 3
-- **Social links on profiles** — Low value for MVP
-- **Custom tags (user-created)** — Only predefined tags for MVP
-- **Video uploads** — Deferred
+- **Bookmarks / save posts** â€” Tier 2
+- **Share button (native sharing)** â€” Tier 2
+- **Notifications (likes, comments, new followers)** â€” Tier 2
+- **Highlight ratings (1â€“5 scale for cleanliness, location, host, value)** â€” Tier 2
+- **Tips section on posts** â€” Tier 2
+- **Stay dates on posts** â€” Tier 2
+- **Direct messaging between users** â€” Tier 3
+- **Collections / curated lists** â€” Tier 3
+- **Map-based discovery** â€” Tier 3
+- **Mention other users in posts/comments** â€” Tier 3
+- **Stories / reels** â€” No plans
+- **Groups / communities** â€” No plans
+- **Native mobile app (iOS / Android)** â€” Post-traction
+- **Airbnb API integration** â€” Not planned
+- **Email verification** â€” Deferred until spam becomes a concern
+- **Algorithmic "For You" feed** â€” Deferred until sufficient data volume
+- **Trending / popular sections** â€” Deferred
+- **Community moderators / mod roles** â€” Deferred, admin-only for now
+- **AI-powered content moderation** â€” Deferred
+- **Appeal process for moderation** â€” Handled manually via email
+- **Cover / banner photo on profiles** â€” Low value for MVP
+- **Travel stats / maps on profiles** â€” Tier 3
+- **Social links on profiles** â€” Low value for MVP
+- **Custom tags (user-created)** â€” Only predefined tags for MVP
+- **Video uploads** â€” Deferred
 
 ## Further Notes
 
@@ -308,3 +308,4 @@ The following are explicitly excluded from this PRD and deferred to future itera
 - **Country/city normalization** will be important for location page generation. Consider using a geocoding service or a controlled location picker (autocomplete from a known dataset) to prevent duplicates like "Lisbon" vs "Lisboa" vs "lisbon". This is a UX/data-quality decision to finalize during implementation.
 - **Admin identification** for MVP is a simple role field on the User model. The first admin account is seeded or manually set in the database. No self-service admin registration.
 - **Rate limiting** (5 posts/day) is enforced at the Server Action layer by querying the user's post count in the last 24 hours before allowing creation. No external rate-limiting service needed for MVP.
+

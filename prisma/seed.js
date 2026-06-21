@@ -1,7 +1,7 @@
-const { hash } = require("bcryptjs");
+﻿const { hash } = require("bcryptjs");
 
 const { TAGS, BASELINE_USERS } = require("./baseline-data.json");
-const BASELINE_ADMIN_EMAIL = "anna@realbnb.local";
+const BASELINE_ADMIN_EMAIL = "anna@trustora.local";
 
 function randomDateWithinLast30Days() {
   const now = Date.now();
@@ -239,7 +239,7 @@ async function main() {
       "The description of the neighborhood is so helpful.",
       "Would you go back? Thinking about a longer stay.",
       "This is the kind of honest review that's hard to find.",
-      "Perfect timing — I was just researching this area.",
+      "Perfect timing â€” I was just researching this area.",
     ];
     const commentData = [];
 
@@ -350,3 +350,4 @@ main()
     console.error(error);
     process.exitCode = 1;
   });
+

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail() {
   return `likes-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -142,6 +142,7 @@ test.describe("Story 10 likes", () => {
     await page.goto(created.canonicalPath);
     await page.getByRole("button", { name: "Like this post" }).click();
 
-    await expect(page.getByRole("heading", { name: "Sign in to RealBnB" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sign in to Trustora" })).toBeVisible();
   });
 });
+

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail() {
   return `location-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -147,7 +147,7 @@ test.describe("Story 18 location pages", () => {
     await expect(page).toHaveTitle(`Experiences in ${country}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
-      `Browse real travel stay experiences in ${country} on RealBnB.`,
+      `Browse real travel stay experiences in ${country} on Trustora.`,
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
@@ -155,7 +155,7 @@ test.describe("Story 18 location pages", () => {
     );
     await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
       "content",
-      `Browse real travel stay experiences in ${country} on RealBnB.`,
+      `Browse real travel stay experiences in ${country} on Trustora.`,
     );
 
     await page.goto(`/explore/${countrySlug}/${cityASlug}`);
@@ -168,7 +168,7 @@ test.describe("Story 18 location pages", () => {
     await expect(page).toHaveTitle(`Experiences in ${cityA}, ${country}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
-      `Browse real travel stay experiences in ${cityA}, ${country} on RealBnB.`,
+      `Browse real travel stay experiences in ${cityA}, ${country} on Trustora.`,
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
@@ -176,7 +176,7 @@ test.describe("Story 18 location pages", () => {
     );
     await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
       "content",
-      `Browse real travel stay experiences in ${cityA}, ${country} on RealBnB.`,
+      `Browse real travel stay experiences in ${cityA}, ${country} on Trustora.`,
     );
 
     await page.goto(`/explore/no-such-country-${suffix}`);
@@ -188,3 +188,4 @@ test.describe("Story 18 location pages", () => {
     await expect(page).toHaveTitle(/Location not found|Not Found/i);
   });
 });
+

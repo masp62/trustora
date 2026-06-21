@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -16,13 +16,13 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   if (!isValidPredefinedTag(tag)) {
     return {
       title: "Tag not found",
-      description: "This tag does not exist on RealBnB.",
+      description: "This tag does not exist on Trustora.",
     };
   }
 
   const tagLabel = tagToLabel(tag);
-  const title = `${tagLabel} Experiences — RealBnB`;
-  const description = `Browse ${tagLabel.toLowerCase()} travel stay experiences shared by the RealBnB community.`;
+  const title = `${tagLabel} Experiences â€” Trustora`;
+  const description = `Browse ${tagLabel.toLowerCase()} travel stay experiences shared by the Trustora community.`;
   const url = `/explore/tags/${tag}`;
 
   return {
@@ -95,3 +95,4 @@ export default async function TagPage({ params }: TagPageProps) {
     </main>
   );
 }
+

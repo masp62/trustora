@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -37,7 +37,7 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
           <>
             <DialogHeader>
               <DialogTitle className="font-heading text-2xl text-gray-900">
-                Sign in to RealBnB
+                Sign in to Trustora
               </DialogTitle>
               <DialogDescription className="text-gray-600">
                 Continue with Google or use your email and password.
@@ -152,3 +152,4 @@ export function AuthDialog({ open, onOpenChange, googleAuthConfigured }: AuthDia
     </Dialog>
   );
 }
+

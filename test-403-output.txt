@@ -1,10 +1,10 @@
-
+﻿
 Running 1 test using 1 worker
 
-  ✘  1 [chromium] › tests\post-edit-delete.spec.ts:138:7 › Story 9 post edit & delete › non-author gets 403 on edit page (2.7s)
+  âœ˜  1 [chromium] â€º tests\post-edit-delete.spec.ts:138:7 â€º Story 9 post edit & delete â€º non-author gets 403 on edit page (2.7s)
 
 
-  1) [chromium] › tests\post-edit-delete.spec.ts:138:7 › Story 9 post edit & delete › non-author gets 403 on edit page 
+  1) [chromium] â€º tests\post-edit-delete.spec.ts:138:7 â€º Story 9 post edit & delete â€º non-author gets 403 on edit page 
 
     Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
 
@@ -18,9 +18,10 @@ Running 1 test using 1 worker
       147 |   });
       148 |
       149 |   test("delete shows confirmation dialog and redirects after deletion", async ({ page }) => {
-        at C:\Projects\realbnb\tests\post-edit-delete.spec.ts:146:32
+        at C:\Projects\trustora\tests\post-edit-delete.spec.ts:146:32
 
     Error Context: test-results\post-edit-delete-Story-9-p-12bc1-uthor-gets-403-on-edit-page-chromium\error-context.md
 
   1 failed
-    [chromium] › tests\post-edit-delete.spec.ts:138:7 › Story 9 post edit & delete › non-author gets 403 on edit page 
+    [chromium] â€º tests\post-edit-delete.spec.ts:138:7 â€º Story 9 post edit & delete â€º non-author gets 403 on edit page 
+

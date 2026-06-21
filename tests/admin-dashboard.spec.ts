@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -15,7 +15,7 @@ type Credentials = {
 };
 
 const ADMIN_CREDENTIALS = {
-  email: "anna@realbnb.local",
+  email: "anna@trustora.local",
   password: "12345678",
 };
 
@@ -222,3 +222,4 @@ test.describe("Story 23 admin dashboard", () => {
     await userContext.close();
   });
 });
+

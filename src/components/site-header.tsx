@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { auth, googleAuthConfigured } from "@/auth";
 
@@ -30,7 +30,7 @@ export async function SiteHeader() {
             href="/explore"
             className="font-heading text-4xl font-bold tracking-tight text-brand transition hover:text-brand-hover"
           >
-            RealBnB
+            Trustora
           </Link>
 
           {/* Desktop nav */}
@@ -61,3 +61,4 @@ export async function SiteHeader() {
     </header>
   );
 }
+

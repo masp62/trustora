@@ -1,64 +1,64 @@
-<testsuites id="" name="" tests="62" failures="1" skipped="0" errors="0" time="200.01518">
+﻿<testsuites id="" name="" tests="62" failures="1" skipped="0" errors="0" time="200.01518">
 <testsuite name="admin-analytics-overview.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="3.113" errors="0">
-<testcase name="Story 23a admin analytics overview › admin sees overview metrics and can switch to reports tab" classname="admin-analytics-overview.spec.ts" time="1.732">
+<testcase name="Story 23a admin analytics overview â€º admin sees overview metrics and can switch to reports tab" classname="admin-analytics-overview.spec.ts" time="1.732">
 </testcase>
-<testcase name="Story 23a admin analytics overview › non-admin still receives forbidden on /admin" classname="admin-analytics-overview.spec.ts" time="1.381">
+<testcase name="Story 23a admin analytics overview â€º non-admin still receives forbidden on /admin" classname="admin-analytics-overview.spec.ts" time="1.381">
 </testcase>
 </testsuite>
 <testsuite name="admin-dashboard.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="10.638" errors="0">
-<testcase name="Story 23 admin dashboard › non-admin user gets forbidden access to /admin" classname="admin-dashboard.spec.ts" time="1.347">
+<testcase name="Story 23 admin dashboard â€º non-admin user gets forbidden access to /admin" classname="admin-dashboard.spec.ts" time="1.347">
 </testcase>
-<testcase name="Story 23 admin dashboard › admin can dismiss, ban, remove and banned user gets clear create/comment rejection" classname="admin-dashboard.spec.ts" time="9.291">
+<testcase name="Story 23 admin dashboard â€º admin can dismiss, ban, remove and banned user gets clear create/comment rejection" classname="admin-dashboard.spec.ts" time="9.291">
 </testcase>
 </testsuite>
 <testsuite name="auth-onboarding.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="1.382" errors="0">
-<testcase name="Story 4 auth and onboarding UI › signup page keeps provider hierarchy and login link" classname="auth-onboarding.spec.ts" time="0.232">
+<testcase name="Story 4 auth and onboarding UI â€º signup page keeps provider hierarchy and login link" classname="auth-onboarding.spec.ts" time="0.232">
 </testcase>
-<testcase name="Story 4 auth and onboarding UI › onboarding prompt can be dismissed" classname="auth-onboarding.spec.ts" time="1.15">
+<testcase name="Story 4 auth and onboarding UI â€º onboarding prompt can be dismissed" classname="auth-onboarding.spec.ts" time="1.15">
 </testcase>
 </testsuite>
 <testsuite name="comments.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="4" failures="0" skipped="0" time="13.066" errors="0">
-<testcase name="Story 11 comments › shows comments chronologically to visitors" classname="comments.spec.ts" time="5.31">
+<testcase name="Story 11 comments â€º shows comments chronologically to visitors" classname="comments.spec.ts" time="5.31">
 </testcase>
-<testcase name="Story 11 comments › adds and deletes own comment without page reload" classname="comments.spec.ts" time="2.526">
+<testcase name="Story 11 comments â€º adds and deletes own comment without page reload" classname="comments.spec.ts" time="2.526">
 </testcase>
-<testcase name="Story 11 comments › guest interaction with comment input opens login prompt" classname="comments.spec.ts" time="2.49">
+<testcase name="Story 11 comments â€º guest interaction with comment input opens login prompt" classname="comments.spec.ts" time="2.49">
 </testcase>
-<testcase name="Story 11 comments › rejects empty comment submission with validation message" classname="comments.spec.ts" time="2.74">
+<testcase name="Story 11 comments â€º rejects empty comment submission with validation message" classname="comments.spec.ts" time="2.74">
 </testcase>
 </testsuite>
 <testsuite name="draft-experience-publish.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="1" failures="0" skipped="0" time="10.727" errors="0">
-<testcase name="Story 23d draft experience and later publish › draft stays private until explicit publish and then becomes visible everywhere" classname="draft-experience-publish.spec.ts" time="10.727">
+<testcase name="Story 23d draft experience and later publish â€º draft stays private until explicit publish and then becomes visible everywhere" classname="draft-experience-publish.spec.ts" time="10.727">
 </testcase>
 </testsuite>
 <testsuite name="edit-profile.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="7" failures="0" skipped="0" time="23.337" errors="0">
-<testcase name="Story 14 edit profile &amp; avatar upload › owner can access edit page with pre-populated fields" classname="edit-profile.spec.ts" time="3.073">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º owner can access edit page with pre-populated fields" classname="edit-profile.spec.ts" time="3.073">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › can edit display name and bio" classname="edit-profile.spec.ts" time="3.333">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º can edit display name and bio" classname="edit-profile.spec.ts" time="3.333">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › username change redirects to new profile URL" classname="edit-profile.spec.ts" time="2.961">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º username change redirects to new profile URL" classname="edit-profile.spec.ts" time="2.961">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › duplicate username shows inline error" classname="edit-profile.spec.ts" time="5.075">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º duplicate username shows inline error" classname="edit-profile.spec.ts" time="5.075">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › avatar upload updates avatar on profile" classname="edit-profile.spec.ts" time="2.89">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º avatar upload updates avatar on profile" classname="edit-profile.spec.ts" time="2.89">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › unauthenticated user is redirected to login" classname="edit-profile.spec.ts" time="2.662">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º unauthenticated user is redirected to login" classname="edit-profile.spec.ts" time="2.662">
 </testcase>
-<testcase name="Story 14 edit profile &amp; avatar upload › non-owner gets 403 on edit page" classname="edit-profile.spec.ts" time="3.343">
+<testcase name="Story 14 edit profile &amp; avatar upload â€º non-owner gets 403 on edit page" classname="edit-profile.spec.ts" time="3.343">
 </testcase>
 </testsuite>
 <testsuite name="explore-feed-filters.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="3" failures="1" skipped="0" time="8.565" errors="0">
-<testcase name="Story 16 explore feed filters › public visitors can browse explore and apply combinable filters with shareable URL" classname="explore-feed-filters.spec.ts" time="2.742">
+<testcase name="Story 16 explore feed filters â€º public visitors can browse explore and apply combinable filters with shareable URL" classname="explore-feed-filters.spec.ts" time="2.742">
 </testcase>
-<testcase name="Story 16 explore feed filters › shows filtered empty state when no posts match" classname="explore-feed-filters.spec.ts" time="0.424">
+<testcase name="Story 16 explore feed filters â€º shows filtered empty state when no posts match" classname="explore-feed-filters.spec.ts" time="0.424">
 </testcase>
-<testcase name="Story 16 explore feed filters › loads additional posts with cursor-based infinite scroll and shows loading skeleton" classname="explore-feed-filters.spec.ts" time="5.399">
+<testcase name="Story 16 explore feed filters â€º loads additional posts with cursor-based infinite scroll and shows loading skeleton" classname="explore-feed-filters.spec.ts" time="5.399">
 <system-err>
 <![CDATA[
 Warning: attachment test-results\explore-feed-filters-Story-59563--and-shows-loading-skeleton-chromium\error-context.md is missing]]>
 </system-err>
 <failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
-<![CDATA[  [chromium] › explore-feed-filters.spec.ts:145:7 › Story 16 explore feed filters › loads additional posts with cursor-based infinite scroll and shows loading skeleton 
+<![CDATA[  [chromium] â€º explore-feed-filters.spec.ts:145:7 â€º Story 16 explore feed filters â€º loads additional posts with cursor-based infinite scroll and shows loading skeleton 
 
     Error: expect(locator).toBeVisible() failed
 
@@ -79,7 +79,7 @@ Warning: attachment test-results\explore-feed-filters-Story-59563--and-shows-loa
       164 |
       165 |     await expect
       166 |       .poll(async () => page.locator("article").count())
-        at C:\Projects\realbnb\tests\explore-feed-filters.spec.ts:163:61
+        at C:\Projects\trustora\tests\explore-feed-filters.spec.ts:163:61
 
     Error Context: ..\test-results\explore-feed-filters-Story-59563--and-shows-loading-skeleton-chromium\error-context.md
 ]]>
@@ -87,109 +87,109 @@ Warning: attachment test-results\explore-feed-filters-Story-59563--and-shows-loa
 </testcase>
 </testsuite>
 <testsuite name="follow-unfollow.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="8.12" errors="0">
-<testcase name="Story 12 follow/unfollow › authenticated user can follow from post detail and unfollow from profile" classname="follow-unfollow.spec.ts" time="5.995">
+<testcase name="Story 12 follow/unfollow â€º authenticated user can follow from post detail and unfollow from profile" classname="follow-unfollow.spec.ts" time="5.995">
 </testcase>
-<testcase name="Story 12 follow/unfollow › guest clicking follow sees login prompt" classname="follow-unfollow.spec.ts" time="2.125">
+<testcase name="Story 12 follow/unfollow â€º guest clicking follow sees login prompt" classname="follow-unfollow.spec.ts" time="2.125">
 </testcase>
 </testsuite>
 <testsuite name="full-text-search.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="3" failures="0" skipped="0" time="9.802" errors="0">
-<testcase name="Story 20 full-text search › search matches title/body/location and keeps query in URL" classname="full-text-search.spec.ts" time="4.318">
+<testcase name="Story 20 full-text search â€º search matches title/body/location and keeps query in URL" classname="full-text-search.spec.ts" time="4.318">
 </testcase>
-<testcase name="Story 20 full-text search › sorts by relevance with reverse-chronological fallback and shows empty state" classname="full-text-search.spec.ts" time="4.405">
+<testcase name="Story 20 full-text search â€º sorts by relevance with reverse-chronological fallback and shows empty state" classname="full-text-search.spec.ts" time="4.405">
 </testcase>
-<testcase name="Story 20 full-text search › header search input submits to /search?q and page is server-rendered" classname="full-text-search.spec.ts" time="1.079">
+<testcase name="Story 20 full-text search â€º header search input submits to /search?q and page is server-rendered" classname="full-text-search.spec.ts" time="1.079">
 </testcase>
 </testsuite>
 <testsuite name="home-feed-following.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="3" failures="0" skipped="0" time="12.272" errors="0">
-<testcase name="Story 17 home feed › redirects unauthenticated visitors from / to /explore" classname="home-feed-following.spec.ts" time="0.405">
+<testcase name="Story 17 home feed â€º redirects unauthenticated visitors from / to /explore" classname="home-feed-following.spec.ts" time="0.405">
 </testcase>
-<testcase name="Story 17 home feed › shows empty-state prompt when user follows nobody" classname="home-feed-following.spec.ts" time="1.865">
+<testcase name="Story 17 home feed â€º shows empty-state prompt when user follows nobody" classname="home-feed-following.spec.ts" time="1.865">
 </testcase>
-<testcase name="Story 17 home feed › shows followed users posts in reverse chronology, supports infinite scroll, and updates on navigation" classname="home-feed-following.spec.ts" time="10.002">
+<testcase name="Story 17 home feed â€º shows followed users posts in reverse chronology, supports infinite scroll, and updates on navigation" classname="home-feed-following.spec.ts" time="10.002">
 </testcase>
 </testsuite>
 <testsuite name="image-upload.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="4" failures="0" skipped="0" time="3.799" errors="0">
-<testcase name="Story 5a image upload API › returns 401 for unauthenticated upload" classname="image-upload.spec.ts" time="0.013">
+<testcase name="Story 5a image upload API â€º returns 401 for unauthenticated upload" classname="image-upload.spec.ts" time="0.013">
 </testcase>
-<testcase name="Story 5a image upload API › uploads a valid image when authenticated" classname="image-upload.spec.ts" time="1.38">
+<testcase name="Story 5a image upload API â€º uploads a valid image when authenticated" classname="image-upload.spec.ts" time="1.38">
 </testcase>
-<testcase name="Story 5a image upload API › rejects unsupported file type" classname="image-upload.spec.ts" time="1.242">
+<testcase name="Story 5a image upload API â€º rejects unsupported file type" classname="image-upload.spec.ts" time="1.242">
 </testcase>
-<testcase name="Story 5a image upload API › rejects file larger than 5 MB" classname="image-upload.spec.ts" time="1.164">
+<testcase name="Story 5a image upload API â€º rejects file larger than 5 MB" classname="image-upload.spec.ts" time="1.164">
 </testcase>
 </testsuite>
 <testsuite name="likes.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="3" failures="0" skipped="0" time="9.826" errors="0">
-<testcase name="Story 10 likes › shows like count for visitors on post cards and detail page" classname="likes.spec.ts" time="3.919">
+<testcase name="Story 10 likes â€º shows like count for visitors on post cards and detail page" classname="likes.spec.ts" time="3.919">
 </testcase>
-<testcase name="Story 10 likes › authenticated user can like and unlike with immediate count changes" classname="likes.spec.ts" time="3.148">
+<testcase name="Story 10 likes â€º authenticated user can like and unlike with immediate count changes" classname="likes.spec.ts" time="3.148">
 </testcase>
-<testcase name="Story 10 likes › guest clicking like sees login prompt" classname="likes.spec.ts" time="2.759">
+<testcase name="Story 10 likes â€º guest clicking like sees login prompt" classname="likes.spec.ts" time="2.759">
 </testcase>
 </testsuite>
 <testsuite name="location-pages.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="1" failures="0" skipped="0" time="6.767" errors="0">
-<testcase name="Story 18 location pages › country and city location pages are generated from posts with SEO metadata and 404 on missing locations" classname="location-pages.spec.ts" time="6.767">
+<testcase name="Story 18 location pages â€º country and city location pages are generated from posts with SEO metadata and 404 on missing locations" classname="location-pages.spec.ts" time="6.767">
 </testcase>
 </testsuite>
 <testsuite name="post-creation.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="6" failures="0" skipped="0" time="14.844" errors="0">
-<testcase name="Story 6 post creation › redirects unauthenticated user from /create to /login" classname="post-creation.spec.ts" time="0.279">
+<testcase name="Story 6 post creation â€º redirects unauthenticated user from /create to /login" classname="post-creation.spec.ts" time="0.279">
 </testcase>
-<testcase name="Story 6 post creation › shows inline required validations" classname="post-creation.spec.ts" time="1.397">
+<testcase name="Story 6 post creation â€º shows inline required validations" classname="post-creation.spec.ts" time="1.397">
 </testcase>
-<testcase name="Story 6 post creation › creates a post and redirects to post detail page" classname="post-creation.spec.ts" time="2.464">
+<testcase name="Story 6 post creation â€º creates a post and redirects to post detail page" classname="post-creation.spec.ts" time="2.464">
 </testcase>
-<testcase name="Story 6 post creation › server-side rejects more than 5 tags" classname="post-creation.spec.ts" time="1.904">
+<testcase name="Story 6 post creation â€º server-side rejects more than 5 tags" classname="post-creation.spec.ts" time="1.904">
 </testcase>
-<testcase name="Story 6 post creation › server-side rejects more than 10 photos" classname="post-creation.spec.ts" time="1.855">
+<testcase name="Story 6 post creation â€º server-side rejects more than 10 photos" classname="post-creation.spec.ts" time="1.855">
 </testcase>
-<testcase name="Story 6 post creation › rate limits post creation after 5 posts in 24 hours" classname="post-creation.spec.ts" time="6.945">
+<testcase name="Story 6 post creation â€º rate limits post creation after 5 posts in 24 hours" classname="post-creation.spec.ts" time="6.945">
 </testcase>
 </testsuite>
 <testsuite name="post-detail.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="3" failures="0" skipped="0" time="9.791" errors="0">
-<testcase name="Story 7 post detail page › allows public visitors to view canonical post detail with metadata" classname="post-detail.spec.ts" time="2.667">
+<testcase name="Story 7 post detail page â€º allows public visitors to view canonical post detail with metadata" classname="post-detail.spec.ts" time="2.667">
 </testcase>
-<testcase name="Story 7 post detail page › redirects /post/[id] and /post/[id]/wrong-slug to canonical URL with 308" classname="post-detail.spec.ts" time="4.085">
+<testcase name="Story 7 post detail page â€º redirects /post/[id] and /post/[id]/wrong-slug to canonical URL with 308" classname="post-detail.spec.ts" time="4.085">
 </testcase>
-<testcase name="Story 7 post detail page › photo gallery lets users browse all uploaded images" classname="post-detail.spec.ts" time="3.039">
+<testcase name="Story 7 post detail page â€º photo gallery lets users browse all uploaded images" classname="post-detail.spec.ts" time="3.039">
 </testcase>
 </testsuite>
 <testsuite name="post-edit-delete.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="7" failures="0" skipped="0" time="21.351" errors="0">
-<testcase name="Story 9 post edit &amp; delete › author sees edit and delete controls on their post" classname="post-edit-delete.spec.ts" time="2.19">
+<testcase name="Story 9 post edit &amp; delete â€º author sees edit and delete controls on their post" classname="post-edit-delete.spec.ts" time="2.19">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › non-author does not see edit/delete controls" classname="post-edit-delete.spec.ts" time="4.437">
+<testcase name="Story 9 post edit &amp; delete â€º non-author does not see edit/delete controls" classname="post-edit-delete.spec.ts" time="4.437">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › guest does not see edit/delete controls" classname="post-edit-delete.spec.ts" time="3.012">
+<testcase name="Story 9 post edit &amp; delete â€º guest does not see edit/delete controls" classname="post-edit-delete.spec.ts" time="3.012">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › edit form pre-populates existing fields and saves changes" classname="post-edit-delete.spec.ts" time="3.015">
+<testcase name="Story 9 post edit &amp; delete â€º edit form pre-populates existing fields and saves changes" classname="post-edit-delete.spec.ts" time="3.015">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › unauthenticated user is redirected from edit page to login" classname="post-edit-delete.spec.ts" time="2.23">
+<testcase name="Story 9 post edit &amp; delete â€º unauthenticated user is redirected from edit page to login" classname="post-edit-delete.spec.ts" time="2.23">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › non-author gets 403 on edit page" classname="post-edit-delete.spec.ts" time="3.304">
+<testcase name="Story 9 post edit &amp; delete â€º non-author gets 403 on edit page" classname="post-edit-delete.spec.ts" time="3.304">
 </testcase>
-<testcase name="Story 9 post edit &amp; delete › delete shows confirmation dialog and redirects after deletion" classname="post-edit-delete.spec.ts" time="3.163">
+<testcase name="Story 9 post edit &amp; delete â€º delete shows confirmation dialog and redirects after deletion" classname="post-edit-delete.spec.ts" time="3.163">
 </testcase>
 </testsuite>
 <testsuite name="report-post-comment.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="8.215" errors="0">
-<testcase name="Story 21 report post and comment › logged-in user can report post and comment once" classname="report-post-comment.spec.ts" time="4.41">
+<testcase name="Story 21 report post and comment â€º logged-in user can report post and comment once" classname="report-post-comment.spec.ts" time="4.41">
 </testcase>
-<testcase name="Story 21 report post and comment › guests do not see report controls" classname="report-post-comment.spec.ts" time="3.805">
+<testcase name="Story 21 report post and comment â€º guests do not see report controls" classname="report-post-comment.spec.ts" time="3.805">
 </testcase>
 </testsuite>
 <testsuite name="tag-pages.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="2" failures="0" skipped="0" time="8.128" errors="0">
-<testcase name="Story 19 tag pages › predefined tag pages are public, list matching posts in reverse chronology, and render SEO metadata" classname="tag-pages.spec.ts" time="5.847">
+<testcase name="Story 19 tag pages â€º predefined tag pages are public, list matching posts in reverse chronology, and render SEO metadata" classname="tag-pages.spec.ts" time="5.847">
 </testcase>
-<testcase name="Story 19 tag pages › all predefined tags are accessible and invalid tags return 404" classname="tag-pages.spec.ts" time="2.281">
+<testcase name="Story 19 tag pages â€º all predefined tags are accessible and invalid tags return 404" classname="tag-pages.spec.ts" time="2.281">
 </testcase>
 </testsuite>
 <testsuite name="user-profile.spec.ts" timestamp="2026-06-21T14:13:15.008Z" hostname="chromium" tests="5" failures="0" skipped="0" time="11.739" errors="0">
-<testcase name="Story 13 user profile page › displays profile info and post grid for authenticated author" classname="user-profile.spec.ts" time="3.192">
+<testcase name="Story 13 user profile page â€º displays profile info and post grid for authenticated author" classname="user-profile.spec.ts" time="3.192">
 </testcase>
-<testcase name="Story 13 user profile page › clicking a post card navigates to post detail" classname="user-profile.spec.ts" time="2.973">
+<testcase name="Story 13 user profile page â€º clicking a post card navigates to post detail" classname="user-profile.spec.ts" time="2.973">
 </testcase>
-<testcase name="Story 13 user profile page › guest can view profile without being logged in" classname="user-profile.spec.ts" time="2.564">
+<testcase name="Story 13 user profile page â€º guest can view profile without being logged in" classname="user-profile.spec.ts" time="2.564">
 </testcase>
-<testcase name="Story 13 user profile page › non-existent username returns 404" classname="user-profile.spec.ts" time="0.276">
+<testcase name="Story 13 user profile page â€º non-existent username returns 404" classname="user-profile.spec.ts" time="0.276">
 </testcase>
-<testcase name="Story 13 user profile page › meta title and description are populated from user data" classname="user-profile.spec.ts" time="2.734">
+<testcase name="Story 13 user profile page â€º meta title and description are populated from user data" classname="user-profile.spec.ts" time="2.734">
 </testcase>
 </testsuite>
 </testsuites>

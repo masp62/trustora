@@ -1,7 +1,7 @@
-# #19 — Tag Pages
+﻿# #19 â€” Tag Pages
 
 **Type:** AFK
-**Blocked by:** #7 — Post Detail Page & Slug URL
+**Blocked by:** #7 â€” Post Detail Page & Slug URL
 
 ## What to build
 
@@ -12,9 +12,10 @@ Build tag discovery pages at `/explore/tags/[tag]` for each of the 8 predefined 
 - [x] `/explore/tags/[tag]` is accessible for each predefined tag: beach, city-break, countryside, luxury, budget, pet-friendly, unique-stay, remote-work
 - [x] Each tag page lists all Experience Posts with that tag, using the standard post card format, sorted reverse-chronologically
 - [x] Visiting a tag slug that is not in the predefined set returns a 404
-- [x] Each page is server-rendered with a unique meta title (e.g. "Beach Experiences — RealBnB"), meta description, and Open Graph tags
+- [x] Each page is server-rendered with a unique meta title (e.g. "Beach Experiences â€” Trustora"), meta description, and Open Graph tags
 - [x] Tag pages are accessible without authentication
 
 ## Blocked by
 
-- #7 — Post Detail Page & Slug URL
+- #7 â€” Post Detail Page & Slug URL
+

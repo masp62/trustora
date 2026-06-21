@@ -1,6 +1,6 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
-const ONBOARDING_PROMPT_DISMISSED_KEY = "realbnb.onboardingPrompt.dismissed";
+const ONBOARDING_PROMPT_DISMISSED_KEY = "trustora.onboardingPrompt.dismissed";
 
 test.describe("Story 4 auth and onboarding UI", () => {
   test("signup page keeps provider hierarchy and login link", async ({ page }) => {
@@ -22,10 +22,11 @@ test.describe("Story 4 auth and onboarding UI", () => {
 
     await page.goto("/explore?onboarding=1");
 
-    await expect(page.getByText("Welcome to RealBnB.")).toBeVisible();
+    await expect(page.getByText("Welcome to Trustora.")).toBeVisible();
 
     await page.getByRole("link", { name: "Dismiss" }).click();
     await expect(page).toHaveURL(/\/explore$/);
-    await expect(page.getByText("Welcome to RealBnB.")).toHaveCount(0);
+    await expect(page.getByText("Welcome to Trustora.")).toHaveCount(0);
   });
 });
+

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   }
 
   const title = `Experiences in ${city}, ${country}`;
-  const description = `Browse real travel stay experiences in ${city}, ${country} on RealBnB.`;
+  const description = `Browse real travel stay experiences in ${city}, ${country} on Trustora.`;
   const url = `/explore/${countrySlug}/${citySlug}`;
 
   return {
@@ -108,3 +108,4 @@ export default async function CityExplorePage({ params }: CityPageProps) {
     </main>
   );
 }
+

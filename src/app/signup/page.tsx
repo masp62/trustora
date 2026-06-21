@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { googleAuthConfigured } from "@/auth";
 import { signInWithGoogle } from "@/lib/auth-actions";
@@ -9,7 +9,7 @@ export default function SignupPage() {
   return (
     <main className="flex flex-1 items-center px-4 py-12 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-12">
-        <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Join RealBnB</p>
+        <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Join Trustora</p>
         <h1 className="mt-4 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">
           Create your account
         </h1>
@@ -51,3 +51,4 @@ export default function SignupPage() {
     </main>
   );
 }
+

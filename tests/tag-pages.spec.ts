@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+﻿import { expect, test } from "@playwright/test";
 
 function uniqueEmail() {
   return `tag-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -137,18 +137,18 @@ test.describe("Story 19 tag pages", () => {
     expect(newerIndex).toBeGreaterThanOrEqual(0);
     expect(newerIndex).toBeLessThan(olderIndex);
 
-    await expect(page).toHaveTitle("Beach Experiences — RealBnB");
+    await expect(page).toHaveTitle("Beach Experiences â€” Trustora");
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
-      "Browse beach travel stay experiences shared by the RealBnB community.",
+      "Browse beach travel stay experiences shared by the Trustora community.",
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
-      "Beach Experiences — RealBnB",
+      "Beach Experiences â€” Trustora",
     );
     await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
       "content",
-      "Browse beach travel stay experiences shared by the RealBnB community.",
+      "Browse beach travel stay experiences shared by the Trustora community.",
     );
   });
 
@@ -173,3 +173,4 @@ test.describe("Story 19 tag pages", () => {
     await expect(page.getByRole("heading", { name: /404|not found/i }).first()).toBeVisible();
   });
 });
+
