@@ -36,6 +36,11 @@ enum PostStatus {
   published
 }
 
+enum PostVisibility {
+  public
+  private
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -64,6 +69,8 @@ model ExperiencePost {
   id              String   @id @default(cuid())
   slug            String
   status          PostStatus @default(published)
+  visibility      PostVisibility @default(public)
+  visibilityChangedAt DateTime?
   publishedAt     DateTime?
   title           String   @db.VarChar(120)
   body            String   @db.VarChar(5000)
@@ -84,6 +91,7 @@ model ExperiencePost {
 
   @@index([authorId, createdAt(sort: Desc)])
   @@index([status, createdAt(sort: Desc)])
+  @@index([status, visibility, createdAt(sort: Desc)])
   @@index([locationCountry, locationCity, createdAt(sort: Desc)])
 }
 

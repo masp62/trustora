@@ -1,5 +1,5 @@
 ﻿import { PrismaClient } from "@prisma/client";
-import type { ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
+import type { PostVisibility, ReportStatus, ReportTargetType, TripType, UserRole } from "@prisma/client";
 import baselineData from "../../prisma/baseline-data.json";
 
 const TRIP_TYPE = {
@@ -26,6 +26,11 @@ const REPORT_STATUS = {
   dismissed: "dismissed",
 } as const satisfies Record<string, ReportStatus>;
 
+const POST_VISIBILITY = {
+  public: "public",
+  private: "private",
+} as const satisfies Record<string, PostVisibility>;
+
 type InMemoryUser = {
   id: string;
   email: string;
@@ -45,6 +50,8 @@ type InMemoryExperiencePost = {
   id: string;
   slug: string;
   status: "draft" | "published";
+  visibility: PostVisibility;
+  visibilityChangedAt: Date | null;
   publishedAt: Date | null;
   title: string;
   body: string;
@@ -925,6 +932,8 @@ function createBaselineInMemoryStore(): InMemoryStore {
       id: post.id,
       slug: post.slug,
       status: "published",
+      visibility: POST_VISIBILITY.public,
+      visibilityChangedAt: null,
       publishedAt: createdAt,
       title: post.title,
       body: post.body,

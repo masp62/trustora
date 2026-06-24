@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Pencil, SendHorizontal, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Pencil, SendHorizontal, Trash2 } from "lucide-react";
 
-import { deleteExperiencePost, publishDraftExperiencePost } from "@/lib/post-actions";
+import { deleteExperiencePost, publishDraftExperiencePost, setPostVisibility } from "@/lib/post-actions";
 
 type PostAuthorActionsProps = {
   postId: string;
   status: "draft" | "published";
+  visibility: "public" | "private";
 };
 
-export function PostAuthorActions({ postId, status }: PostAuthorActionsProps) {
+export function PostAuthorActions({ postId, status, visibility }: PostAuthorActionsProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +38,16 @@ export function PostAuthorActions({ postId, status }: PostAuthorActionsProps) {
     });
   }
 
+  function handleVisibilityToggle() {
+    startTransition(async () => {
+      const nextVisibility = visibility === "public" ? "private" : "public";
+      const result = await setPostVisibility(postId, nextVisibility);
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
+  }
+
   return (
     <>
       <div className="flex items-center gap-3">
@@ -49,6 +60,21 @@ export function PostAuthorActions({ postId, status }: PostAuthorActionsProps) {
           >
             <SendHorizontal className="h-4 w-4" />
             {isPending ? "Publishing..." : "Publish now"}
+          </button>
+        )}
+        {status === "published" && (
+          <button
+            type="button"
+            onClick={handleVisibilityToggle}
+            disabled={isPending}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+          >
+            {visibility === "public" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {isPending
+              ? "Saving..."
+              : visibility === "public"
+                ? "Make private"
+                : "Make public"}
           </button>
         )}
         <Link

@@ -23,14 +23,24 @@ export async function setPostLikeStatus(postId: string, shouldLike: boolean) {
 
     const post = (await db.experiencePost.findUnique({
       where: { id: postId },
-      select: { id: true, slug: true, authorId: true, status: true },
-    })) as { id: string; slug: string; authorId: string; status: "draft" | "published" } | null;
+      select: { id: true, slug: true, authorId: true, status: true, visibility: true },
+    })) as {
+      id: string;
+      slug: string;
+      authorId: string;
+      status: "draft" | "published";
+      visibility: "public" | "private";
+    } | null;
 
     if (!post) {
       return { ok: false as const, error: "POST_NOT_FOUND" as const };
     }
 
     if (post.status === "draft" && post.authorId !== session.user.id) {
+      return { ok: false as const, error: "POST_NOT_FOUND" as const };
+    }
+
+    if (post.visibility === "private" && post.authorId !== session.user.id) {
       return { ok: false as const, error: "POST_NOT_FOUND" as const };
     }
 

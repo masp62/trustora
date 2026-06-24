@@ -59,6 +59,7 @@ export async function getHomeFeedPage(
     where: {
       authorId: { in: followedIds },
       status: "published",
+      visibility: "public",
     },
     orderBy: { createdAt: "desc" },
   })) as Array<{

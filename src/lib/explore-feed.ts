@@ -46,7 +46,7 @@ export async function getExplorePostsPage(
   take = EXPLORE_PAGE_SIZE,
 ): Promise<ExplorePageResult> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const where: any = { status: "published" };
+  const where: any = { status: "published", visibility: "public" };
 
   if (filters.country) {
     where.locationCountry = {

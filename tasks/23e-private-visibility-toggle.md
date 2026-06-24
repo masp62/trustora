@@ -26,15 +26,15 @@ Suggested model changes:
 
 ## Acceptance criteria
 
-- [ ] A logged-in author can change their own published story visibility to private
-- [ ] A logged-in author can change a private story back to public at any time
-- [ ] Private stories are excluded from explore feed, search, location pages, tag pages, and public profile views
-- [ ] Non-authors cannot access private story detail URLs (404 or forbidden)
-- [ ] The author can still access and edit their private stories
-- [ ] Visibility status is clearly shown in author-facing UI (e.g. badge or status label)
-- [ ] Switching visibility does not delete data, likes, comments, or ratings; it only affects discoverability/access
-- [ ] Existing stories default to public during migration/backfill
-- [ ] Access control and visibility behavior are covered by automated tests
+- [x] A logged-in author can change their own published story visibility to private
+- [x] A logged-in author can change a private story back to public at any time
+- [x] Private stories are excluded from explore feed, search, location pages, tag pages, and public profile views
+- [x] Non-authors cannot access private story detail URLs (404 or forbidden)
+- [x] The author can still access and edit their private stories
+- [x] Visibility status is clearly shown in author-facing UI (e.g. badge or status label)
+- [x] Switching visibility does not delete data, likes, comments, or ratings; it only affects discoverability/access
+- [x] Existing stories default to public during migration/backfill
+- [x] Access control and visibility behavior are covered by automated tests
 
 ## Blocked by
 

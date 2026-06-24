@@ -1,10 +1,13 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import type { TripType } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { postCanonicalPath } from "@/app/post/post-detail-data";
 import { db } from "@/lib/db";
+import { locationToSlug } from "@/lib/location-slug";
 import { type PostActionState } from "@/lib/post-action-state";
 import { validatePostInput, firstValidationError } from "@/lib/post-validation";
 import { MAX_POSTS_PER_24H } from "@/lib/post-constants";
@@ -264,6 +267,8 @@ export async function createExperiencePost(
     data: {
       slug,
       status: intent === "draft" ? "draft" : "published",
+      visibility: "public",
+      visibilityChangedAt: null,
       publishedAt: intent === "draft" ? null : new Date(),
       title,
       body,
@@ -575,4 +580,100 @@ export async function publishDraftExperiencePost(postId: string): Promise<{ erro
   });
 
   redirect(`/post/${updated.id}`);
+}
+
+export async function setPostVisibility(
+  postId: string,
+  visibility: "public" | "private",
+): Promise<{ error?: string }> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const existingPost = (await db.experiencePost.findUnique({
+    where: { id: postId },
+    select: {
+      id: true,
+      slug: true,
+      status: true,
+      visibility: true,
+      authorId: true,
+      locationCountry: true,
+      locationCity: true,
+    },
+  })) as {
+    id: string;
+    slug: string;
+    status: "draft" | "published";
+    visibility: "public" | "private";
+    authorId: string;
+    locationCountry: string;
+    locationCity: string;
+  } | null;
+
+  if (!existingPost) {
+    return { error: "Post not found." };
+  }
+
+  if (existingPost.authorId !== session.user.id) {
+    return { error: "You are not authorized to update visibility for this post." };
+  }
+
+  if (existingPost.status !== "published") {
+    return { error: "Only published posts can change visibility." };
+  }
+
+  if (existingPost.visibility === visibility) {
+    return {};
+  }
+
+  await db.experiencePost.update({
+    where: { id: existingPost.id },
+    data: {
+      visibility,
+      visibilityChangedAt: new Date(),
+    },
+  });
+
+  const [author, postTags] = await Promise.all([
+    db.user.findUnique({
+      where: { id: existingPost.authorId },
+      select: { username: true },
+    }) as Promise<{ username: string } | null>,
+    db.postTag.findMany({
+      where: { postId: existingPost.id },
+      select: { tagId: true },
+    }) as Promise<Array<{ tagId: string }>>,
+  ]);
+
+  const tagIds = postTags.map((entry) => entry.tagId);
+  const tags =
+    tagIds.length > 0
+      ? ((await db.tag.findMany({
+          where: { id: { in: tagIds } },
+          select: { name: true },
+        })) as Array<{ name: string }>)
+      : [];
+
+  revalidatePath("/");
+  revalidatePath("/explore");
+  revalidatePath("/search");
+  revalidatePath(`/post/${existingPost.id}`);
+  revalidatePath(postCanonicalPath(existingPost.id, existingPost.slug));
+  const countrySlug = locationToSlug(existingPost.locationCountry);
+  const citySlug = locationToSlug(existingPost.locationCity);
+  revalidatePath(`/explore/${countrySlug}`);
+  revalidatePath(`/explore/${countrySlug}/${citySlug}`);
+
+  tags.forEach((tag) => {
+    revalidatePath(`/explore/tags/${tag.name}`);
+  });
+
+  if (author?.username) {
+    revalidatePath(`/u/${author.username}`);
+  }
+
+  redirect(postCanonicalPath(existingPost.id, existingPost.slug));
 }

@@ -30,6 +30,7 @@ type EditPostFormProps = {
   post: {
     id: string;
     status: "draft" | "published";
+    visibility: "public" | "private";
     title: string;
     body: string;
     locationCity: string;

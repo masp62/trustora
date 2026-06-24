@@ -16,6 +16,7 @@ export type PostDetailData = {
   id: string;
   slug: string;
   status: "draft" | "published";
+  visibility: "public" | "private";
   publishedAt: Date | null;
   title: string;
   body: string;
@@ -47,6 +48,7 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
       id: true,
       slug: true,
       status: true,
+      visibility: true,
       publishedAt: true,
       title: true,
       body: true,
@@ -62,6 +64,7 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
         id: string;
         slug: string;
       status: "draft" | "published";
+      visibility: "public" | "private";
       publishedAt: Date | null;
         title: string;
         body: string;
@@ -79,6 +82,10 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
   }
 
   if (post.status === "draft" && post.authorId !== viewerId) {
+    return null;
+  }
+
+  if (post.visibility === "private" && post.authorId !== viewerId) {
     return null;
   }
 
@@ -132,6 +139,7 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
     id: post.id,
     slug: post.slug,
     status: post.status,
+    visibility: post.visibility,
     publishedAt: post.publishedAt,
     title: post.title,
     body: post.body,

@@ -15,7 +15,7 @@ type BasePost = {
 
 async function getAllLocationPosts() {
   return (await db.experiencePost.findMany({
-    where: { status: "published" },
+    where: { status: "published", visibility: "public" },
     select: {
       id: true,
       slug: true,
@@ -73,10 +73,12 @@ export async function getLocationPosts(
           locationCountry: country,
           locationCity: city,
           status: "published",
+          visibility: "public",
         }
       : {
           locationCountry: country,
           status: "published",
+          visibility: "public",
         },
     orderBy: { createdAt: "desc" },
   })) as BasePost[];

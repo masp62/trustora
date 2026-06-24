@@ -29,7 +29,7 @@ async function getUserProfile(username: string) {
 
   const [allPostCount, publishedPostCount, followerCount, followingCount, posts] = await Promise.all([
     db.experiencePost.count({ where: { authorId: user.id } }),
-    db.experiencePost.count({ where: { authorId: user.id, status: "published" } }),
+    db.experiencePost.count({ where: { authorId: user.id, status: "published", visibility: "public" } }),
     db.follow.count({ where: { followingId: user.id } }),
     db.follow.count({ where: { followerId: user.id } }),
     db.experiencePost.findMany({
@@ -41,6 +41,7 @@ async function getUserProfile(username: string) {
         id: string;
         slug: string;
         status: "draft" | "published";
+        visibility: "public" | "private";
         title: string;
         locationCity: string;
         locationCountry: string;
@@ -107,7 +108,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
     : 0;
 
   const { user } = profile;
-  const posts = isOwnProfile ? profile.posts : profile.posts.filter((post) => post.status === "published");
+  const posts = isOwnProfile
+    ? profile.posts
+    : profile.posts.filter((post) => post.status === "published" && post.visibility === "public");
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
@@ -232,6 +235,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                       </h3>
                       {isOwnProfile && post.status === "draft" && (
                         <p className="mt-1 text-xs font-semibold tracking-wide text-amber-700 uppercase">Draft</p>
+                      )}
+                      {isOwnProfile && post.status === "published" && post.visibility === "private" && (
+                        <p className="mt-1 text-xs font-semibold tracking-wide text-slate-700 uppercase">Private</p>
                       )}
                       <p className="mt-1 text-xs text-gray-500">
                         {post.locationCity}, {post.locationCountry}

@@ -151,8 +151,13 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
                   Draft
                 </span>
               )}
+              {isAuthor && post.status === "published" && post.visibility === "private" && (
+                <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
+                  Private
+                </span>
+              )}
             </div>
-            {isAuthor && <PostAuthorActions postId={post.id} status={post.status} />}
+            {isAuthor && <PostAuthorActions postId={post.id} status={post.status} visibility={post.visibility} />}
           </div>
           <h1 className="font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">{post.title}</h1>
           <p className="text-sm text-gray-600">
