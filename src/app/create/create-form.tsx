@@ -265,7 +265,7 @@ export function CreatePostForm() {
       )}
 
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-gray-700">Property name (optional)</span>
+        <span className="text-sm font-semibold text-gray-700">Property name</span>
         <input
           name="propertyName"
           value={propertyName}

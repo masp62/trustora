@@ -65,6 +65,33 @@ model User {
   passwordResetTokens PasswordResetToken[]
 }
 
+model Accommodation {
+  id              String   @id @default(cuid())
+  name            String   @db.VarChar(140)
+  locationCity    String
+  locationCountry String
+  slug            String   @unique
+  weightedOverallScore Float?
+  weightedCleanliness  Float?
+  weightedAccuracy     Float?
+  weightedCheckIn      Float?
+  weightedCommunication Float?
+  weightedLocation     Float?
+  weightedValue        Float?
+  weightedComfort      Float?
+  weightedFacilities   Float?
+  contributingRatingCount Int @default(0)
+  aggregateUpdatedAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  posts           ExperiencePost[]
+  comments        Comment[]
+
+  @@unique([name, locationCity, locationCountry])
+  @@index([locationCountry, locationCity])
+}
+
 model ExperiencePost {
   id              String   @id @default(cuid())
   slug            String
@@ -78,11 +105,13 @@ model ExperiencePost {
   locationCountry String
   propertyName    String?  @db.VarChar(140)
   tripType        TripType
+  accommodationId String
   authorId        String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  accommodation Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Restrict)
   images   PostImage[]
   postTags PostTag[]
   likes    Like[]
@@ -90,6 +119,7 @@ model ExperiencePost {
   accommodationRatings AccommodationRating[]
 
   @@index([authorId, createdAt(sort: Desc)])
+  @@index([accommodationId, createdAt(sort: Desc)])
   @@index([status, createdAt(sort: Desc)])
   @@index([status, visibility, createdAt(sort: Desc)])
   @@index([locationCountry, locationCity, createdAt(sort: Desc)])
@@ -166,15 +196,15 @@ model Like {
 model Comment {
   id        String   @id @default(cuid())
   body      String   @db.VarChar(2000)
-  postId    String
+  accommodationId String
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  post   ExperiencePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  accommodation Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
   author User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  @@index([postId, createdAt])
+  @@index([accommodationId, createdAt])
 }
 
 model Follow {

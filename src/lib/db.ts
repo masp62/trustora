@@ -46,6 +46,27 @@ type InMemoryUser = {
   updatedAt: Date;
 };
 
+type InMemoryAccommodation = {
+  id: string;
+  name: string;
+  locationCity: string;
+  locationCountry: string;
+  slug: string;
+  weightedOverallScore: number | null;
+  weightedCleanliness: number | null;
+  weightedAccuracy: number | null;
+  weightedCheckIn: number | null;
+  weightedCommunication: number | null;
+  weightedLocation: number | null;
+  weightedValue: number | null;
+  weightedComfort: number | null;
+  weightedFacilities: number | null;
+  contributingRatingCount: number;
+  aggregateUpdatedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 type InMemoryExperiencePost = {
   id: string;
   slug: string;
@@ -59,6 +80,7 @@ type InMemoryExperiencePost = {
   locationCountry: string;
   propertyName: string | null;
   tripType: TripType;
+  accommodationId: string;
   authorId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -91,7 +113,7 @@ type InMemoryLike = {
 type InMemoryComment = {
   id: string;
   body: string;
-  postId: string;
+  accommodationId: string;
   authorId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -146,6 +168,7 @@ type InMemoryPasswordResetToken = {
 
 type InMemoryStore = {
   users: InMemoryUser[];
+  accommodations: InMemoryAccommodation[];
   experiencePosts: InMemoryExperiencePost[];
   postImages: InMemoryPostImage[];
   tags: InMemoryTag[];
@@ -303,6 +326,102 @@ function createInMemoryDb(store: InMemoryStore) {
       },
       async count(args: { where?: Record<string, unknown> } = {}) {
         return store.users.filter((entry) => matchesWhere(entry, args.where)).length;
+      },
+    },
+    accommodation: {
+      async findUnique(args: FindArgs) {
+        const entry = store.accommodations.find((accommodation) => matchesWhere(accommodation, args.where));
+        return entry ? applySelect(entry, args.select) : null;
+      },
+      async findMany(args: FindArgs = {}) {
+        const filtered = store.accommodations.filter((entry) => matchesWhere(entry, args.where));
+        const ordered = sortEntries(filtered, args.orderBy);
+        return paginate(ordered.map((entry) => applySelect(entry, args.select)), args.skip, args.take);
+      },
+      async create(args: {
+        data: Omit<
+          InMemoryAccommodation,
+          | "id"
+          | "createdAt"
+          | "updatedAt"
+          | "weightedOverallScore"
+          | "weightedCleanliness"
+          | "weightedAccuracy"
+          | "weightedCheckIn"
+          | "weightedCommunication"
+          | "weightedLocation"
+          | "weightedValue"
+          | "weightedComfort"
+          | "weightedFacilities"
+          | "contributingRatingCount"
+          | "aggregateUpdatedAt"
+        >;
+        select?: Record<string, boolean>;
+      }) {
+        const now = new Date();
+        const created: InMemoryAccommodation = {
+          ...args.data,
+          id: nextId("acc"),
+          weightedOverallScore: null,
+          weightedCleanliness: null,
+          weightedAccuracy: null,
+          weightedCheckIn: null,
+          weightedCommunication: null,
+          weightedLocation: null,
+          weightedValue: null,
+          weightedComfort: null,
+          weightedFacilities: null,
+          contributingRatingCount: 0,
+          aggregateUpdatedAt: null,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        store.accommodations.push(created);
+        return applySelect(created, args.select);
+      },
+      async update(args: { where: Record<string, unknown>; data: Partial<InMemoryAccommodation>; select?: Record<string, boolean> }) {
+        const target = store.accommodations.find((entry) => matchesWhere(entry, args.where));
+
+        if (!target) {
+          throw new Error("In-memory accommodation not found.");
+        }
+
+        Object.assign(target, args.data, { updatedAt: new Date() });
+        return applySelect(target, args.select);
+      },
+      async upsert(args: {
+        where: Record<string, unknown>;
+        create: Omit<
+          InMemoryAccommodation,
+          | "id"
+          | "createdAt"
+          | "updatedAt"
+          | "weightedOverallScore"
+          | "weightedCleanliness"
+          | "weightedAccuracy"
+          | "weightedCheckIn"
+          | "weightedCommunication"
+          | "weightedLocation"
+          | "weightedValue"
+          | "weightedComfort"
+          | "weightedFacilities"
+          | "contributingRatingCount"
+          | "aggregateUpdatedAt"
+        >;
+        update: Partial<InMemoryAccommodation>;
+      }) {
+        const target = store.accommodations.find((entry) => matchesWhere(entry, args.where));
+
+        if (target) {
+          Object.assign(target, args.update, { updatedAt: new Date() });
+          return target;
+        }
+
+        return this.create({ data: args.create });
+      },
+      async count(args: { where?: Record<string, unknown> } = {}) {
+        return store.accommodations.filter((entry) => matchesWhere(entry, args.where)).length;
       },
     },
     experiencePost: {
@@ -925,8 +1044,52 @@ function createBaselineInMemoryStore(): InMemoryStore {
     });
   });
 
+  const accommodationByKey = new Map<string, InMemoryAccommodation>();
+  const accommodations: InMemoryAccommodation[] = [];
+
+  const getAccommodationKey = (propertyName: string, locationCity: string, locationCountry: string) =>
+    `${propertyName.toLowerCase().trim()}|${locationCity.toLowerCase().trim()}|${locationCountry.toLowerCase().trim()}`;
+
+  postSeeds.forEach((post) => {
+    const key = getAccommodationKey(post.propertyName, post.locationCity, post.locationCountry);
+    if (accommodationByKey.has(key)) {
+      return;
+    }
+
+    const slugBase = `${post.propertyName}-${post.locationCity}-${post.locationCountry}`;
+    const slug = toSlug(slugBase);
+    const created: InMemoryAccommodation = {
+      id: nextId("acc"),
+      name: post.propertyName,
+      locationCity: post.locationCity,
+      locationCountry: post.locationCountry,
+      slug,
+      weightedOverallScore: null,
+      weightedCleanliness: null,
+      weightedAccuracy: null,
+      weightedCheckIn: null,
+      weightedCommunication: null,
+      weightedLocation: null,
+      weightedValue: null,
+      weightedComfort: null,
+      weightedFacilities: null,
+      contributingRatingCount: 0,
+      aggregateUpdatedAt: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    accommodationByKey.set(key, created);
+    accommodations.push(created);
+  });
+
   const experiencePosts: InMemoryExperiencePost[] = postSeeds.map((post) => {
     const createdAt = randomDateWithinLast30Days();
+    const key = getAccommodationKey(post.propertyName, post.locationCity, post.locationCountry);
+    const accommodationId = accommodationByKey.get(key)?.id;
+
+    if (!accommodationId) {
+      throw new Error("Baseline post missing accommodation.");
+    }
 
     return {
       id: post.id,
@@ -941,6 +1104,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
       locationCountry: post.locationCountry,
       propertyName: post.propertyName,
       tripType: post.tripType,
+      accommodationId,
       authorId: post.authorId,
       createdAt,
       updatedAt: now,
@@ -993,7 +1157,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     return {
       id: `cmt_${index + 1}`,
       body: commentBodies[index % commentBodies.length],
-      postId: post.id,
+      accommodationId: post.accommodationId,
       authorId: author.id,
       createdAt,
       updatedAt: createdAt,
@@ -1079,6 +1243,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
 
   return {
     users,
+    accommodations,
     experiencePosts,
     postImages,
     tags,
@@ -1098,6 +1263,7 @@ const inMemoryStore =
     ? createBaselineInMemoryStore()
     : {
         users: [],
+        accommodations: [],
         experiencePosts: [],
         postImages: [],
         tags: [],
@@ -1130,6 +1296,7 @@ if (useInMemoryDb && process.env.NODE_ENV !== "production") {
       "[in-memory-db] Baseline loaded:",
       JSON.stringify({
         users: inMemoryStore.users.length,
+        accommodations: inMemoryStore.accommodations.length,
         posts: inMemoryStore.experiencePosts.length,
         images: inMemoryStore.postImages.length,
         tags: inMemoryStore.tags.length,

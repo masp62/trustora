@@ -95,17 +95,19 @@ export async function submitTargetReport({
     } else {
       const comment = (await db.comment.findUnique({
         where: { id: trimmedTargetId },
-        select: { id: true, postId: true },
-      })) as { id: string; postId: string } | null;
+        select: { id: true, accommodationId: true },
+      })) as { id: string; accommodationId: string } | null;
 
       if (!comment) {
         return { ok: false as const, error: "TARGET_NOT_FOUND" as const };
       }
 
-      const post = (await db.experiencePost.findUnique({
-        where: { id: comment.postId },
+      const post = ((await db.experiencePost.findMany({
+        where: { accommodationId: comment.accommodationId },
+        orderBy: { createdAt: "desc" },
+        take: 1,
         select: { id: true, slug: true },
-      })) as { id: string; slug: string } | null;
+      })) as Array<{ id: string; slug: string }>)[0] ?? null;
 
       if (!post) {
         return { ok: false as const, error: "TARGET_NOT_FOUND" as const };

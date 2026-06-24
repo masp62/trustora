@@ -25,6 +25,12 @@ export type PostDetailData = {
   propertyName: string | null;
   tripType: string;
   authorId: string;
+  accommodationId: string;
+  accommodation: {
+    slug: string;
+    name: string;
+    weightedOverallScore: number | null;
+  };
   createdAt: Date;
   author: {
     username: string;
@@ -41,31 +47,23 @@ export function postCanonicalPath(postId: string, slug: string) {
   return `/post/${postId}/${slug}`;
 }
 
+function toAccommodationSlug(name: string | null, city: string, country: string) {
+  const source = `${name ?? "accommodation"}-${city}-${country}`;
+  return source
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export async function getPostDetailById(id: string, viewerId: string | null = null): Promise<PostDetailData | null> {
-  const post = (await db.experiencePost.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      slug: true,
-      status: true,
-      visibility: true,
-      publishedAt: true,
-      title: true,
-      body: true,
-      locationCity: true,
-      locationCountry: true,
-      propertyName: true,
-      tripType: true,
-      authorId: true,
-      createdAt: true,
-    },
-  })) as
+  let post:
     | {
         id: string;
         slug: string;
-      status: "draft" | "published";
-      visibility: "public" | "private";
-      publishedAt: Date | null;
+        status: "draft" | "published";
+        visibility: "public" | "private";
+        publishedAt: Date | null;
         title: string;
         body: string;
         locationCity: string;
@@ -73,9 +71,55 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
         propertyName: string | null;
         tripType: string;
         authorId: string;
+        accommodationId: string | null;
         createdAt: Date;
       }
-    | null;
+    | null = null;
+
+  try {
+    post = (await db.experiencePost.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        slug: true,
+        status: true,
+        visibility: true,
+        publishedAt: true,
+        title: true,
+        body: true,
+        locationCity: true,
+        locationCountry: true,
+        propertyName: true,
+        tripType: true,
+        authorId: true,
+        accommodationId: true,
+        createdAt: true,
+      },
+    })) as typeof post;
+  } catch {
+    post = (await db.experiencePost.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        slug: true,
+        status: true,
+        visibility: true,
+        publishedAt: true,
+        title: true,
+        body: true,
+        locationCity: true,
+        locationCountry: true,
+        propertyName: true,
+        tripType: true,
+        authorId: true,
+        createdAt: true,
+      },
+    })) as (Omit<NonNullable<typeof post>, "accommodationId"> & { accommodationId?: never }) | null;
+
+    if (post) {
+      post = { ...post, accommodationId: null };
+    }
+  }
 
   if (!post) {
     return null;
@@ -89,7 +133,7 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
     return null;
   }
 
-  const [author, images, postTags, likeCount, comments] = await Promise.all([
+  const [author, images, postTags, likeCount] = await Promise.all([
     db.user.findUnique({
       where: { id: post.authorId },
       select: { username: true, displayName: true, avatarUrl: true },
@@ -104,12 +148,56 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
       select: { tagId: true },
     }) as Promise<Array<{ tagId: string }>>,
     db.like.count({ where: { postId: post.id } }),
-    db.comment.findMany({
-      where: { postId: post.id },
-      orderBy: { createdAt: "desc" },
-      select: { id: true, body: true, authorId: true, createdAt: true },
-    }) as Promise<Array<{ id: string; body: string; authorId: string; createdAt: Date }>>,
   ]);
+
+  let accommodation: { slug: string; name: string; weightedOverallScore: number | null } | null = null;
+  if (post.accommodationId) {
+    try {
+      accommodation = (await db.accommodation.findUnique({
+        where: { id: post.accommodationId },
+        select: {
+          slug: true,
+          name: true,
+          weightedOverallScore: true,
+        },
+      })) as { slug: string; name: string; weightedOverallScore: number | null } | null;
+    } catch {
+      accommodation = null;
+    }
+  }
+
+  let comments: Array<{ id: string; body: string; authorId: string; createdAt: Date }> = [];
+  if (post.accommodationId) {
+    try {
+      comments = (await db.comment.findMany({
+        where: { accommodationId: post.accommodationId },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, body: true, authorId: true, createdAt: true },
+      })) as Array<{ id: string; body: string; authorId: string; createdAt: Date }>;
+    } catch {
+      comments = [];
+    }
+  }
+
+  if (comments.length === 0) {
+    try {
+      comments = (await db.comment.findMany({
+        where: { postId: post.id },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, body: true, authorId: true, createdAt: true },
+      })) as Array<{ id: string; body: string; authorId: string; createdAt: Date }>;
+    } catch {
+      comments = [];
+    }
+  }
+
+  if (!accommodation) {
+    accommodation = {
+      slug: toAccommodationSlug(post.propertyName, post.locationCity, post.locationCountry),
+      name: post.propertyName ?? "Accommodation",
+      weightedOverallScore: null,
+    };
+  }
 
   if (!author) {
     return null;
@@ -148,6 +236,8 @@ export async function getPostDetailById(id: string, viewerId: string | null = nu
     propertyName: post.propertyName,
     tripType: post.tripType,
     authorId: post.authorId,
+    accommodationId: post.accommodationId ?? `legacy:${post.id}`,
+    accommodation,
     createdAt: post.createdAt,
     author,
     images,

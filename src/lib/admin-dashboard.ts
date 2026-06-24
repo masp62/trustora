@@ -279,6 +279,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       select: {
         id: true,
         title: true,
+        accommodationId: true,
         authorId: true,
         locationCountry: true,
         locationCity: true,
@@ -288,6 +289,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       Array<{
         id: string;
         title: string;
+        accommodationId: string;
         authorId: string;
         locationCountry: string;
         locationCity: string;
@@ -295,8 +297,8 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       }>
     >,
     db.comment.findMany({
-      select: { id: true, authorId: true, postId: true, createdAt: true },
-    }) as Promise<Array<{ id: string; authorId: string; postId: string; createdAt: Date }>>,
+      select: { id: true, authorId: true, accommodationId: true, createdAt: true },
+    }) as Promise<Array<{ id: string; authorId: string; accommodationId: string; createdAt: Date }>>,
     db.like.findMany({
       select: { id: true, postId: true },
     }) as Promise<Array<{ id: string; postId: string }>>,
@@ -307,6 +309,16 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
 
   const userById = new Map(users.map((user) => [user.id, user]));
   const postById = new Map(posts.map((post) => [post.id, post]));
+  const representativePostByAccommodation = new Map<string, { id: string; title: string; authorId: string }>();
+  for (const post of posts) {
+    if (!representativePostByAccommodation.has(post.accommodationId)) {
+      representativePostByAccommodation.set(post.accommodationId, {
+        id: post.id,
+        title: post.title,
+        authorId: post.authorId,
+      });
+    }
+  }
 
   const likesByPost = new Map<string, number>();
   for (const like of likes) {
@@ -316,7 +328,10 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
   const commentsByPost = new Map<string, number>();
   const commentsByAuthor = new Map<string, number>();
   for (const comment of comments) {
-    commentsByPost.set(comment.postId, (commentsByPost.get(comment.postId) ?? 0) + 1);
+    const representativePost = representativePostByAccommodation.get(comment.accommodationId);
+    if (representativePost) {
+      commentsByPost.set(representativePost.id, (commentsByPost.get(representativePost.id) ?? 0) + 1);
+    }
     commentsByAuthor.set(comment.authorId, (commentsByAuthor.get(comment.authorId) ?? 0) + 1);
   }
 

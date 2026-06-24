@@ -52,13 +52,14 @@ export async function addPostComment(postId: string, rawBody: string) {
 
     const post = (await db.experiencePost.findUnique({
       where: { id: postId },
-      select: { id: true, slug: true, authorId: true, status: true, visibility: true },
+      select: { id: true, slug: true, authorId: true, status: true, visibility: true, accommodationId: true },
     })) as {
       id: string;
       slug: string;
       authorId: string;
       status: "draft" | "published";
       visibility: "public" | "private";
+      accommodationId: string;
     } | null;
 
     if (!post) {
@@ -75,7 +76,7 @@ export async function addPostComment(postId: string, rawBody: string) {
 
     const comment = (await db.comment.create({
       data: {
-        postId,
+        accommodationId: post.accommodationId,
         authorId: session.user.id,
         body,
       },
@@ -127,12 +128,12 @@ export async function deletePostComment(commentId: string) {
       select: {
         id: true,
         authorId: true,
-        postId: true,
+        accommodationId: true,
       },
     })) as {
       id: string;
       authorId: string;
-      postId: string;
+      accommodationId: string;
     } | null;
 
     if (!comment) {
@@ -143,13 +144,15 @@ export async function deletePostComment(commentId: string) {
       return { ok: false as const, error: "FORBIDDEN" as const };
     }
 
-    const post = (await db.experiencePost.findUnique({
-      where: { id: comment.postId },
+    const post = ((await db.experiencePost.findMany({
+      where: { accommodationId: comment.accommodationId },
+      orderBy: { createdAt: "desc" },
+      take: 1,
       select: {
         id: true,
         slug: true,
       },
-    })) as { id: string; slug: string } | null;
+    })) as Array<{ id: string; slug: string }>)[0] ?? null;
 
     if (!post) {
       return { ok: false as const, error: "POST_NOT_FOUND" as const };

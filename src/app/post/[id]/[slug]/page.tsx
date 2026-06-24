@@ -220,6 +220,24 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           <p className="whitespace-pre-wrap text-[1.05rem] leading-8 text-gray-800">{post.body}</p>
         </section>
 
+        <section className="rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5" aria-label="Parent accommodation">
+          <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">Accommodation</p>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="font-semibold text-gray-900">{post.accommodation.name}</p>
+              <p className="text-sm text-gray-600">
+                Aggregated score: {typeof post.accommodation.weightedOverallScore === "number" ? post.accommodation.weightedOverallScore.toFixed(1) : "-"}
+              </p>
+            </div>
+            <Link
+              href={`/accommodation/${post.accommodation.slug}`}
+              className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
+            >
+              View accommodation
+            </Link>
+          </div>
+        </section>
+
         <section className="space-y-2 rounded-2xl border border-gray-200 p-4 sm:p-5" aria-label="Post stats">
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-semibold text-gray-700">Likes</p>

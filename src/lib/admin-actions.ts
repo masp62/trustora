@@ -99,16 +99,18 @@ export async function removeReportedTarget(reportId: string, confirmation: strin
     if (report.targetType === REPORT_TARGET_TYPE.comment) {
       const comment = (await db.comment.findUnique({
         where: { id: report.targetId },
-        select: { id: true, postId: true },
-      })) as { id: string; postId: string } | null;
+        select: { id: true, accommodationId: true },
+      })) as { id: string; accommodationId: string } | null;
 
       if (comment) {
         await db.comment.delete({ where: { id: comment.id } });
 
-        const post = (await db.experiencePost.findUnique({
-          where: { id: comment.postId },
+        const post = ((await db.experiencePost.findMany({
+          where: { accommodationId: comment.accommodationId },
+          orderBy: { createdAt: "desc" },
+          take: 1,
           select: { id: true, slug: true },
-        })) as { id: string; slug: string } | null;
+        })) as Array<{ id: string; slug: string }>)[0] ?? null;
 
         if (post) {
           revalidatePath(`/post/${post.id}`);

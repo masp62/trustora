@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { postCanonicalPath } from "@/app/post/post-detail-data";
+import { ensureAccommodationForPostInput, recomputeAccommodationAggregate } from "@/lib/accommodations";
 import { db } from "@/lib/db";
 import { locationToSlug } from "@/lib/location-slug";
 import { type PostActionState } from "@/lib/post-action-state";
@@ -61,6 +62,10 @@ function computeOverallAccommodationRating(categoryRatings: {
 
   const average = values.reduce((sum, value) => sum + value, 0) / values.length;
   return Number(average.toFixed(1));
+}
+
+function supportsAccommodationSchema() {
+  return typeof (db as unknown as { accommodation?: { findMany?: unknown } }).accommodation?.findMany === "function";
 }
 
 async function generateUniquePostSlug(title: string) {
@@ -245,6 +250,16 @@ export async function createExperiencePost(
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
 
+  if (!propertyName) {
+    return {
+      error: "Property name is required.",
+      fieldErrors: {
+        ...fieldErrors,
+        location: "Property name is required to link this story to an accommodation.",
+      },
+    };
+  }
+
   const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -262,6 +277,11 @@ export async function createExperiencePost(
   }
 
   const slug = await generateUniquePostSlug(title);
+  const accommodation = await ensureAccommodationForPostInput({
+    propertyName,
+    locationCity,
+    locationCountry,
+  });
 
   const createdPost = await db.experiencePost.create({
     data: {
@@ -276,6 +296,7 @@ export async function createExperiencePost(
       locationCountry,
       propertyName: propertyName || null,
       tripType: tripTypeValue as TripType,
+      ...(supportsAccommodationSchema() && accommodation?.id ? { accommodationId: accommodation.id } : {}),
       authorId: session.user.id,
     },
   }) as { id: string; slug: string };
@@ -330,6 +351,10 @@ export async function createExperiencePost(
     },
   });
 
+  if (accommodation?.id) {
+    await recomputeAccommodationAggregate(accommodation.id);
+  }
+
   redirect(`/post/${createdPost.id}`);
 }
 
@@ -350,8 +375,14 @@ export async function updateExperiencePost(
 
   const existingPost = (await db.experiencePost.findUnique({
     where: { id: postId },
-    select: { id: true, authorId: true, status: true, publishedAt: true },
-  })) as { id: string; authorId: string; status: "draft" | "published"; publishedAt: Date | null } | null;
+    select: { id: true, authorId: true, status: true, publishedAt: true, accommodationId: true },
+  })) as {
+    id: string;
+    authorId: string;
+    status: "draft" | "published";
+    publishedAt: Date | null;
+    accommodationId: string;
+  } | null;
 
   if (!existingPost) {
     return { error: "Post not found.", fieldErrors: {} };
@@ -401,9 +432,24 @@ export async function updateExperiencePost(
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
 
+  if (!propertyName) {
+    return {
+      error: "Property name is required.",
+      fieldErrors: {
+        ...fieldErrors,
+        location: "Property name is required to link this story to an accommodation.",
+      },
+    };
+  }
+
   const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const slug = await generateUniquePostSlug(title);
+  const accommodation = await ensureAccommodationForPostInput({
+    propertyName,
+    locationCity,
+    locationCountry,
+  });
   const nextStatus =
     existingPost.status === "published" ? "published" : intent === "draft" ? "draft" : "published";
   const nextPublishedAt =
@@ -423,6 +469,7 @@ export async function updateExperiencePost(
       locationCountry,
       propertyName: propertyName || null,
       tripType: tripTypeValue as TripType,
+      ...(supportsAccommodationSchema() && accommodation?.id ? { accommodationId: accommodation.id } : {}),
     },
   });
 
@@ -501,6 +548,17 @@ export async function updateExperiencePost(
         isVerifiedStay: false,
       },
     });
+  }
+
+  const aggregateRecomputes: Array<Promise<unknown>> = [];
+  if (accommodation?.id) {
+    aggregateRecomputes.push(recomputeAccommodationAggregate(accommodation.id));
+  }
+  if (existingPost.accommodationId && accommodation?.id && existingPost.accommodationId !== accommodation.id) {
+    aggregateRecomputes.push(recomputeAccommodationAggregate(existingPost.accommodationId));
+  }
+  if (aggregateRecomputes.length > 0) {
+    await Promise.all(aggregateRecomputes);
   }
 
   redirect(`/post/${postId}`);

@@ -1,68 +1,17 @@
-import { Suspense } from "react";
-
-import { auth, googleAuthConfigured } from "@/auth";
-import { FilterPanel } from "@/components/explore/filter-panel";
-import { parseFiltersFromParams } from "@/lib/explore-filters";
-import { getExplorePostsPage } from "@/lib/explore-feed";
+import { auth } from "@/auth";
+import { AccommodationCard } from "@/components/accommodation-card";
+import { getAccommodationCards } from "@/lib/accommodations";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
-import { ExploreFeedClient } from "./explore-feed-client";
-
-function FilterPanelSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="h-10 flex-1 animate-pulse rounded-lg bg-gray-100" />
-        <div className="h-10 flex-1 animate-pulse rounded-lg bg-gray-100" />
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="h-9 w-24 animate-pulse rounded-full bg-gray-100" />
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {Array.from({ length: 8 }, (_, i) => (
-          <div key={i} className="h-9 w-20 animate-pulse rounded-full bg-gray-100" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-interface ExploreSearchParams {
-  country?: string;
-  city?: string;
-  tripType?: string;
-  tags?: string;
-}
 
 export default async function ExplorePage({
-  searchParams,
+  searchParams: _searchParams,
 }: {
-  searchParams: Promise<ExploreSearchParams>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const session = await auth();
-  const params = await searchParams;
-  const sp = new URLSearchParams();
-  if (params.country) sp.set("country", params.country);
-  if (params.city) sp.set("city", params.city);
-  if (params.tripType) sp.set("tripType", params.tripType);
-  if (params.tags) sp.set("tags", params.tags);
-
-  const filters = parseFiltersFromParams(sp);
-  const hasActiveFilters =
-    !!filters.country ||
-    !!filters.city ||
-    !!filters.tripType ||
-    filters.tags.length > 0;
-  const feedKey = JSON.stringify(filters);
-
-  const { posts, hasMore, nextCursor } = await getExplorePostsPage(
-    session?.user?.id ?? null,
-    filters,
-  );
-  const isAuthenticated = !!session?.user;
+  const accommodations = await getAccommodationCards();
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
@@ -70,42 +19,36 @@ export default async function ExplorePage({
       <section className="mx-auto mb-8 w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Explore</p>
         <h1 className="mt-3 max-w-2xl font-heading text-4xl leading-tight text-gray-900 sm:text-6xl xl:max-w-none xl:whitespace-nowrap">
-          Discover real travel stay stories.
+          Discover verified accommodations.
         </h1>
 
         <OnboardingPrompt />
 
         {session?.user && (
           <>
-            <Suspense>
-              <ProfileSetupDialog
-                initialDisplayName={session.user.name ?? ""}
-                initialBio=""
-                initialLocation=""
-              />
-            </Suspense>
+            <ProfileSetupDialog
+              initialDisplayName={session.user.name ?? ""}
+              initialBio=""
+              initialLocation=""
+            />
           </>
         )}
-
-        <div className="mt-6 border-t border-gray-100 pt-4">
-          <Suspense fallback={<FilterPanelSkeleton />}>
-            <FilterPanel />
-          </Suspense>
-        </div>
       </section>
 
-      {/* Post Feed */}
+      {/* Accommodation Feed */}
       <section className="mx-auto w-full max-w-[1760px]">
-        <ExploreFeedClient
-          key={feedKey}
-          initialPosts={posts}
-          initialHasMore={hasMore}
-          initialNextCursor={nextCursor}
-          isAuthenticated={isAuthenticated}
-          googleAuthConfigured={googleAuthConfigured}
-          filters={filters}
-          hasActiveFilters={hasActiveFilters}
-        />
+        {accommodations.length === 0 ? (
+          <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
+            <h2 className="font-heading text-2xl text-gray-900">No accommodations yet</h2>
+            <p className="mt-2 text-sm text-gray-600">Create an experience with property details to populate this list.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {accommodations.map((accommodation) => (
+              <AccommodationCard key={accommodation.id} accommodation={accommodation} />
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );
