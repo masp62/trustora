@@ -970,6 +970,111 @@ function createBaselineInMemoryStore(): InMemoryStore {
       .replace(/^-|-$/g, "")
       .slice(0, 64);
 
+  const normalizeAccommodationPart = (value: string) => value.trim().toLowerCase();
+
+  const getAccommodationKey = (propertyName: string, locationCity: string, locationCountry: string) =>
+    `${normalizeAccommodationPart(propertyName)}|${normalizeAccommodationPart(locationCity)}|${normalizeAccommodationPart(locationCountry)}`;
+
+  const hashString = (value: string) => {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+    }
+    return hash;
+  };
+
+  const targetPostsPerAccommodation = (key: string) => 4 + (hashString(key) % 7);
+
+  const trimTitle = (value: string) => (value.length <= 120 ? value : `${value.slice(0, 117)}...`);
+
+  const buildExpandedStoriesByUser = (
+    baselineUsers: Array<{
+      email: string;
+      stories: Array<{
+        title: string;
+        body: string;
+        locationCity: string;
+        locationCountry: string;
+        propertyName: string;
+        tripType: string;
+        tags: string[];
+        images: string[];
+      }>;
+    }>,
+  ) => {
+    const storiesByAccommodation = new Map<
+      string,
+      Array<{
+        title: string;
+        body: string;
+        locationCity: string;
+        locationCountry: string;
+        propertyName: string;
+        tripType: string;
+        tags: string[];
+        images: string[];
+        seedAuthorEmail: string;
+      }>
+    >();
+    const allUserEmails = baselineUsers.map((user) => user.email);
+
+    for (const user of baselineUsers) {
+      for (const story of user.stories) {
+        const key = getAccommodationKey(story.propertyName, story.locationCity, story.locationCountry);
+        if (!storiesByAccommodation.has(key)) {
+          storiesByAccommodation.set(key, []);
+        }
+        storiesByAccommodation.get(key)?.push({ ...story, seedAuthorEmail: user.email });
+      }
+    }
+
+    const expandedByUser = new Map<string, Array<{
+      title: string;
+      body: string;
+      locationCity: string;
+      locationCountry: string;
+      propertyName: string;
+      tripType: string;
+      tags: string[];
+      images: string[];
+    }>>(allUserEmails.map((email) => [email, []]));
+
+    for (const [key, sourceStories] of storiesByAccommodation.entries()) {
+      const targetCount = targetPostsPerAccommodation(key);
+      const expandedStories = [...sourceStories];
+
+      for (let i = sourceStories.length; i < targetCount; i += 1) {
+        const template = sourceStories[i % sourceStories.length];
+        let authorEmail = allUserEmails[i % allUserEmails.length];
+        if (allUserEmails.length > 1 && authorEmail === template.seedAuthorEmail) {
+          authorEmail = allUserEmails[(i + 1) % allUserEmails.length];
+        }
+
+        expandedStories.push({
+          ...template,
+          seedAuthorEmail: authorEmail,
+          title: trimTitle(`${template.title} · Community Stay ${i + 1}`),
+          body: `${template.body} Additional stay perspective ${i + 1}.`,
+        });
+      }
+
+      for (const story of expandedStories) {
+        expandedByUser.get(story.seedAuthorEmail)?.push({
+          title: story.title,
+          body: story.body,
+          locationCity: story.locationCity,
+          locationCountry: story.locationCountry,
+          propertyName: story.propertyName,
+          tripType: story.tripType,
+          tags: story.tags,
+          images: story.images,
+        });
+      }
+    }
+
+    return expandedByUser;
+  };
+
   const preferredUserIds: Record<string, string> = {
     "anna@trustora.local": "usr_anna",
     "lukas@trustora.local": "usr_lukas",
@@ -1002,6 +1107,7 @@ function createBaselineInMemoryStore(): InMemoryStore {
     name,
   }));
   const tagByName = new Map(tags.map((tag) => [tag.name, tag.id]));
+  const expandedStoriesByUser = buildExpandedStoriesByUser(BASELINE_USERS);
 
   const slugCounts = new Map<string, number>();
   const postSeeds: Array<{
@@ -1022,7 +1128,9 @@ function createBaselineInMemoryStore(): InMemoryStore {
       return [];
     }
 
-    return seedUser.stories.map((story, storyIndex) => {
+    const storiesForUser = expandedStoriesByUser.get(seedUser.email) ?? [];
+
+    return storiesForUser.map((story, storyIndex) => {
       const baseSlug = toSlug(story.title);
       const collisionCount = slugCounts.get(baseSlug) ?? 0;
       slugCounts.set(baseSlug, collisionCount + 1);
@@ -1046,9 +1154,6 @@ function createBaselineInMemoryStore(): InMemoryStore {
 
   const accommodationByKey = new Map<string, InMemoryAccommodation>();
   const accommodations: InMemoryAccommodation[] = [];
-
-  const getAccommodationKey = (propertyName: string, locationCity: string, locationCountry: string) =>
-    `${propertyName.toLowerCase().trim()}|${locationCity.toLowerCase().trim()}|${locationCountry.toLowerCase().trim()}`;
 
   postSeeds.forEach((post) => {
     const key = getAccommodationKey(post.propertyName, post.locationCity, post.locationCountry);
@@ -1240,6 +1345,64 @@ function createBaselineInMemoryStore(): InMemoryStore {
       updatedAt: createdAt,
     };
   });
+
+  const ageWeight = (createdAt: Date, current = new Date()) => {
+    const ageDays = (current.getTime() - createdAt.getTime()) / (24 * 60 * 60 * 1000);
+    if (ageDays <= 30) return 1;
+    if (ageDays <= 180) return 0.75;
+    if (ageDays <= 270) return 0.5;
+    if (ageDays <= 365) return 0.25;
+    return 0;
+  };
+
+  const weightedAverage = (entries: Array<{ value: number; weight: number }>) => {
+    const weightedSum = entries.reduce((sum, entry) => sum + entry.value * entry.weight, 0);
+    const weightSum = entries.reduce((sum, entry) => sum + entry.weight, 0);
+    if (weightSum <= 0) {
+      return null;
+    }
+
+    return Number((weightedSum / weightSum).toFixed(2));
+  };
+
+  const postById = new Map(experiencePosts.map((post) => [post.id, post]));
+  for (const accommodation of accommodations) {
+    const relevantRatings = accommodationRatings
+      .filter((rating) => postById.get(rating.postId)?.accommodationId === accommodation.id)
+      .map((rating) => ({ rating, weight: ageWeight(rating.createdAt, now) }))
+      .filter((entry) => entry.weight > 0);
+
+    accommodation.weightedOverallScore = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.overallScore, weight: entry.weight })),
+    );
+    accommodation.weightedCleanliness = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.cleanliness, weight: entry.weight })),
+    );
+    accommodation.weightedAccuracy = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.accuracy, weight: entry.weight })),
+    );
+    accommodation.weightedCheckIn = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.checkIn, weight: entry.weight })),
+    );
+    accommodation.weightedCommunication = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.communication, weight: entry.weight })),
+    );
+    accommodation.weightedLocation = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.location, weight: entry.weight })),
+    );
+    accommodation.weightedValue = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.value, weight: entry.weight })),
+    );
+    accommodation.weightedComfort = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.comfort, weight: entry.weight })),
+    );
+    accommodation.weightedFacilities = weightedAverage(
+      relevantRatings.map((entry) => ({ value: entry.rating.facilities, weight: entry.weight })),
+    );
+    accommodation.contributingRatingCount = relevantRatings.length;
+    accommodation.aggregateUpdatedAt = now;
+    accommodation.updatedAt = now;
+  }
 
   return {
     users,

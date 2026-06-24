@@ -122,15 +122,15 @@
       "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
       "stories": [
         {
-          "title": "Surf House in Ericeira",
-          "body": "Shared kitchen, sunset cliffs, and walking distance to two beginner-friendly beaches.",
-          "locationCity": "Ericeira",
+          "title": "Second Stay at Alfama Rooftop Studio",
+          "body": "Came back for a longer remote-work week. Same quiet mornings, better local coffee routine, and a solid workspace setup.",
+          "locationCity": "Lisbon",
           "locationCountry": "Portugal",
-          "propertyName": "Blue Tide Surf House",
+          "propertyName": "Alfama Rooftop Studio",
           "tripType": "friends",
           "tags": [
-            "beach",
-            "budget"
+            "city-break",
+            "remote-work"
           ],
           "images": [
             "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
@@ -138,11 +138,11 @@
           ]
         },
         {
-          "title": "Alpine Cabin near Innsbruck",
-          "body": "Wood interiors, fresh snow, and a sauna with mountain views after long hiking days.",
-          "locationCity": "Innsbruck",
-          "locationCountry": "Austria",
-          "propertyName": "Nordkette Cabin",
+          "title": "Autumn Return to Villa Bellavista",
+          "body": "Different season, same lake serenity. The terrace sunsets and quiet evenings made it perfect for a reset.",
+          "locationCity": "Como",
+          "locationCountry": "Italy",
+          "propertyName": "Villa Bellavista",
           "tripType": "couple",
           "tags": [
             "countryside",

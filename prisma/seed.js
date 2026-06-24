@@ -112,6 +112,183 @@ function toSlug(value) {
     .slice(0, 64);
 }
 
+function accommodationSlug(propertyName, locationCity, locationCountry) {
+  return toSlug(`${propertyName}-${locationCity}-${locationCountry}`);
+}
+
+function normalizeAccommodationPart(value) {
+  return value.trim().toLowerCase();
+}
+
+function accommodationKey(story) {
+  return [
+    normalizeAccommodationPart(story.propertyName),
+    normalizeAccommodationPart(story.locationCity),
+    normalizeAccommodationPart(story.locationCountry),
+  ].join("|");
+}
+
+function hashString(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function targetPostsPerAccommodation(key) {
+  return 4 + (hashString(key) % 7); // 4..10
+}
+
+function trimTitle(value) {
+  return value.length <= 120 ? value : `${value.slice(0, 117)}...`;
+}
+
+function buildExpandedStoriesByUser(baselineUsers) {
+  const storiesByAccommodation = new Map();
+  const allUserEmails = baselineUsers.map((user) => user.email);
+
+  for (const user of baselineUsers) {
+    for (const story of user.stories) {
+      const key = accommodationKey(story);
+      if (!storiesByAccommodation.has(key)) {
+        storiesByAccommodation.set(key, []);
+      }
+      storiesByAccommodation.get(key).push({
+        ...story,
+        seedAuthorEmail: user.email,
+      });
+    }
+  }
+
+  const expandedByUser = new Map(allUserEmails.map((email) => [email, []]));
+
+  for (const [key, sourceStories] of storiesByAccommodation.entries()) {
+    const targetCount = targetPostsPerAccommodation(key);
+    const expandedStories = [...sourceStories];
+
+    for (let i = sourceStories.length; i < targetCount; i += 1) {
+      const template = sourceStories[i % sourceStories.length];
+      let authorEmail = allUserEmails[i % allUserEmails.length];
+      if (allUserEmails.length > 1 && authorEmail === template.seedAuthorEmail) {
+        authorEmail = allUserEmails[(i + 1) % allUserEmails.length];
+      }
+
+      expandedStories.push({
+        ...template,
+        seedAuthorEmail: authorEmail,
+        title: trimTitle(`${template.title} · Community Stay ${i + 1}`),
+        body: `${template.body} Additional stay perspective ${i + 1}.`,
+      });
+    }
+
+    for (const story of expandedStories) {
+      expandedByUser.get(story.seedAuthorEmail).push({
+        title: story.title,
+        body: story.body,
+        locationCity: story.locationCity,
+        locationCountry: story.locationCountry,
+        propertyName: story.propertyName,
+        tripType: story.tripType,
+        tags: story.tags,
+        images: story.images,
+      });
+    }
+  }
+
+  return expandedByUser;
+}
+
+function ageWeight(createdAt, now = new Date()) {
+  const ageDays = (now.getTime() - createdAt.getTime()) / (24 * 60 * 60 * 1000);
+
+  if (ageDays <= 30) return 1;
+  if (ageDays <= 180) return 0.75;
+  if (ageDays <= 270) return 0.5;
+  if (ageDays <= 365) return 0.25;
+  return 0;
+}
+
+function weightedAverage(entries) {
+  const weightedSum = entries.reduce((sum, entry) => sum + entry.value * entry.weight, 0);
+  const weightSum = entries.reduce((sum, entry) => sum + entry.weight, 0);
+  if (weightSum <= 0) {
+    return null;
+  }
+
+  return Number((weightedSum / weightSum).toFixed(2));
+}
+
+async function recomputeAllAccommodationAggregates(prisma) {
+  const accommodations = await prisma.accommodation.findMany({
+    select: { id: true },
+  });
+
+  for (const accommodation of accommodations) {
+    const posts = await prisma.experiencePost.findMany({
+      where: { accommodationId: accommodation.id },
+      select: { id: true },
+    });
+
+    if (posts.length === 0) {
+      await prisma.accommodation.update({
+        where: { id: accommodation.id },
+        data: {
+          weightedOverallScore: null,
+          weightedCleanliness: null,
+          weightedAccuracy: null,
+          weightedCheckIn: null,
+          weightedCommunication: null,
+          weightedLocation: null,
+          weightedValue: null,
+          weightedComfort: null,
+          weightedFacilities: null,
+          contributingRatingCount: 0,
+          aggregateUpdatedAt: new Date(),
+        },
+      });
+      continue;
+    }
+
+    const ratings = await prisma.accommodationRating.findMany({
+      where: { postId: { in: posts.map((post) => post.id) } },
+      select: {
+        overallScore: true,
+        cleanliness: true,
+        accuracy: true,
+        checkIn: true,
+        communication: true,
+        location: true,
+        value: true,
+        comfort: true,
+        facilities: true,
+        createdAt: true,
+      },
+    });
+
+    const weighted = ratings
+      .map((rating) => ({ rating, weight: ageWeight(rating.createdAt) }))
+      .filter((entry) => entry.weight > 0);
+
+    await prisma.accommodation.update({
+      where: { id: accommodation.id },
+      data: {
+        weightedOverallScore: weightedAverage(weighted.map((entry) => ({ value: entry.rating.overallScore, weight: entry.weight }))),
+        weightedCleanliness: weightedAverage(weighted.map((entry) => ({ value: entry.rating.cleanliness, weight: entry.weight }))),
+        weightedAccuracy: weightedAverage(weighted.map((entry) => ({ value: entry.rating.accuracy, weight: entry.weight }))),
+        weightedCheckIn: weightedAverage(weighted.map((entry) => ({ value: entry.rating.checkIn, weight: entry.weight }))),
+        weightedCommunication: weightedAverage(weighted.map((entry) => ({ value: entry.rating.communication, weight: entry.weight }))),
+        weightedLocation: weightedAverage(weighted.map((entry) => ({ value: entry.rating.location, weight: entry.weight }))),
+        weightedValue: weightedAverage(weighted.map((entry) => ({ value: entry.rating.value, weight: entry.weight }))),
+        weightedComfort: weightedAverage(weighted.map((entry) => ({ value: entry.rating.comfort, weight: entry.weight }))),
+        weightedFacilities: weightedAverage(weighted.map((entry) => ({ value: entry.rating.facilities, weight: entry.weight }))),
+        contributingRatingCount: weighted.length,
+        aggregateUpdatedAt: new Date(),
+      },
+    });
+  }
+}
+
 function hasPlaceholderDatabaseUrl(value) {
   return typeof value === "string" && (value.includes("<") || value.includes(">"));
 }
@@ -143,6 +320,7 @@ async function main() {
   );
 
   const tagByName = new Map(tags.map((tag) => [tag.name, tag]));
+  const expandedStoriesByUser = buildExpandedStoriesByUser(BASELINE_USERS);
 
   for (const userSeed of BASELINE_USERS) {
     const role = userSeed.email === BASELINE_ADMIN_EMAIL ? "admin" : "user";
@@ -176,8 +354,27 @@ async function main() {
 
     await prisma.experiencePost.deleteMany({ where: { authorId: user.id } });
 
-    for (let i = 0; i < userSeed.stories.length; i += 1) {
-      const story = userSeed.stories[i];
+    const storiesForUser = expandedStoriesByUser.get(userSeed.email) ?? [];
+
+    for (let i = 0; i < storiesForUser.length; i += 1) {
+      const story = storiesForUser[i];
+
+      const accommodation = await prisma.accommodation.upsert({
+        where: {
+          name_locationCity_locationCountry: {
+            name: story.propertyName,
+            locationCity: story.locationCity,
+            locationCountry: story.locationCountry,
+          },
+        },
+        update: {},
+        create: {
+          name: story.propertyName,
+          locationCity: story.locationCity,
+          locationCountry: story.locationCountry,
+          slug: accommodationSlug(story.propertyName, story.locationCity, story.locationCountry),
+        },
+      });
 
       const post = await prisma.experiencePost.create({
         data: {
@@ -188,6 +385,7 @@ async function main() {
           locationCountry: story.locationCountry,
           propertyName: story.propertyName,
           tripType: story.tripType,
+          accommodationId: accommodation.id,
           authorId: user.id,
           createdAt: randomDateWithinLast30Days(),
         },
@@ -225,7 +423,7 @@ async function main() {
   const users = await prisma.user.findMany({ where: { email: { in: BASELINE_USERS.map((u) => u.email) } } });
   if (users.length >= 2) {
     // Create cross-user likes and comments for richer seed data
-    const allPosts = await prisma.experiencePost.findMany({ select: { id: true, authorId: true } });
+    const allPosts = await prisma.experiencePost.findMany({ select: { id: true, authorId: true, accommodationId: true } });
 
     // Each user likes posts from other users
     const likeData = [];
@@ -255,7 +453,7 @@ async function main() {
       for (const post of postsToComment) {
         commentData.push({
           authorId: user.id,
-          postId: post.id,
+          accommodationId: post.accommodationId,
           body: commentBodies[Math.floor(Math.random() * commentBodies.length)],
           createdAt: randomDateWithinLast30Days(),
         });
@@ -339,6 +537,8 @@ async function main() {
       await prisma.report.createMany({ data: reportData });
     }
   }
+
+  await recomputeAllAccommodationAggregates(prisma);
 
   console.log(`Seeded ${TAGS.length} tags, ${BASELINE_USERS.length} users, baseline stories, ratings, likes, and comments.`);
 
