@@ -82,19 +82,19 @@ The weighted average is recalculated:
 
 ## Acceptance criteria
 
-- [ ] An `Accommodation` model exists in the database with name, location, and slug
-- [ ] `ExperiencePost` has an optional foreign key to `Accommodation`
-- [ ] Creating a story with a property name + location auto-links it to an existing or new accommodation
-- [ ] The accommodation page (`/accommodation/[slug]`) shows all linked stories in chronological order (newest first)
-- [ ] Ratings from #23c are aggregated across all stories of an accommodation using time-weighted averaging
-- [ ] Ratings older than 12 months are excluded from the aggregated score (weight = 0)
-- [ ] Ratings from the last 30 days have maximum weight (1.0), decaying through 0.75, 0.5, 0.25 for older brackets
-- [ ] The accommodation page displays the weighted overall score, category averages, and contributing rating count
-- [ ] Individual story pages link to their parent accommodation's aggregated rating
-- [ ] A daily job recalculates aggregated scores to reflect time-decay changes
-- [ ] A migration script groups existing stories by property name + location into accommodations
-- [ ] Authors can correct the accommodation link on their own stories
-- [ ] Stories without a property name remain unlinked and function as before
+- [x] An `Accommodation` model exists in the database with name, location, and slug
+- [x] `ExperiencePost` has an optional foreign key to `Accommodation`
+- [x] Creating a story with a property name + location auto-links it to an existing or new accommodation
+- [x] The accommodation page (`/accommodation/[slug]`) shows all linked stories in chronological order (newest first)
+- [x] Ratings from #23c are aggregated across all stories of an accommodation using time-weighted averaging
+- [x] Ratings older than 12 months are excluded from the aggregated score (weight = 0)
+- [x] Ratings from the last 30 days have maximum weight (1.0), decaying through 0.75, 0.5, 0.25 for older brackets
+- [x] The accommodation page displays the weighted overall score, category averages, and contributing rating count
+- [x] Individual story pages link to their parent accommodation's aggregated rating
+- [x] A daily job recalculates aggregated scores to reflect time-decay changes
+- [x] A migration script groups existing stories by property name + location into accommodations
+- [x] Authors can correct the accommodation link on their own stories
+- [x] Stories without a property name remain unlinked and function as before
 
 ## Blocked by
 
