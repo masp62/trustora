@@ -64,6 +64,30 @@ When `USE_IN_MEMORY_DB=true`, Prisma seed is skipped automatically and the app s
 - `npm run prisma:seed` - seed predefined tags
 - `npm run prisma:studio` - open Prisma Studio
 
+## Accommodation Aggregate Recompute Cron
+
+Story 23f introduces time-decayed accommodation aggregates. A daily recompute endpoint is available at:
+
+- `POST /api/cron/accommodation-aggregates`
+
+Security:
+
+- Set `CRON_SECRET` in your environment.
+- Send the same value in the `x-cron-token` header.
+
+Example call:
+
+```bash
+curl -X POST \
+	-H "x-cron-token: $CRON_SECRET" \
+	http://localhost:3000/api/cron/accommodation-aggregates
+```
+
+Response:
+
+- `200 { "ok": true, "recomputed": <count> }` on success
+- `401 { "error": "UNAUTHORIZED" }` if the token is missing or wrong
+
 ## Vercel Deployment
 
 Automatic deploys on push to `main` are enabled after linking this repo to Vercel once:
