@@ -103,9 +103,9 @@ test.describe("Story 10 likes", () => {
 
     await context.clearCookies();
 
-    await page.goto("/explore");
+    await page.goto(`/search?q=${encodeURIComponent(created.title)}`);
     const card = page.getByRole("heading", { name: created.title }).locator("xpath=ancestor::article[1]");
-    await expect(card.getByRole("button", { name: "Like this post" })).toContainText("0");
+    await expect(card.getByRole("button", { name: "Like this post" }).first()).toContainText("0");
 
     await page.goto(created.canonicalPath);
     await expect(page.getByRole("button", { name: "Like this post" })).toContainText("0");

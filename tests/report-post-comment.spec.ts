@@ -52,15 +52,16 @@ async function rateAllCategories(page: import("@playwright/test").Page) {
 }
 
 async function createPost(page: import("@playwright/test").Page) {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   await page.goto("/create");
 
   const photoUrl = await uploadPhotoAndGetUrl(page);
 
-  await page.getByLabel("Title").fill("Story 21 report target post");
+  await page.getByLabel("Title").fill(`Story 21 report target post ${suffix}`);
   await page.getByLabel("Story").fill("Post used to verify report controls for posts and comments.");
-  await page.locator('input[name="locationCity"]').fill("Hamburg");
-  await page.locator('input[name="locationCountry"]').fill("Germany");
-  await page.locator('input[name="propertyName"]').fill("Report Test Loft");
+  await page.locator('input[name="locationCity"]').fill(`Hamburg ${suffix}`);
+  await page.locator('input[name="locationCountry"]').fill(`Germany ${suffix}`);
+  await page.locator('input[name="propertyName"]').fill(`Report Test Loft ${suffix}`);
   await page.locator('select[name="tripType"]').selectOption("friends");
   await page.getByLabel("city-break", { exact: true }).check();
   await rateAllCategories(page);

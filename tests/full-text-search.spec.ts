@@ -63,19 +63,20 @@ async function createPost(
     city: string;
     country: string;
     photoIndex: number;
+    propertyName: string;
   },
 ) {
   await page.goto("/create");
-  const photoUrl = await uploadPhotoAndGetUrl(page, options.photoIndex);
 
   await page.getByLabel("Title").fill(options.title);
   await page.getByLabel("Story").fill(options.body);
   await page.locator('input[name="locationCity"]').fill(options.city);
   await page.locator('input[name="locationCountry"]').fill(options.country);
+  await page.locator('input[name="propertyName"]').fill(options.propertyName);
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break").check();
   await rateAllCategories(page);
-
+  const photoUrl = await uploadPhotoAndGetUrl(page, options.photoIndex);
   await page.evaluate((url) => {
     const form = document.querySelector("form");
     if (!form) {
@@ -109,6 +110,7 @@ test.describe("Story 20 full-text search", () => {
       city: "Oslo",
       country: "Norway",
       photoIndex: 1,
+      propertyName: `Search Property ${suffix} 1`,
     });
 
     await createPost(page, {
@@ -117,6 +119,7 @@ test.describe("Story 20 full-text search", () => {
       city: "Rome",
       country: "Italy",
       photoIndex: 2,
+      propertyName: `Search Property ${suffix} 2`,
     });
 
     await createPost(page, {
@@ -125,6 +128,7 @@ test.describe("Story 20 full-text search", () => {
       city: cityToken,
       country: "France",
       photoIndex: 3,
+      propertyName: `Search Property ${suffix} 3`,
     });
 
     await createPost(page, {
@@ -133,6 +137,7 @@ test.describe("Story 20 full-text search", () => {
       city: "Berlin",
       country: countryToken,
       photoIndex: 4,
+      propertyName: `Search Property ${suffix} 4`,
     });
 
     await page.context().clearCookies();
@@ -165,6 +170,7 @@ test.describe("Story 20 full-text search", () => {
       city: "Lisbon",
       country: "Portugal",
       photoIndex: 5,
+      propertyName: `Search Tie Property ${suffix} 1`,
     });
 
     await createPost(page, {
@@ -173,6 +179,7 @@ test.describe("Story 20 full-text search", () => {
       city: "Lisbon",
       country: "Portugal",
       photoIndex: 6,
+      propertyName: `Search Tie Property ${suffix} 2`,
     });
 
     await page.context().clearCookies();

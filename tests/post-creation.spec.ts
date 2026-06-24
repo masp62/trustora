@@ -178,6 +178,7 @@ test.describe("Story 6 post creation", () => {
       await page.getByLabel("Story").fill("A valid story body for rate-limit testing.");
       await page.locator('input[name="locationCity"]').fill("Berlin");
       await page.locator('input[name="locationCountry"]').fill("Germany");
+      await page.locator('input[name="propertyName"]').fill(`Rate Limit Lodge ${i + 1}`);
       await page.locator('select[name="tripType"]').selectOption("solo");
       await rateAllCategories(page);
 
@@ -202,6 +203,7 @@ test.describe("Story 6 post creation", () => {
     await page.getByLabel("Story").fill("A valid story body for rate-limit testing.");
     await page.locator('input[name="locationCity"]').fill("Berlin");
     await page.locator('input[name="locationCountry"]').fill("Germany");
+    await page.locator('input[name="propertyName"]').fill("Rate Limit Lodge 6");
     await page.locator('select[name="tripType"]').selectOption("solo");
     await rateAllCategories(page);
 

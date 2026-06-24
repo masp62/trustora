@@ -54,15 +54,16 @@ async function rateAllCategories(page: import("@playwright/test").Page) {
 }
 
 async function createPost(page: import("@playwright/test").Page) {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   await page.goto("/create");
 
   const photoUrl = await uploadPhotoAndGetUrl(page, 0);
 
-  await page.getByLabel("Title").fill("Story 11 comments post");
+  await page.getByLabel("Title").fill(`Story 11 comments post ${suffix}`);
   await page.getByLabel("Story").fill("Testing comments on post detail page.");
-  await page.locator('input[name="locationCity"]').fill("Porto");
-  await page.locator('input[name="locationCountry"]').fill("Portugal");
-  await page.locator('input[name="propertyName"]').fill("Comment House");
+  await page.locator('input[name="locationCity"]').fill(`Porto ${suffix}`);
+  await page.locator('input[name="locationCountry"]').fill(`Portugal ${suffix}`);
+  await page.locator('input[name="propertyName"]').fill(`Comment House ${suffix}`);
   await page.locator('select[name="tripType"]').selectOption("friends");
   await page.getByLabel("beach").check();
   await rateAllCategories(page);

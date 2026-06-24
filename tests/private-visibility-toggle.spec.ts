@@ -45,13 +45,14 @@ async function createPublishedPost(
   country: string,
   city: string,
 ) {
+  const propertyName = `Visibility Test Property ${uniqueSuffix()}`;
   await page.goto("/create");
 
   await page.getByLabel("Title").fill(title);
   await page.getByLabel("Story").fill("Visibility toggle regression coverage post body.");
   await page.locator('input[name="locationCity"]').fill(city);
   await page.locator('input[name="locationCountry"]').fill(country);
-  await page.locator('input[name="propertyName"]').fill("Visibility Test Property");
+  await page.locator('input[name="propertyName"]').fill(propertyName);
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("beach", { exact: true }).check();
 
@@ -95,6 +96,7 @@ async function createPublishedPost(
     slug,
     canonicalPath,
     authorPath: authorHref!,
+    propertyName,
   };
 }
 
@@ -106,7 +108,7 @@ test.describe("Story 23e private visibility toggle", () => {
     const city = `Hidden Bay ${suffix}`;
 
     const author = await signUp(page, "Visibility Author", "visibility-author");
-    const { id, canonicalPath, authorPath } = await createPublishedPost(page, title, country, city);
+    const { id, canonicalPath, authorPath, propertyName } = await createPublishedPost(page, title, country, city);
 
     const reader = await signUp(page, "Visibility Reader", "visibility-reader");
     await page.goto(canonicalPath);
@@ -170,6 +172,9 @@ test.describe("Story 23e private visibility toggle", () => {
     await expect(page.getByText("Keeping this comment to verify persistence after visibility toggles.")).toBeVisible();
 
     await page.goto("/explore");
+    await expect(page.getByRole("link", { name: propertyName }).first()).toBeVisible();
+    await page.getByRole("link", { name: propertyName }).first().click();
+    await expect(page).toHaveURL(/\/accommodation\//);
     await expect(page.getByRole("heading", { level: 3, name: title })).toBeVisible();
 
     await page.goto(`/search?q=${encodeURIComponent(title)}`);

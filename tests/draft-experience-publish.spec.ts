@@ -41,6 +41,7 @@ test.describe("Story 23d draft experience and later publish", () => {
     const title = `Draft Story ${suffix}`;
     const country = `Draftland ${suffix}`;
     const city = `Harbor ${suffix}`;
+    const propertyName = `Draft Property ${suffix}`;
 
     const credentials = await signUp(page, "Draft Author");
     await page.goto("/create");
@@ -49,7 +50,7 @@ test.describe("Story 23d draft experience and later publish", () => {
     await page.getByLabel("Story").fill("Draft story body for story 23d coverage.");
     await page.locator('input[name="locationCity"]').fill(city);
     await page.locator('input[name="locationCountry"]').fill(country);
-    await page.locator('input[name="propertyName"]').fill("Draft Property");
+    await page.locator('input[name="propertyName"]').fill(propertyName);
     await page.locator('select[name="tripType"]').selectOption("solo");
 
     await page.getByLabel("beach", { exact: true }).check();
@@ -129,6 +130,9 @@ test.describe("Story 23d draft experience and later publish", () => {
     await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
 
     await page.goto("/explore");
+    await expect(page.getByRole("link", { name: propertyName }).first()).toBeVisible();
+    await page.getByRole("link", { name: propertyName }).first().click();
+    await expect(page).toHaveURL(/\/accommodation\//);
     await expect(page.getByRole("heading", { level: 3, name: title })).toBeVisible();
 
     await page.goto(`/search?q=${encodeURIComponent(title)}`);

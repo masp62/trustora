@@ -63,13 +63,15 @@ async function createPost(
     photoIndex: number;
   },
 ) {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   await page.goto("/create");
   const photoUrl = await uploadPhotoAndGetUrl(page, options.photoIndex);
 
   await page.getByLabel("Title").fill(options.title);
   await page.getByLabel("Story").fill("Story 19 tag page coverage post.");
-  await page.locator('input[name="locationCity"]').fill("Tag City");
-  await page.locator('input[name="locationCountry"]').fill("Tag Country");
+  await page.locator('input[name="locationCity"]').fill(`Tag City ${suffix}`);
+  await page.locator('input[name="locationCountry"]').fill(`Tag Country ${suffix}`);
+  await page.locator('input[name="propertyName"]').fill(`Tag Property ${suffix}`);
   await page.locator('select[name="tripType"]').selectOption("solo");
   await rateAllCategories(page);
 

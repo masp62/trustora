@@ -72,14 +72,15 @@ async function rateAllCategories(page: import("@playwright/test").Page) {
 }
 
 async function createPost(page: import("@playwright/test").Page, title: string, suffix: string) {
+  const uniquePart = `${suffix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   await page.goto("/create");
   const photoUrl = await uploadPhotoAndGetUrl(page, suffix);
 
   await page.getByLabel("Title").fill(title);
   await page.getByLabel("Story").fill("Story 23 admin moderation test post body.");
-  await page.locator('input[name="locationCity"]').fill("AdminCity");
-  await page.locator('input[name="locationCountry"]').fill("AdminCountry");
-  await page.locator('input[name="propertyName"]').fill("Admin Moderation Place");
+  await page.locator('input[name="locationCity"]').fill(`AdminCity ${uniquePart}`);
+  await page.locator('input[name="locationCountry"]').fill(`AdminCountry ${uniquePart}`);
+  await page.locator('input[name="propertyName"]').fill(`Admin Moderation Place ${uniquePart}`);
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break", { exact: true }).check();
   await rateAllCategories(page);

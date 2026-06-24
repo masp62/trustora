@@ -37,18 +37,7 @@ async function rateAllCategories(page: import("@playwright/test").Page) {
 }
 
 async function getUsername(page: import("@playwright/test").Page) {
-  // Create a post and extract username from post detail page
-  const photoResponse = await page.request.post("/api/upload", {
-    multipart: {
-      file: {
-        name: "edit-profile-photo.png",
-        mimeType: "image/png",
-        buffer: Buffer.from("edit-profile-fake-image"),
-      },
-    },
-  });
-  expect(photoResponse.status()).toBe(201);
-  const photoPayload = (await photoResponse.json()) as { url: string };
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
   await page.goto("/create");
 
@@ -56,19 +45,16 @@ async function getUsername(page: import("@playwright/test").Page) {
   await page.getByLabel("Story").fill("Post for extracting username.");
   await page.locator('input[name="locationCity"]').fill("Berlin");
   await page.locator('input[name="locationCountry"]').fill("Germany");
+  await page.locator('input[name="propertyName"]').fill(`Edit Profile Property ${suffix}`);
   await page.locator('select[name="tripType"]').selectOption("solo");
   await page.getByLabel("city-break").check();
   await rateAllCategories(page);
-
-  await page.evaluate((url) => {
-    const form = document.querySelector("form");
-    if (!form) return;
-    const hidden = document.createElement("input");
-    hidden.type = "hidden";
-    hidden.name = "photoUrls";
-    hidden.value = url;
-    form.appendChild(hidden);
-  }, photoPayload.url);
+  await page.locator('input[type="file"]').setInputFiles({
+    name: `edit-profile-${suffix}.png`,
+    mimeType: "image/png",
+    buffer: Buffer.from(`edit-profile-fake-image-${suffix}`),
+  });
+  await expect(page.getByText("Photos (1/10)")).toBeVisible();
 
   await page.getByRole("button", { name: "Publish experience" }).click();
   await expect(page).toHaveURL(/\/post\/[^/]+\/[^/]+/);
