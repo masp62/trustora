@@ -47,7 +47,7 @@ type CreatedStory = {
 
 async function createStoryForAccommodation(
   page: import("@playwright/test").Page,
-  input?: { propertyName?: string; city?: string; country?: string; title?: string },
+  input?: { propertyName?: string; city?: string; country?: string; title?: string; tripType?: "solo" | "couple" | "family" | "friends" | "business" },
 ): Promise<CreatedStory> {
   const suffix = uniqueSuffix();
   const title = input?.title ?? `Story16 Accommodation ${suffix}`;
@@ -62,7 +62,7 @@ async function createStoryForAccommodation(
   await page.locator('input[name="locationCity"]').fill(city);
   await page.locator('input[name="locationCountry"]').fill(country);
   await page.locator('input[name="propertyName"]').fill(propertyName);
-  await page.locator('select[name="tripType"]').selectOption("couple");
+  await page.locator('select[name="tripType"]').selectOption(input?.tripType ?? "couple");
 
   await page.getByLabel("beach").check();
   await page.getByLabel("remote-work").check();
@@ -132,5 +132,37 @@ test.describe("Story 16 explore accommodations", () => {
     const experienceCards = page.locator('section:has(h2:has-text("Experiences")) h3');
     await expect(experienceCards.first()).toHaveText(second.title);
     await expect(experienceCards.nth(1)).toHaveText(first.title);
+  });
+
+  test("trip type filter only shows matching accommodations", async ({ page }) => {
+    await signUp(page);
+    const suffix = uniqueSuffix();
+
+    const soloPropertyName = `Story16 Solo Property ${suffix}`;
+    const couplePropertyName = `Story16 Couple Property ${suffix}`;
+    const city = `Story16City ${suffix}`;
+    const country = `Story16Country ${suffix}`;
+
+    await createStoryForAccommodation(page, {
+      propertyName: soloPropertyName,
+      city,
+      country,
+      title: `Story16 Solo ${suffix}`,
+      tripType: "solo",
+    });
+
+    await createStoryForAccommodation(page, {
+      propertyName: couplePropertyName,
+      city,
+      country,
+      title: `Story16 Couple ${suffix}`,
+      tripType: "couple",
+    });
+
+    await page.context().clearCookies();
+    await page.goto("/explore?tripType=solo");
+
+    await expect(page.getByRole("link", { name: soloPropertyName }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: couplePropertyName })).toHaveCount(0);
   });
 });

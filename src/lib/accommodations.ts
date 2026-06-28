@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import type { FilterState } from "@/lib/explore-filters";
 
 export type AccommodationAggregate = {
   weightedOverallScore: number | null;
@@ -47,6 +48,13 @@ export type AccommodationCommentData = {
     displayName: string;
     avatarUrl: string | null;
   } | null;
+};
+
+const EMPTY_FILTERS: FilterState = {
+  country: "",
+  city: "",
+  tripType: "",
+  tags: [],
 };
 
 function normalizePart(value: string) {
@@ -290,30 +298,92 @@ export async function recomputeAccommodationAggregate(accommodationId: string): 
   return aggregate;
 }
 
-export async function getAccommodationCards(): Promise<AccommodationCardData[]> {
-  if (!hasAccommodationModel()) {
-    const posts = (await db.experiencePost.findMany({
-      where: { status: "published", visibility: "public" },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        slug: true,
-        propertyName: true,
-        locationCity: true,
-        locationCountry: true,
-        authorId: true,
-      },
-    })) as Array<{
-      id: string;
-      slug: string;
-      propertyName: string | null;
-      locationCity: string;
-      locationCountry: string;
-      authorId: string;
-    }>;
+export async function getAccommodationCards(filters: FilterState = EMPTY_FILTERS): Promise<AccommodationCardData[]> {
+  const whereBase: {
+    status: "published";
+    visibility: "public";
+    locationCountry?: { contains: string; mode: "insensitive" };
+    locationCity?: { contains: string; mode: "insensitive" };
+    tripType?: string;
+  } = {
+    status: "published",
+    visibility: "public",
+  };
 
+  if (filters.country) {
+    whereBase.locationCountry = {
+      contains: filters.country,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters.city) {
+    whereBase.locationCity = {
+      contains: filters.city,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters.tripType) {
+    whereBase.tripType = filters.tripType;
+  }
+
+  const basePosts = (await db.experiencePost.findMany({
+    where: whereBase,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      accommodationId: true,
+      propertyName: true,
+      locationCity: true,
+      locationCountry: true,
+      authorId: true,
+      createdAt: true,
+    },
+  })) as Array<{
+    id: string;
+    accommodationId: string | null;
+    propertyName: string | null;
+    locationCity: string;
+    locationCountry: string;
+    authorId: string;
+    createdAt: Date;
+  }>;
+
+  let filteredPosts = basePosts;
+
+  if (filters.tags.length > 0) {
+    const tagRecords = (await db.tag.findMany({
+      where: { name: { in: filters.tags } },
+      select: { id: true },
+    })) as Array<{ id: string }>;
+
+    if (tagRecords.length === 0) {
+      return [];
+    }
+
+    const tagIds = new Set(tagRecords.map((entry) => entry.id));
+    const postTagRows = (await db.postTag.findMany({
+      where: {
+        postId: { in: basePosts.map((post) => post.id) },
+      },
+      select: { postId: true, tagId: true },
+    })) as Array<{ postId: string; tagId: string }>;
+
+    const allowedPostIds = new Set(
+      postTagRows.filter((entry) => tagIds.has(entry.tagId)).map((entry) => entry.postId),
+    );
+
+    filteredPosts = basePosts.filter((post) => allowedPostIds.has(post.id));
+  }
+
+  if (filteredPosts.length === 0) {
+    return [];
+  }
+
+  if (!hasAccommodationModel()) {
     const grouped = new Map<string, AccommodationCardData>();
-    for (const post of posts) {
+    for (const post of filteredPosts) {
       if (!post.propertyName) {
         continue;
       }
@@ -352,8 +422,13 @@ export async function getAccommodationCards(): Promise<AccommodationCardData[]> 
     return [...grouped.values()];
   }
 
+  const accommodationIds = [...new Set(filteredPosts.map((post) => post.accommodationId).filter(Boolean))] as string[];
+  if (accommodationIds.length === 0) {
+    return [];
+  }
+
   const accommodations = (await db.accommodation.findMany({
-    orderBy: { updatedAt: "desc" },
+    where: { id: { in: accommodationIds } },
     select: {
       id: true,
       slug: true,
@@ -371,40 +446,49 @@ export async function getAccommodationCards(): Promise<AccommodationCardData[]> 
     weightedOverallScore: number | null;
   }>;
 
-  const result = await Promise.all(
-    accommodations.map(async (accommodation) => {
-      const posts = (await db.experiencePost.findMany({
-        where: {
-          accommodationId: accommodation.id,
-          status: "published",
-          visibility: "public",
-        },
-        orderBy: { createdAt: "desc" },
-        select: { id: true },
-      })) as Array<{ id: string }>;
+  const postsByAccommodationId = new Map<string, Array<{ id: string; createdAt: Date }>>();
+  for (const post of filteredPosts) {
+    if (!post.accommodationId) {
+      continue;
+    }
 
-      const firstPostId = posts[0]?.id;
-      const image = firstPostId
-        ? ((await db.postImage.findMany({
-            where: { postId: firstPostId },
-            orderBy: { order: "asc" },
-            take: 1,
-            select: { cloudinaryUrl: true },
-          })) as Array<{ cloudinaryUrl: string }>)[0]?.cloudinaryUrl ?? null
-        : null;
+    const current = postsByAccommodationId.get(post.accommodationId) ?? [];
+    current.push({ id: post.id, createdAt: post.createdAt });
+    postsByAccommodationId.set(post.accommodationId, current);
+  }
 
-      return {
-        id: accommodation.id,
-        slug: accommodation.slug,
-        name: accommodation.name,
-        locationCity: accommodation.locationCity,
-        locationCountry: accommodation.locationCountry,
-        weightedOverallScore: accommodation.weightedOverallScore,
-        experienceCount: posts.length,
-        leadImageUrl: image,
-      };
-    }),
-  );
+  const leadPostIds = [...postsByAccommodationId.values()]
+    .map((posts) => [...posts].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]?.id)
+    .filter(Boolean) as string[];
+
+  const leadImages = leadPostIds.length
+    ? ((await db.postImage.findMany({
+        where: { postId: { in: leadPostIds } },
+        orderBy: { order: "asc" },
+        select: { postId: true, cloudinaryUrl: true },
+      })) as Array<{ postId: string; cloudinaryUrl: string }>).reduce((acc, image) => {
+        if (!acc.has(image.postId)) {
+          acc.set(image.postId, image.cloudinaryUrl);
+        }
+        return acc;
+      }, new Map<string, string>())
+    : new Map<string, string>();
+
+  const result = accommodations.map((accommodation) => {
+    const postsForAccommodation = postsByAccommodationId.get(accommodation.id) ?? [];
+    const leadPostId = [...postsForAccommodation].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]?.id;
+
+    return {
+      id: accommodation.id,
+      slug: accommodation.slug,
+      name: accommodation.name,
+      locationCity: accommodation.locationCity,
+      locationCountry: accommodation.locationCountry,
+      weightedOverallScore: accommodation.weightedOverallScore,
+      experienceCount: postsForAccommodation.length,
+      leadImageUrl: leadPostId ? (leadImages.get(leadPostId) ?? null) : null,
+    };
+  });
 
   return result.filter((entry) => entry.experienceCount > 0);
 }

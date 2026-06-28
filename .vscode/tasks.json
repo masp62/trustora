@@ -418,6 +418,21 @@
 				"--workers=1"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "playwright-triptype-fix-check",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
 		}
 	]
 }

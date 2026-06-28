@@ -2,17 +2,28 @@ import { auth } from "@/auth";
 import { AccommodationCard } from "@/components/accommodation-card";
 import { FilterPanel } from "@/components/explore/filter-panel";
 import { getAccommodationCards } from "@/lib/accommodations";
+import { parseFiltersFromParams } from "@/lib/explore-filters";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
 
 export default async function ExplorePage({
-  searchParams: _searchParams,
+  searchParams,
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const session = await auth();
-  const accommodations = await getAccommodationCards();
+  const resolvedSearchParams = await searchParams;
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(resolvedSearchParams)) {
+    if (typeof value === "string" && value.trim()) {
+      params.set(key, value);
+    }
+  }
+
+  const filters = parseFiltersFromParams(params);
+  const accommodations = await getAccommodationCards(filters);
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
