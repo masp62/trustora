@@ -165,4 +165,74 @@ test.describe("Story 16 explore accommodations", () => {
     await expect(page.getByRole("link", { name: soloPropertyName }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: couplePropertyName })).toHaveCount(0);
   });
+
+  test("trip type filter works via filter panel controls", async ({ page }) => {
+    await signUp(page);
+    const suffix = uniqueSuffix();
+
+    const soloPropertyName = `Story16 Solo UI Property ${suffix}`;
+    const couplePropertyName = `Story16 Couple UI Property ${suffix}`;
+    const city = `Story16UICity ${suffix}`;
+    const country = `Story16UICountry ${suffix}`;
+
+    await createStoryForAccommodation(page, {
+      propertyName: soloPropertyName,
+      city,
+      country,
+      title: `Story16 Solo UI ${suffix}`,
+      tripType: "solo",
+    });
+
+    await createStoryForAccommodation(page, {
+      propertyName: couplePropertyName,
+      city,
+      country,
+      title: `Story16 Couple UI ${suffix}`,
+      tripType: "couple",
+    });
+
+    await page.context().clearCookies();
+    await page.goto("/explore");
+
+    await page.getByRole("button", { name: "Solo" }).click();
+    await expect(page).toHaveURL(/tripType=solo/);
+
+    await expect(page.getByRole("heading", { name: soloPropertyName })).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: couplePropertyName })).toHaveCount(0);
+  });
+
+  test("trip type filter works via filter panel controls for couple", async ({ page }) => {
+    await signUp(page);
+    const suffix = uniqueSuffix();
+
+    const soloPropertyName = `Story16 Solo UI Property ${suffix}`;
+    const couplePropertyName = `Story16 Couple UI Property ${suffix}`;
+    const city = `Story16UICity ${suffix}`;
+    const country = `Story16UICountry ${suffix}`;
+
+    await createStoryForAccommodation(page, {
+      propertyName: soloPropertyName,
+      city,
+      country,
+      title: `Story16 Solo UI ${suffix}`,
+      tripType: "solo",
+    });
+
+    await createStoryForAccommodation(page, {
+      propertyName: couplePropertyName,
+      city,
+      country,
+      title: `Story16 Couple UI ${suffix}`,
+      tripType: "couple",
+    });
+
+    await page.context().clearCookies();
+    await page.goto("/explore");
+
+    await page.getByRole("button", { name: "Couple" }).click();
+    await expect(page).toHaveURL(/tripType=couple/);
+
+    await expect(page.getByRole("heading", { name: couplePropertyName })).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: soloPropertyName })).toHaveCount(0);
+  });
 });
