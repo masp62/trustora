@@ -51,7 +51,10 @@ async function rateAllCategories(page: import("@playwright/test").Page) {
   ];
 
   for (const label of ratingLabels) {
-    await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+    const group = page.getByRole("radiogroup", { name: label });
+    await expect(group).toBeVisible();
+    await group.getByRole("radio").nth(4).click();
+    await expect(group.getByText("5/5")).toBeVisible();
   }
 }
 

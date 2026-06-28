@@ -36,25 +36,25 @@ export function validatePostInput(
   fields: PostValidationFields,
   mode: "draft" | "publish",
 ): PostValidationResult {
-  void mode; // reserved for future draft relaxation (#23g)
+  const isPublish = mode === "publish";
 
   const fieldErrors: PostActionFieldErrors = {};
   const { title, body, locationCity, locationCountry, propertyName, tripType, categoryRatings, tags, photoUrls } =
     fields;
 
   if (!title) {
-    fieldErrors.title = "Title is required.";
+    fieldErrors.title = isPublish ? "Title is required." : "Draft title is required.";
   } else if (title.length > POST_TITLE_MAX_LENGTH) {
     fieldErrors.title = `Title must be ${POST_TITLE_MAX_LENGTH} characters or fewer.`;
   }
 
   if (!body) {
-    fieldErrors.body = "Body is required.";
+    fieldErrors.body = isPublish ? "Body is required." : "Draft story is required.";
   } else if (body.length > POST_BODY_MAX_LENGTH) {
     fieldErrors.body = `Body must be ${POST_BODY_MAX_LENGTH} characters or fewer.`;
   }
 
-  if (!locationCity || !locationCountry) {
+  if (isPublish && (!locationCity || !locationCountry)) {
     fieldErrors.location = "City and country are required.";
   }
 
@@ -70,7 +70,7 @@ export function validatePostInput(
     const value = categoryRatings[key];
     return !Number.isInteger(value) || value < 1 || value > 5;
   });
-  if (hasInvalidCategoryRating) {
+  if (isPublish && hasInvalidCategoryRating) {
     fieldErrors.accommodationRatingCategories = "Please rate all accommodation categories (1-5 stars).";
   }
 
@@ -83,7 +83,7 @@ export function validatePostInput(
     fieldErrors.tags = "One or more selected tags are invalid.";
   }
 
-  if (photoUrls.length < MIN_PHOTOS_PER_POST) {
+  if (isPublish && photoUrls.length < MIN_PHOTOS_PER_POST) {
     fieldErrors.photos = "Upload at least one photo.";
   } else if (photoUrls.length > MAX_PHOTOS_PER_POST) {
     fieldErrors.photos = `Upload up to ${MAX_PHOTOS_PER_POST} photos.`;
@@ -113,4 +113,13 @@ export function firstValidationError(result: PostValidationResult): string | nul
     if (result.fieldErrors[key]) return result.fieldErrors[key]!;
   }
   return "Please fix the highlighted fields.";
+}
+
+export function firstPublishValidationError(result: PostValidationResult): string | null {
+  const first = firstValidationError(result);
+  if (!first) {
+    return null;
+  }
+
+  return `Cannot publish yet: ${first}`;
 }

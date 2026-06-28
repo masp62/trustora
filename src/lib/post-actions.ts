@@ -10,7 +10,7 @@ import { ensureAccommodationForPostInput, recomputeAccommodationAggregate } from
 import { db } from "@/lib/db";
 import { locationToSlug } from "@/lib/location-slug";
 import { type PostActionState } from "@/lib/post-action-state";
-import { validatePostInput, firstValidationError } from "@/lib/post-validation";
+import { validatePostInput, firstPublishValidationError } from "@/lib/post-validation";
 import { MAX_POSTS_PER_24H } from "@/lib/post-constants";
 
 function parseField(value: FormDataEntryValue | null) {
@@ -66,6 +66,21 @@ function computeOverallAccommodationRating(categoryRatings: {
 
 function supportsAccommodationSchema() {
   return typeof (db as unknown as { accommodation?: { findMany?: unknown } }).accommodation?.findMany === "function";
+}
+
+function buildDraftAccommodationLinkInput(input: {
+  title: string;
+  propertyName: string;
+  locationCity: string;
+  locationCountry: string;
+}) {
+  const titleSeed = input.title || "Draft experience";
+
+  return {
+    propertyName: input.propertyName || `${titleSeed} (draft)`,
+    locationCity: input.locationCity || "draft-city",
+    locationCountry: input.locationCountry || "draft-country",
+  };
 }
 
 async function generateUniquePostSlug(title: string) {
@@ -185,7 +200,7 @@ async function validateDraftForPublishing(postId: string, authorId: string): Pro
     "publish",
   );
 
-  return firstValidationError(result);
+  return firstPublishValidationError(result);
 }
 
 export async function createExperiencePost(
@@ -247,12 +262,18 @@ export async function createExperiencePost(
   );
 
   if (!valid) {
-    return { error: "Please fix the highlighted fields.", fieldErrors };
+    return {
+      error:
+        intent === "draft"
+          ? "Cannot save draft yet: add at least a title, story, and trip type."
+          : "Cannot publish yet: please fix the highlighted fields.",
+      fieldErrors,
+    };
   }
 
-  if (!propertyName) {
+  if (intent === "publish" && !propertyName) {
     return {
-      error: "Property name is required.",
+      error: "Cannot publish yet: property name is required.",
       fieldErrors: {
         ...fieldErrors,
         location: "Property name is required to link this story to an accommodation.",
@@ -277,11 +298,23 @@ export async function createExperiencePost(
   }
 
   const slug = await generateUniquePostSlug(title);
-  const accommodation = await ensureAccommodationForPostInput({
-    propertyName,
-    locationCity,
-    locationCountry,
-  });
+  const accommodationInput =
+    intent === "publish"
+      ? { propertyName, locationCity, locationCountry }
+      : buildDraftAccommodationLinkInput({
+          title,
+          propertyName,
+          locationCity,
+          locationCountry,
+        });
+  const accommodation = await ensureAccommodationForPostInput(accommodationInput);
+
+  if (supportsAccommodationSchema() && !accommodation?.id) {
+    return {
+      error: "Unable to save this post right now. Please try again.",
+      fieldErrors: {},
+    };
+  }
 
   const createdPost = await db.experiencePost.create({
     data: {
@@ -428,13 +461,23 @@ export async function updateExperiencePost(
     intent,
   );
 
+  const nextStatus =
+    existingPost.status === "published" ? "published" : intent === "draft" ? "draft" : "published";
+  const requiresPublishFields = nextStatus === "published";
+
   if (!valid) {
-    return { error: "Please fix the highlighted fields.", fieldErrors };
+    return {
+      error:
+        intent === "draft"
+          ? "Cannot save draft yet: add at least a title, story, and trip type."
+          : "Cannot publish yet: please fix the highlighted fields.",
+      fieldErrors,
+    };
   }
 
-  if (!propertyName) {
+  if (requiresPublishFields && !propertyName) {
     return {
-      error: "Property name is required.",
+      error: "Cannot publish yet: property name is required.",
       fieldErrors: {
         ...fieldErrors,
         location: "Property name is required to link this story to an accommodation.",
@@ -445,13 +488,24 @@ export async function updateExperiencePost(
   const accommodationRating = computeOverallAccommodationRating(categoryRatings);
 
   const slug = await generateUniquePostSlug(title);
-  const accommodation = await ensureAccommodationForPostInput({
-    propertyName,
-    locationCity,
-    locationCountry,
-  });
-  const nextStatus =
-    existingPost.status === "published" ? "published" : intent === "draft" ? "draft" : "published";
+  const accommodationInput =
+    requiresPublishFields
+      ? { propertyName, locationCity, locationCountry }
+      : buildDraftAccommodationLinkInput({
+          title,
+          propertyName,
+          locationCity,
+          locationCountry,
+        });
+  const accommodation = await ensureAccommodationForPostInput(accommodationInput);
+
+  if (supportsAccommodationSchema() && !accommodation?.id) {
+    return {
+      error: "Unable to save this post right now. Please try again.",
+      fieldErrors: {},
+    };
+  }
+
   const nextPublishedAt =
     nextStatus === "published"
       ? existingPost.publishedAt ?? new Date()

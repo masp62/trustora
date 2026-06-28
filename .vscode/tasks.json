@@ -315,6 +315,22 @@
 				"--workers=1"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "playwright-userprofile-tag-subset",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/tag-pages.spec.ts",
+				"tests/user-profile.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
 		}
 	]
 }

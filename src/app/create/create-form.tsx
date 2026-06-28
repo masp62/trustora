@@ -290,7 +290,9 @@ export function CreatePostForm() {
             </option>
           ))}
         </select>
-        {state.fieldErrors.tripType && <p className="text-sm text-red-700">{state.fieldErrors.tripType}</p>}
+        {(clientErrors.tripType ?? state.fieldErrors.tripType) && (
+          <p className="text-sm text-red-700">{clientErrors.tripType ?? state.fieldErrors.tripType}</p>
+        )}
       </label>
 
       <fieldset className="space-y-3">

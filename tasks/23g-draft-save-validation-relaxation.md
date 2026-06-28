@@ -17,13 +17,13 @@ Target behavior:
 
 ## Acceptance criteria
 
-- [ ] Save as draft works with incomplete content (for example: missing some ratings/tags/photos)
-- [ ] Draft save enforces only minimal constraints (for example: author/session + basic title/body presence + safe field lengths)
-- [ ] Draft publish still enforces full publish rules (same strictness as normal publish)
-- [ ] Error messages distinguish clearly between draft-save validation and publish validation
-- [ ] Drafts created under relaxed validation remain editable and can later be published after completion
-- [ ] Existing tests for published posts and publish validation continue to pass unchanged
-- [ ] Add/adjust Playwright coverage to verify relaxed draft save and strict publish behavior
+- [x] Save as draft works with incomplete content (for example: missing some ratings/tags/photos)
+- [x] Draft save enforces only minimal constraints (for example: author/session + basic title/body presence + safe field lengths)
+- [x] Draft publish still enforces full publish rules (same strictness as normal publish)
+- [x] Error messages distinguish clearly between draft-save validation and publish validation
+- [x] Drafts created under relaxed validation remain editable and can later be published after completion
+- [x] Existing tests for published posts and publish validation continue to pass unchanged
+- [x] Add/adjust Playwright coverage to verify relaxed draft save and strict publish behavior
 
 ## Blocked by
 

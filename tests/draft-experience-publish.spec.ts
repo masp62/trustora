@@ -147,4 +147,59 @@ test.describe("Story 23d draft experience and later publish", () => {
     await page.goto(authorPath);
     await expect(page.getByText(title)).toBeVisible();
   });
+
+  test("story 23g: saves incomplete draft, blocks publish until completion, then publishes", async ({ page }) => {
+    const suffix = uniqueSuffix();
+    const title = `Relaxed Draft ${suffix}`;
+    const country = `Completa ${suffix}`;
+    const city = `Finishville ${suffix}`;
+    const propertyName = `Completion Stay ${suffix}`;
+
+    await signUp(page, "Draft Relaxation Author");
+    await page.goto("/create");
+
+    await page.getByLabel("Title").fill(title);
+    await page.getByLabel("Story").fill("Minimal draft body for 23g coverage.");
+    await page.locator('select[name="tripType"]').selectOption("solo");
+
+    await page.getByRole("button", { name: "Save as draft" }).click();
+    await expect(page).toHaveURL(/\/post\/[^/]+\/[^/]+/);
+    await expect(page.getByText("Draft", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Publish now" }).click();
+    await expect(page.getByText("Cannot publish yet: City and country are required.")).toBeVisible();
+    await expect(page.getByText("Draft not published yet.")).toBeVisible();
+
+    await page.getByRole("link", { name: "Edit" }).click();
+    await page.locator('input[name="locationCity"]').fill(city);
+    await page.locator('input[name="locationCountry"]').fill(country);
+    await page.locator('input[name="propertyName"]').fill(propertyName);
+    await page.getByLabel("beach", { exact: true }).check();
+
+    await page.locator('input[type="file"]').setInputFiles({
+      name: "completion-photo.png",
+      mimeType: "image/png",
+      buffer: Buffer.from("completion-image"),
+    });
+    await expect(page.getByText("Photos (1/10)")).toBeVisible();
+
+    const ratingLabels = [
+      "Cleanliness",
+      "Accuracy of listing",
+      "Check-in",
+      "Communication",
+      "Location",
+      "Value for money",
+      "Comfort",
+      "Facilities & amenities",
+    ];
+
+    for (const label of ratingLabels) {
+      await page.getByRole("radiogroup", { name: label }).getByRole("radio").nth(4).click();
+    }
+
+    await page.getByRole("button", { name: "Publish now" }).click();
+    await expect(page).toHaveURL(/\/post\/[^/]+\/[^/]+/);
+    await expect(page.getByText("Draft not published yet.")).toHaveCount(0);
+  });
 });
