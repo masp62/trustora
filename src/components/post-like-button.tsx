@@ -26,6 +26,7 @@ export function PostLikeButton({
 }: PostLikeButtonProps) {
   const [liked, setLiked] = useState(initiallyLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [popTick, setPopTick] = useState(0);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -45,6 +46,7 @@ export function PostLikeButton({
 
     setLiked(nextLiked);
     setLikeCount((current) => Math.max(0, current + (nextLiked ? 1 : -1)));
+    setPopTick((value) => value + 1);
 
     startTransition(async () => {
       try {
@@ -72,6 +74,7 @@ export function PostLikeButton({
   return (
     <>
       <button
+        key={popTick}
         type="button"
         onClick={toggleLike}
         disabled={isPending}
@@ -80,7 +83,7 @@ export function PostLikeButton({
         className={cn(
           "touch-target inline-flex items-center gap-1 rounded-full border border-transparent transition",
           compact ? "px-2.5 py-2 text-sm" : "px-3 py-2 text-sm font-medium",
-          liked ? "text-rose-600 hover:bg-rose-50" : "text-gray-600 hover:bg-gray-100",
+          liked ? "like-pop bg-rose-50 text-rose-600 hover:bg-rose-100" : "text-gray-600 hover:bg-gray-100",
           isPending && "opacity-70",
         )}
       >

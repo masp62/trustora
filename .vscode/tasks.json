@@ -433,6 +433,214 @@
 				"--workers=1"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "playwright-explore-added-test",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-explore-added-test-rerun",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-explore-couple-check",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-24b-targeted",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/auth-onboarding.spec.ts",
+				"tests/explore-accommodations.spec.ts",
+				"tests/post-creation.spec.ts",
+				"tests/user-profile.spec.ts",
+				"tests/likes.spec.ts",
+				"tests/follow-unfollow.spec.ts",
+				"tests/comments.spec.ts",
+				"tests/draft-experience-publish.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-24b-fix-rerun",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/auth-onboarding.spec.ts",
+				"tests/user-profile.spec.ts",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-final-24b",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-final-24b-log",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=dot",
+				"--workers=1",
+				">",
+				"playwright-full-final-24b.log",
+				"2>&1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-full-final-24b-rerun-clean",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-comments-first-test-repro",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/comments.spec.ts",
+				"-g",
+				"shows comments chronologically to visitors",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-24b-block-a",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/auth-onboarding.spec.ts",
+				"tests/image-upload.spec.ts",
+				"tests/post-creation.spec.ts",
+				"tests/post-detail.spec.ts",
+				"tests/post-edit-delete.spec.ts",
+				"tests/comments.spec.ts",
+				"tests/likes.spec.ts",
+				"tests/follow-unfollow.spec.ts",
+				"tests/edit-profile.spec.ts",
+				"tests/user-profile.spec.ts",
+				"tests/draft-experience-publish.spec.ts",
+				"tests/private-visibility-toggle.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-24b-block-b",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"tests/location-pages.spec.ts",
+				"tests/tag-pages.spec.ts",
+				"tests/full-text-search.spec.ts",
+				"tests/home-feed-following.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-24b-block-c",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/admin-dashboard.spec.ts",
+				"tests/admin-analytics-overview.spec.ts",
+				"tests/report-post-comment.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
 		}
 	]
 }

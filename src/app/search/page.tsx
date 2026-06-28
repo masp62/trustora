@@ -78,7 +78,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <PostCard
                 key={post.id}

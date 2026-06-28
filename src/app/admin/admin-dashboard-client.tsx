@@ -372,6 +372,7 @@ function ReportQueueSection({
   return (
     <section className="space-y-4" aria-label="Pending report queue">
       <h2 className="font-heading text-2xl text-gray-900">Report queue</h2>
+      <p className="text-sm text-gray-600">Reported experiences and comments awaiting moderation.</p>
       <p className="text-sm font-semibold text-gray-700">{pendingCountLabel}</p>
 
       <div className="hidden overflow-hidden rounded-2xl border border-gray-200 md:block">

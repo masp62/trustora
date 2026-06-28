@@ -7,7 +7,8 @@ import { Compass, SearchX, UserPlus } from "lucide-react";
 export function ExploreNoResults() {
   return (
     <div className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center">
-      <div className="flex size-16 items-center justify-center rounded-full bg-gray-100">
+      <div className="relative flex size-16 items-center justify-center rounded-full bg-gray-100">
+        <span className="absolute -right-1 -top-1 size-3 rounded-full bg-brand/20" aria-hidden="true" />
         <SearchX className="size-8 text-gray-400" />
       </div>
       <h2 className="mt-5 font-heading text-xl text-gray-900">
@@ -34,8 +35,7 @@ export function HomeFeedEmpty() {
         Your feed is empty
       </h2>
       <p className="mt-2 max-w-sm text-sm text-gray-500">
-        Follow travelers to see their latest posts here, or explore the
-        community to discover new stories.
+        No stories shared yet. Your next adventure starts here.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Link
@@ -63,14 +63,15 @@ export function HomeFeedEmpty() {
 export function ExploreEmpty() {
   return (
     <div className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center">
-      <div className="flex size-16 items-center justify-center rounded-full bg-brand/10">
+      <div className="relative flex size-16 items-center justify-center rounded-full bg-brand/10">
+        <span className="absolute -left-1 -top-1 size-2.5 rounded-full bg-brand/30" aria-hidden="true" />
         <Compass className="size-8 text-brand" />
       </div>
       <h2 className="mt-5 font-heading text-xl text-gray-900">
-        No stories yet
+        No stories shared yet
       </h2>
       <p className="mt-2 max-w-sm text-sm text-gray-500">
-        Be the first to share your travel experience!
+        Your next adventure starts here.
       </p>
     </div>
   );

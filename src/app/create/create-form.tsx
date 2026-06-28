@@ -68,23 +68,26 @@ function SubmitButtons({ disabled, setIntent }: { disabled: boolean; setIntent: 
   const { pending } = useFormStatus();
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <button
-        type="submit"
-        onClick={() => setIntent("publish")}
-        disabled={pending || disabled}
-        className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
-      >
-        {pending ? "Saving..." : "Publish experience"}
-      </button>
-      <button
-        type="submit"
-        onClick={() => setIntent("draft")}
-        disabled={pending || disabled}
-        className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
-      >
-        {pending ? "Saving..." : "Save as draft"}
-      </button>
+    <div className="sticky bottom-3 z-20 rounded-2xl border border-gray-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none">
+      <p className="mb-2 text-xs font-semibold tracking-[0.08em] text-gray-500 uppercase">Publish</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          type="submit"
+          onClick={() => setIntent("publish")}
+          disabled={pending || disabled}
+          className="inline-flex w-full items-center justify-center rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-gray-300"
+        >
+          {pending ? "Publishing your story..." : "Publish experience"}
+        </button>
+        <button
+          type="submit"
+          onClick={() => setIntent("draft")}
+          disabled={pending || disabled}
+          className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
+        >
+          {pending ? "Saving draft..." : "Save as draft"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -232,6 +235,8 @@ export function CreatePostForm() {
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} className="mt-8 space-y-6">
       <input type="hidden" name="intent" value={submitIntent} />
+      <section className="space-y-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold tracking-[0.08em] text-gray-500 uppercase">Content</h2>
       <label className="block space-y-1">
         <span className="text-sm font-semibold text-gray-700">Title</span>
         <input
@@ -262,7 +267,10 @@ export function CreatePostForm() {
           <p className="text-sm text-red-700">{clientErrors.body ?? state.fieldErrors.body}</p>
         )}
       </label>
+      </section>
 
+      <section className="space-y-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold tracking-[0.08em] text-gray-500 uppercase">Location</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1">
           <span className="text-sm font-semibold text-gray-700">City</span>
@@ -319,8 +327,9 @@ export function CreatePostForm() {
           <p className="text-sm text-red-700">{clientErrors.tripType ?? state.fieldErrors.tripType}</p>
         )}
       </label>
+      </section>
 
-      <fieldset className="space-y-3">
+      <fieldset className="space-y-3 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
         <legend className="text-sm font-semibold text-gray-700">Accommodation rating categories</legend>
         <p className="text-xs text-gray-500">
           Overall rating is calculated automatically from all category ratings (equal weight).
@@ -378,7 +387,7 @@ export function CreatePostForm() {
         )}
       </fieldset>
 
-      <fieldset className="space-y-2">
+      <fieldset className="space-y-2 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
         <legend className="text-sm font-semibold text-gray-700">
           Tags ({selectedTags.length}/{MAX_TAGS_PER_POST})
         </legend>
@@ -408,7 +417,7 @@ export function CreatePostForm() {
         )}
       </fieldset>
 
-      <fieldset className="space-y-2">
+      <fieldset className="space-y-2 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
         <legend className="text-sm font-semibold text-gray-700">
           Photos ({uploadedPhotos.length}/{MAX_PHOTOS_PER_POST})
         </legend>
@@ -426,7 +435,11 @@ export function CreatePostForm() {
           <ul className="space-y-2">
             {uploadedPhotos.map((photo) => (
               <li key={photo.url} className="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-3 py-2 text-sm">
-                <div className="truncate pr-3 text-gray-800">{photo.name}</div>
+                <div className="flex min-w-0 items-center gap-3 pr-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.url} alt={photo.name} className="h-10 w-10 rounded-md object-cover" />
+                  <div className="truncate text-gray-800">{photo.name}</div>
+                </div>
                 <button
                   type="button"
                   onClick={() => removePhoto(photo.url)}

@@ -138,7 +138,7 @@ export function PostComments({
     <section className="space-y-4" aria-label="Comments">
       <h2 className="font-heading text-2xl text-gray-900">Comments ({comments.length})</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-amber-100 bg-amber-50/60 p-4">
         <label htmlFor="comment-body" className="text-sm font-semibold text-gray-800">
           Write a comment
         </label>
@@ -179,15 +179,15 @@ export function PostComments({
       </form>
 
       {comments.length === 0 ? (
-        <p className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">No comments yet.</p>
+        <p className="rounded-xl border border-amber-100 bg-amber-50/60 p-4 text-sm text-gray-600">No comments yet. Start the conversation about this stay.</p>
       ) : (
-        <ul className="space-y-3" aria-label="Comment list">
+        <ul className="space-y-3 pl-2 sm:pl-4" aria-label="Comment list">
           {comments.map((comment) => {
             const canDelete = isAuthenticated && currentUserId === comment.author?.id;
             const isDeleting = deletingCommentId === comment.id;
 
             return (
-              <li key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <li key={comment.id} className="rounded-xl border border-amber-100 bg-white p-4 shadow-sm">
                 <div className="mb-2 flex items-center justify-between gap-3">
                   {comment.author ? (
                     <Link

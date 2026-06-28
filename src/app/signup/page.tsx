@@ -9,20 +9,28 @@ export default function SignupPage() {
   return (
     <main className="flex flex-1 items-start px-4 py-10 sm:items-center sm:px-6 sm:py-12 lg:px-8 xl:px-10 2xl:px-12">
       <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm sm:p-12">
-        <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Join Trustora</p>
-        <h1 className="mt-4 font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">
-          Create your account
-        </h1>
-        <p className="mt-4 text-gray-700">
-          Continue with Google or sign up with email and password.
-        </p>
+        <div className="relative overflow-hidden rounded-2xl border border-teal-100 bg-linear-to-r from-teal-50 via-white to-sky-50 p-5 sm:p-6">
+          <div className="pointer-events-none absolute right-8 top-3 h-24 w-24 rounded-full border border-teal-200/80" aria-hidden="true" />
+          <div className="pointer-events-none absolute right-20 top-16 h-16 w-16 rounded-full border border-cyan-200/80" aria-hidden="true" />
+          <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Start your travel logbook</p>
+          <h1 className="mt-4 font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">
+            Create your account
+          </h1>
+          <p className="mt-4 max-w-2xl text-gray-700">
+            Build your stay profile, collect trusted reviews, and share your next adventure with context.
+          </p>
+          <p className="mt-2 text-gray-700">
+            Continue with Google or sign up with email and password.
+          </p>
+        </div>
 
         <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-4 sm:p-6">
+          <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-gray-500 uppercase">Fast start</p>
           {googleAuthConfigured ? (
             <form action={signInWithGoogle}>
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="inline-flex w-full items-center justify-center rounded-full border border-teal-200 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-teal-50"
               >
                 Continue with Google
               </button>

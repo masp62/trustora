@@ -27,6 +27,23 @@ function toTitleCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function tripTypePillClass(tripType: string) {
+  switch (tripType) {
+    case "solo":
+      return "trip-pill trip-pill-solo";
+    case "couple":
+      return "trip-pill trip-pill-couple";
+    case "family":
+      return "trip-pill trip-pill-family";
+    case "friends":
+      return "trip-pill trip-pill-friends";
+    case "business":
+      return "trip-pill trip-pill-business";
+    default:
+      return "trip-pill";
+  }
+}
+
 type PostCardProps = {
   post: PostCardData;
   isAuthenticated: boolean;
@@ -68,20 +85,23 @@ export function PostCard({ post, isAuthenticated, googleAuthConfigured }: PostCa
         </div>
       </div>
 
-      <div className="space-y-2 p-4 sm:p-4">
+      <div className="space-y-2.5 p-4 sm:p-4">
         <Link href={href} className="block">
           <h3 className="line-clamp-2 font-heading text-lg leading-snug text-gray-900 transition group-hover:text-brand">
             {post.title}
           </h3>
         </Link>
 
+        <div className="flex items-center justify-between gap-2">
+          <span className={tripTypePillClass(post.tripType)}>{toTitleCase(post.tripType)}</span>
+          <span className="text-xs font-semibold tracking-[0.06em] text-gray-400 uppercase">Story</span>
+        </div>
+
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <MapPin className="size-3.5 text-brand-accent" />
           <span className="truncate">
             {post.locationCity}, {post.locationCountry}
           </span>
-          <span className="text-gray-400">·</span>
-          <span className="text-gray-500">{toTitleCase(post.tripType)}</span>
         </div>
 
         <div className="flex items-center justify-between gap-3">

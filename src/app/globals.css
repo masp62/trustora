@@ -111,3 +111,137 @@ body {
     min-height: 44px;
   }
 }
+
+@keyframes fade-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.18);
+  }
+
+  65% {
+    transform: scale(0.94);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 38%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+
+.motion-hero-kicker {
+  opacity: 0;
+  animation: fade-up-in 480ms cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
+}
+
+.motion-hero-title {
+  opacity: 0;
+  animation: fade-up-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 180ms forwards;
+}
+
+.motion-hero-subtitle {
+  opacity: 0;
+  animation: fade-up-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 300ms forwards;
+}
+
+.stagger-grid > * {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fade-up-in 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.stagger-grid > *:nth-child(1) { animation-delay: 70ms; }
+.stagger-grid > *:nth-child(2) { animation-delay: 120ms; }
+.stagger-grid > *:nth-child(3) { animation-delay: 170ms; }
+.stagger-grid > *:nth-child(4) { animation-delay: 220ms; }
+.stagger-grid > *:nth-child(5) { animation-delay: 270ms; }
+.stagger-grid > *:nth-child(6) { animation-delay: 320ms; }
+
+.like-pop {
+  animation: pop-bounce 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.follow-pulse {
+  animation: pulse-ring 620ms ease-out;
+}
+
+.trip-pill {
+  border-radius: 999px;
+  border-width: 1px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.trip-pill-solo {
+  border-color: #9ed8ff;
+  background: #e8f4ff;
+  color: #1968a5;
+}
+
+.trip-pill-couple {
+  border-color: #fed7aa;
+  background: #fff4e6;
+  color: #b45309;
+}
+
+.trip-pill-family {
+  border-color: #bbf7d0;
+  background: #ecfdf3;
+  color: #166534;
+}
+
+.trip-pill-friends {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.trip-pill-business {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-hero-kicker,
+  .motion-hero-title,
+  .motion-hero-subtitle,
+  .stagger-grid > *,
+  .like-pop,
+  .follow-pulse {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  * {
+    scroll-behavior: auto !important;
+    transition-duration: 0ms !important;
+  }
+}

@@ -24,6 +24,7 @@ export function FollowButton({
   className,
 }: FollowButtonProps) {
   const [isFollowing, setIsFollowing] = useState(initiallyFollowing);
+  const [showPulse, setShowPulse] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -55,6 +56,8 @@ export function FollowButton({
         }
 
         setIsFollowing(result.followed);
+        setShowPulse(true);
+        setTimeout(() => setShowPulse(false), 650);
       } catch {
         setIsFollowing(previousIsFollowing);
       }
@@ -74,6 +77,7 @@ export function FollowButton({
           isFollowing
             ? "border border-gray-300 bg-white text-gray-800 hover:border-gray-400 hover:bg-gray-100"
             : "border border-gray-900 bg-gray-900 text-white hover:bg-gray-700",
+          showPulse && "follow-pulse",
           className,
         )}
       >

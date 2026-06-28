@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   if (!profile) return { title: "User not found" };
 
   return {
-    title: `${profile.user.displayName} (@${profile.user.username}) Â· Trustora`,
+    title: `${profile.user.displayName} (@${profile.user.username}) · Trustora`,
     description: profile.user.bio ?? `Travel stories by ${profile.user.displayName}`,
   };
 }
@@ -116,7 +116,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
     <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <div className="mx-auto w-full max-w-[1760px] space-y-8">
         {/* Profile Header */}
-        <section className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm sm:p-10">
+        <section className="overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-sm">
+          <div className="h-20 bg-linear-to-r from-cyan-100 via-sky-100 to-teal-100 sm:h-24" aria-hidden="true" />
+          <div className="-mt-10 p-6 sm:-mt-12 sm:p-10">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
             {/* Avatar */}
             {user.avatarUrl ? (
@@ -124,10 +126,10 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               <img
                 src={user.avatarUrl}
                 alt={user.displayName}
-                className="size-24 rounded-full border-2 border-gray-200 object-cover sm:size-28"
+                className="size-28 rounded-full border-4 border-white object-cover shadow-md sm:size-32"
               />
             ) : (
-              <div className="flex size-24 items-center justify-center rounded-full border-2 border-gray-200 bg-gray-100 text-3xl font-bold text-gray-700 sm:size-28">
+              <div className="flex size-28 items-center justify-center rounded-full border-4 border-white bg-gray-100 text-3xl font-bold text-gray-700 shadow-md sm:size-32">
                 {user.displayName.slice(0, 1).toUpperCase()}
               </div>
             )}
@@ -139,7 +141,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               <p className="mt-1 text-sm text-gray-500">@{user.username}</p>
 
               {user.bio && (
-                <p className="mt-3 max-w-lg text-sm leading-relaxed text-gray-700">
+                <p className="mt-3 max-w-lg text-[0.98rem] leading-relaxed text-gray-700">
                   {user.bio}
                 </p>
               )}
@@ -158,18 +160,18 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               </div>
 
               {/* Stats */}
-              <div className="mt-4 flex items-center justify-center gap-6 text-sm sm:justify-start">
-                <span>
-                  <span className="font-semibold text-gray-900">{isOwnProfile ? user._count.allPosts : user._count.posts}</span>{" "}
-                  <span className="text-gray-500">posts</span>
+              <div className="mt-5 grid w-full max-w-lg grid-cols-3 gap-2 rounded-2xl border border-gray-100 bg-gray-50 p-2 text-center sm:text-left">
+                <span className="rounded-xl bg-white px-3 py-2">
+                  <span className="block text-lg font-semibold text-gray-900">{isOwnProfile ? user._count.allPosts : user._count.posts}</span>
+                  <span className="text-sm text-gray-500">{isOwnProfile ? user._count.allPosts : user._count.posts} posts</span>
                 </span>
-                <Link href={`/u/${user.username}/followers`} className="transition hover:text-brand">
-                  <span className="font-semibold text-gray-900">{user._count.followers}</span>{" "}
-                  <span className="text-gray-500">followers</span>
+                <Link href={`/u/${user.username}/followers`} className="rounded-xl bg-white px-3 py-2 transition hover:text-brand">
+                  <span className="block text-lg font-semibold text-gray-900">{user._count.followers}</span>
+                  <span className="text-sm text-gray-500">{user._count.followers} followers</span>
                 </Link>
-                <Link href={`/u/${user.username}/following`} className="transition hover:text-brand">
-                  <span className="font-semibold text-gray-900">{user._count.following}</span>{" "}
-                  <span className="text-gray-500">following</span>
+                <Link href={`/u/${user.username}/following`} className="rounded-xl bg-white px-3 py-2 transition hover:text-brand">
+                  <span className="block text-lg font-semibold text-gray-900">{user._count.following}</span>
+                  <span className="text-sm text-gray-500">{user._count.following} following</span>
                 </Link>
               </div>
 
@@ -198,6 +200,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
               )}
             </div>
           </div>
+          </div>
         </section>
 
         {/* Post Grid */}
@@ -205,17 +208,17 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
           <h2 className="mb-4 font-heading text-xl text-gray-900">{isOwnProfile ? "Posts & drafts" : "Posts"}</h2>
           {posts.length === 0 ? (
             <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
-              <p className="text-sm text-gray-500">No posts yet.</p>
+              <p className="text-sm text-gray-500">No stories shared yet. Your next adventure starts here.</p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {posts.map((post) => {
                 const href = postCanonicalPath(post.id, post.slug);
                 return (
                   <Link
                     key={post.id}
                     href={href}
-                    className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
+                    className="group overflow-hidden rounded-xl border border-gray-100 bg-white transition hover:shadow-sm"
                   >
                     {post.leadImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element

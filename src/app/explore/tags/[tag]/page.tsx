@@ -80,7 +80,7 @@ export default async function TagPage({ params }: TagPageProps) {
             <p className="mt-2 text-sm text-gray-600">Check back later for new tagged experiences.</p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <PostCard
                 key={post.id}

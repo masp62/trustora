@@ -89,13 +89,17 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
           {images.map((image, index) => (
             <li
               key={image.cloudinaryUrl}
-              className="min-w-[85%] snap-start overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 sm:min-w-[70%]"
+              className={`min-w-[85%] snap-start overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 transition duration-500 ease-out sm:min-w-[70%] ${
+                index === activeIndex ? "opacity-100" : "opacity-70"
+              }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={image.cloudinaryUrl}
                 alt={`${title} photo ${index + 1}`}
-                className="h-[20rem] w-full object-cover sm:h-[28rem]"
+                className={`h-[20rem] w-full object-cover transition duration-500 ease-out sm:h-[28rem] ${
+                  index === activeIndex ? "scale-100" : "scale-[0.985]"
+                }`}
               />
             </li>
           ))}

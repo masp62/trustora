@@ -388,7 +388,7 @@ export async function createExperiencePost(
     await recomputeAccommodationAggregate(accommodation.id);
   }
 
-  redirect(`/post/${createdPost.id}`);
+  redirect(`/post/${createdPost.id}/${createdPost.slug}?published=1`);
 }
 
 export async function updateExperiencePost(
