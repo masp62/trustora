@@ -27,6 +27,43 @@ type UploadedPhoto = {
   url: string;
 };
 
+async function uploadPhotoWithRetry(file: File, attempts = 3): Promise<{ url: string }> {
+  let lastError: string | null = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const payload = (await response.json()) as { url?: string; error?: string };
+
+      if (!response.ok || !payload.url) {
+        lastError = payload.error ?? "Upload failed";
+
+        if (response.status >= 500 && attempt < attempts) {
+          continue;
+        }
+
+        throw new Error(lastError);
+      }
+
+      return { url: payload.url };
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : "Upload failed";
+      if (attempt === attempts) {
+        throw new Error(lastError);
+      }
+    }
+  }
+
+  throw new Error(lastError ?? "Upload failed");
+}
+
 type EditPostFormProps = {
   post: {
     id: string;
@@ -175,19 +212,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
     try {
       const uploaded = await Promise.all(
         files.map(async (file) => {
-          const formData = new FormData();
-          formData.append("file", file);
-
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          const payload = (await response.json()) as { url?: string; error?: string };
-
-          if (!response.ok || !payload.url) {
-            throw new Error(payload.error ?? "Upload failed");
-          }
+          const payload = await uploadPhotoWithRetry(file);
 
           return {
             name: file.name,
@@ -372,7 +397,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
                       setCategoryRatings((prev) => ({ ...prev, [category.key]: value }));
                       setClientErrors((prev) => ({ ...prev, accommodationRatingCategories: undefined }));
                     }}
-                    className="rounded-full p-1 transition hover:bg-gray-100"
+                    className="touch-target rounded-full p-2 transition hover:bg-gray-100"
                   >
                     <Star className={`size-5 ${active ? "fill-amber-400 text-amber-500" : "text-gray-300"}`} />
                   </button>
@@ -400,7 +425,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
             const disabled = !checked && selectedTags.length >= MAX_TAGS_PER_POST;
 
             return (
-              <label key={tag} className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-800">
+              <label key={tag} className="touch-target flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-800">
                 <input
                   type="checkbox"
                   checked={checked}
@@ -442,7 +467,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
                 <button
                   type="button"
                   onClick={() => removePhoto(photo.url)}
-                  className="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                  className="touch-target rounded-md border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
                 >
                   Remove
                 </button>

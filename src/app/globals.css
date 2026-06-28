@@ -98,8 +98,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
+  overflow-x: clip;
 }
 
 .font-heading {
   font-family: var(--font-heading), serif;
+}
+
+@media (max-width: 640px) {
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }

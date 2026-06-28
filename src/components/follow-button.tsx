@@ -70,7 +70,7 @@ export function FollowButton({
         aria-pressed={isFollowing}
         aria-label={isFollowing ? `Unfollow @${targetUsername}` : `Follow @${targetUsername}`}
         className={cn(
-          "rounded-full px-6 py-2 text-sm font-semibold transition disabled:opacity-70",
+          "touch-target rounded-full px-6 py-2.5 text-sm font-semibold transition disabled:opacity-70",
           isFollowing
             ? "border border-gray-300 bg-white text-gray-800 hover:border-gray-400 hover:bg-gray-100"
             : "border border-gray-900 bg-gray-900 text-white hover:bg-gray-700",

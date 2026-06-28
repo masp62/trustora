@@ -70,7 +70,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
           <button
             type="button"
             onClick={onForgotPassword}
-            className="font-semibold text-brand hover:text-brand-hover"
+            className="touch-target px-2 font-semibold text-brand hover:text-brand-hover"
           >
             Forgot password?
           </button>
@@ -79,7 +79,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword?: () => void 
         <p className="text-center text-sm text-gray-600">
           <a
             href="/forgot-password"
-            className="font-semibold text-brand hover:text-brand-hover"
+            className="touch-target inline-flex items-center px-2 font-semibold text-brand hover:text-brand-hover"
           >
             Forgot password?
           </a>

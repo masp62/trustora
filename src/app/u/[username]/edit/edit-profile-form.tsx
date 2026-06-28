@@ -15,6 +15,43 @@ type EditProfileFormProps = {
   initialAvatarUrl: string | null;
 };
 
+async function uploadAvatarWithRetry(file: File, attempts = 3): Promise<{ url: string }> {
+  let lastError: string | null = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const payload = (await response.json()) as { url?: string; error?: string };
+
+      if (!response.ok || !payload.url) {
+        lastError = payload.error ?? "Upload failed";
+
+        if (response.status >= 500 && attempt < attempts) {
+          continue;
+        }
+
+        throw new Error(lastError);
+      }
+
+      return { url: payload.url };
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : "Upload failed";
+      if (attempt === attempts) {
+        throw new Error(lastError);
+      }
+    }
+  }
+
+  throw new Error(lastError ?? "Upload failed");
+}
+
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -63,22 +100,7 @@ export function EditProfileForm({
     setAvatarPreview(localPreview);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const payload = (await response.json()) as { error?: string };
-        setUploadError(payload.error ?? "Upload failed");
-        setAvatarPreview(initialAvatarUrl ?? "");
-        return;
-      }
-
-      const payload = (await response.json()) as { url: string };
+      const payload = await uploadAvatarWithRetry(file);
       setAvatarUrl(payload.url);
       setAvatarPreview(payload.url);
     } catch {
@@ -99,7 +121,7 @@ export function EditProfileForm({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="group relative"
+          className="touch-target group relative"
           disabled={uploading}
         >
           {avatarPreview ? (

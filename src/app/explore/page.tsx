@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { AccommodationCard } from "@/components/accommodation-card";
+import { FilterPanel } from "@/components/explore/filter-panel";
 import { getAccommodationCards } from "@/lib/accommodations";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
@@ -21,6 +22,10 @@ export default async function ExplorePage({
         <h1 className="mt-3 max-w-2xl font-heading text-4xl leading-tight text-gray-900 sm:text-6xl xl:max-w-none xl:whitespace-nowrap">
           Discover verified accommodations.
         </h1>
+
+        <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
+          <FilterPanel />
+        </div>
 
         <OnboardingPrompt />
 

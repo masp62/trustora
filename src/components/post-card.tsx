@@ -106,7 +106,7 @@ export function PostCard({ post, isAuthenticated, googleAuthConfigured }: PostCa
 
           <Link
             href={`/u/${post.author.username}`}
-            className="flex max-w-[12rem] items-center gap-2 transition hover:opacity-80"
+            className="touch-target flex max-w-[12rem] items-center gap-2 transition hover:opacity-80"
             aria-label={`View profile of ${post.author.username}`}
           >
             {post.author.avatarUrl ? (

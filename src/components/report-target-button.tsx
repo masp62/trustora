@@ -70,7 +70,7 @@ export function ReportTargetButton({
           setIsFormOpen((current) => !current);
           setMessage(null);
         }}
-        className="text-xs font-semibold text-gray-600 transition hover:text-red-600"
+        className="touch-target px-2 text-xs font-semibold text-gray-600 transition hover:text-red-600"
       >
         Report
       </button>
@@ -96,7 +96,7 @@ export function ReportTargetButton({
               onClick={() => {
                 setIsFormOpen(false);
               }}
-              className="rounded-full px-3 py-1 text-xs font-semibold text-gray-600 transition hover:bg-gray-200"
+              className="touch-target rounded-full px-3 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-200"
             >
               Cancel
             </button>
@@ -104,7 +104,7 @@ export function ReportTargetButton({
               type="button"
               onClick={handleSubmit}
               disabled={isPending}
-              className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="touch-target rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
               Submit report
             </button>

@@ -128,7 +128,7 @@ function ReportModerationActions({ report, onResolved }: ReportModerationActions
           type="button"
           onClick={runDismiss}
           disabled={isPending}
-          className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
+          className="touch-target rounded-full border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
         >
           Dismiss
         </button>
@@ -141,7 +141,7 @@ function ReportModerationActions({ report, onResolved }: ReportModerationActions
             setMessage(null);
           }}
           disabled={isPending}
-          className="rounded-full bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+          className="touch-target rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {report.targetType === "post" ? "Remove post" : "Remove comment"}
         </button>
@@ -154,7 +154,7 @@ function ReportModerationActions({ report, onResolved }: ReportModerationActions
             setMessage(null);
           }}
           disabled={isPending}
-          className="rounded-full bg-red-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70"
+          className="touch-target rounded-full bg-red-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70"
         >
           Ban user
         </button>
@@ -178,7 +178,7 @@ function ReportModerationActions({ report, onResolved }: ReportModerationActions
                 setActiveConfirm(null);
                 setConfirmText("");
               }}
-              className="rounded-full px-3 py-1 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
+              className="touch-target rounded-full px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
             >
               Cancel
             </button>
@@ -186,7 +186,7 @@ function ReportModerationActions({ report, onResolved }: ReportModerationActions
               type="button"
               onClick={runConfirmedAction}
               disabled={isPending || confirmText !== requiredToken}
-              className="rounded-full bg-red-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70"
+              className="touch-target rounded-full bg-red-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
               Confirm
             </button>
@@ -527,7 +527,7 @@ export function AdminDashboardClient({ initialOverview, initialReports }: AdminD
           role="tab"
           aria-selected={activeTab === "overview"}
           onClick={() => setActiveTab("overview")}
-          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+          className={`touch-target rounded-lg px-3 py-2 text-sm font-semibold transition ${
             activeTab === "overview" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
           }`}
         >
@@ -538,7 +538,7 @@ export function AdminDashboardClient({ initialOverview, initialReports }: AdminD
           role="tab"
           aria-selected={activeTab === "reports"}
           onClick={() => setActiveTab("reports")}
-          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+          className={`touch-target rounded-lg px-3 py-2 text-sm font-semibold transition ${
             activeTab === "reports" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
           }`}
         >

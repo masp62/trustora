@@ -25,10 +25,10 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
-        <div className="flex items-center gap-8">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-8">
           <Link
             href="/explore"
-            className="font-heading text-4xl font-bold tracking-tight text-brand transition hover:text-brand-hover"
+            className="touch-target font-heading text-3xl font-bold tracking-tight text-brand transition hover:text-brand-hover sm:text-4xl"
           >
             Trustora
           </Link>
@@ -47,7 +47,7 @@ export async function SiteHeader() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <SearchNavForm />
           <ThemeToggle />
           <UserMenu

@@ -84,7 +84,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
       <div className="relative">
         <ul
           ref={scrollRef}
-          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [touch-action:pan-x] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((image, index) => (
             <li
@@ -106,7 +106,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
             <button
               onClick={goPrev}
               disabled={activeIndex === 0}
-              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-2 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
+              className="touch-target absolute top-1/2 left-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-3 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
               aria-label="Previous photo"
             >
               <ChevronLeft className="size-5 text-gray-800" />
@@ -114,7 +114,7 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
             <button
               onClick={goNext}
               disabled={activeIndex === count - 1}
-              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-2 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
+              className="touch-target absolute top-1/2 right-2 -translate-y-1/2 rounded-full border border-white/40 bg-white/80 p-3 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-30"
               aria-label="Next photo"
             >
               <ChevronRight className="size-5 text-gray-800" />
@@ -129,15 +129,17 @@ export function PhotoGallery({ title, images }: PhotoGalleryProps) {
             <button
               key={index}
               onClick={() => scrollToIndex(index)}
-              className={`size-2 rounded-full transition ${
+              className={`touch-target relative inline-flex items-center justify-center rounded-full transition ${
                 index === activeIndex
-                  ? "scale-125 bg-brand"
-                  : "bg-gray-300 hover:bg-gray-400"
+                  ? "text-brand"
+                  : "text-gray-300 hover:text-gray-400"
               }`}
               role="tab"
               aria-selected={index === activeIndex}
               aria-label={`Go to photo ${index + 1}`}
-            />
+            >
+              <span className="size-2 rounded-full bg-current" aria-hidden="true" />
+            </button>
           ))}
         </div>
       )}

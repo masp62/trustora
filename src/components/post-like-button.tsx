@@ -78,8 +78,8 @@ export function PostLikeButton({
         aria-pressed={liked}
         aria-label={liked ? "Unlike this post" : "Like this post"}
         className={cn(
-          "inline-flex items-center gap-1 rounded-full border border-transparent transition",
-          compact ? "px-2 py-1 text-sm" : "px-3 py-1.5 text-sm font-medium",
+          "touch-target inline-flex items-center gap-1 rounded-full border border-transparent transition",
+          compact ? "px-2.5 py-2 text-sm" : "px-3 py-2 text-sm font-medium",
           liked ? "text-rose-600 hover:bg-rose-50" : "text-gray-600 hover:bg-gray-100",
           isPending && "opacity-70",
         )}

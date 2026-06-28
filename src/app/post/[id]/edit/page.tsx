@@ -144,9 +144,9 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
 
   return (
     <main className="flex flex-1 px-4 py-12 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
-      <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-12">
+      <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm sm:p-12">
         <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Edit experience</p>
-        <h1 className="mt-4 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">
+        <h1 className="mt-4 font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">
           Update your story
         </h1>
         <p className="mt-2 inline-flex w-fit rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold tracking-wide text-gray-700 uppercase">

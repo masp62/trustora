@@ -7,17 +7,17 @@ import { SignupForm } from "./signup-form";
 
 export default function SignupPage() {
   return (
-    <main className="flex flex-1 items-center px-4 py-12 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
-      <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-12">
+    <main className="flex flex-1 items-start px-4 py-10 sm:items-center sm:px-6 sm:py-12 lg:px-8 xl:px-10 2xl:px-12">
+      <section className="mx-auto w-full max-w-[1760px] rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm sm:p-12">
         <p className="text-sm font-semibold tracking-[0.15em] text-gray-500 uppercase">Join Trustora</p>
-        <h1 className="mt-4 font-heading text-4xl leading-tight text-gray-900 sm:text-5xl">
+        <h1 className="mt-4 font-heading text-3xl leading-tight text-gray-900 sm:text-5xl">
           Create your account
         </h1>
         <p className="mt-4 text-gray-700">
           Continue with Google or sign up with email and password.
         </p>
 
-        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6">
+        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-4 sm:p-6">
           {googleAuthConfigured ? (
             <form action={signInWithGoogle}>
               <button

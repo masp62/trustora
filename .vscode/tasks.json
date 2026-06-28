@@ -331,6 +331,93 @@
 				"--workers=1"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "playwright-responsive-polish-check",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/edit-profile.spec.ts",
+				"tests/post-detail.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-edit-profile-recheck",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/edit-profile.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-post-detail-recheck",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/post-detail.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-explore-recheck",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "playwright-story24-final-check",
+			"type": "shell",
+			"command": "C:\\Windows\\System32\\cmd.exe",
+			"args": [
+				"/c",
+				"npx.cmd",
+				"playwright",
+				"test",
+				"tests/explore-accommodations.spec.ts",
+				"tests/post-creation.spec.ts",
+				"tests/post-edit-delete.spec.ts",
+				"tests/edit-profile.spec.ts",
+				"tests/auth-onboarding.spec.ts",
+				"tests/post-detail.spec.ts",
+				"tests/admin-dashboard.spec.ts",
+				"tests/admin-analytics-overview.spec.ts",
+				"tests/home-feed-following.spec.ts",
+				"tests/location-pages.spec.ts",
+				"tests/full-text-search.spec.ts",
+				"tests/tag-pages.spec.ts",
+				"--reporter=line",
+				"--workers=1"
+			],
+			"isBackground": false
 		}
 	]
 }
