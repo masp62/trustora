@@ -6,6 +6,7 @@ import { auth, googleAuthConfigured } from "@/auth";
 import { PostCard } from "@/components/post-card";
 import { resolveCountryFromSlug, getLocationPosts } from "@/lib/location-feed";
 import { locationToSlug } from "@/lib/location-slug";
+import { getLatestPublicOgImage, toOpenGraphImages } from "@/lib/seo";
 
 type CountryPageProps = {
   params: Promise<{ country: string }>;
@@ -25,6 +26,9 @@ export async function generateMetadata({ params }: CountryPageProps): Promise<Me
   const title = `Experiences in ${country}`;
   const description = `Browse real travel stay experiences in ${country} on Trustora.`;
   const url = `/explore/${countrySlug}`;
+  const posts = await getLocationPosts(null, country);
+  const fallbackImage = await getLatestPublicOgImage();
+  const openGraphImage = posts[0]?.leadImageUrl ?? fallbackImage;
 
   return {
     title,
@@ -34,6 +38,7 @@ export async function generateMetadata({ params }: CountryPageProps): Promise<Me
       description,
       type: "website",
       url,
+      images: toOpenGraphImages(openGraphImage, title),
     },
     alternates: {
       canonical: url,

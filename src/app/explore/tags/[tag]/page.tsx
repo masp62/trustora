@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { auth, googleAuthConfigured } from "@/auth";
 import { PostCard } from "@/components/post-card";
 import { getTagPosts, isValidPredefinedTag, tagToLabel } from "@/lib/tag-feed";
+import { getLatestPublicOgImage, toOpenGraphImages } from "@/lib/seo";
 
 type TagPageProps = {
   params: Promise<{ tag: string }>;
@@ -24,6 +25,9 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const title = `${tagLabel} Experiences â€” Trustora`;
   const description = `Browse ${tagLabel.toLowerCase()} travel stay experiences shared by the Trustora community.`;
   const url = `/explore/tags/${tag}`;
+  const posts = await getTagPosts(null, tag);
+  const fallbackImage = await getLatestPublicOgImage();
+  const openGraphImage = posts[0]?.leadImageUrl ?? fallbackImage;
 
   return {
     title,
@@ -33,6 +37,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       description,
       type: "website",
       url,
+      images: toOpenGraphImages(openGraphImage, title),
     },
     alternates: {
       canonical: url,

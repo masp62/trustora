@@ -49,20 +49,24 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
 
   const description = `${post.body.slice(0, 140)}${post.body.length > 140 ? "..." : ""}`;
   const canonicalUrl = postCanonicalPath(post.id, post.slug);
-  const openGraphImages = post.images.map((image) => ({
-    url: image.cloudinaryUrl,
-    alt: post.title,
-  }));
+  const firstPostImage = post.images[0]?.cloudinaryUrl ?? null;
 
   return {
-    title: `${post.title} · ${post.locationCity}, ${post.locationCountry}`,
+    title: `${post.title} - ${post.locationCity}, ${post.locationCountry} - Trustora`,
     description,
     openGraph: {
       title: post.title,
       description,
       type: "article",
       url: canonicalUrl,
-      images: openGraphImages,
+      images: firstPostImage
+        ? [
+            {
+              url: firstPostImage,
+              alt: post.title,
+            },
+          ]
+        : undefined,
     },
     alternates: {
       canonical: canonicalUrl,

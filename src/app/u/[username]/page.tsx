@@ -7,6 +7,7 @@ import { auth, googleAuthConfigured } from "@/auth";
 import { db } from "@/lib/db";
 import { postCanonicalPath } from "@/app/post/post-detail-data";
 import { FollowButton } from "@/components/follow-button";
+import { getLatestPublicOgImage, toOpenGraphImages } from "@/lib/seo";
 
 type ProfilePageProps = {
   params: Promise<{ username: string }>;
@@ -77,11 +78,32 @@ async function getUserProfile(username: string) {
 export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
   const { username } = await params;
   const profile = await getUserProfile(username);
-  if (!profile) return { title: "User not found" };
+  if (!profile) {
+    return {
+      title: "User not found",
+      description: "The requested Trustora profile does not exist.",
+    };
+  }
+
+  const title = `${profile.user.displayName} (@${profile.user.username}) - Trustora`;
+  const description = profile.user.bio ?? `Travel stories by ${profile.user.displayName} on Trustora.`;
+  const url = `/u/${profile.user.username}`;
+  const fallbackImage = await getLatestPublicOgImage();
+  const openGraphImage = profile.user.avatarUrl ?? profile.posts[0]?.leadImageUrl ?? fallbackImage;
 
   return {
-    title: `${profile.user.displayName} (@${profile.user.username}) · Trustora`,
-    description: profile.user.bio ?? `Travel stories by ${profile.user.displayName}`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      url,
+      images: toOpenGraphImages(openGraphImage, `${profile.user.displayName} avatar`),
+    },
+    alternates: {
+      canonical: url,
+    },
   };
 }
 

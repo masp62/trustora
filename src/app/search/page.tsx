@@ -3,6 +3,7 @@
 import { auth, googleAuthConfigured } from "@/auth";
 import { PostCard } from "@/components/post-card";
 import { searchPosts } from "@/lib/search-feed";
+import { getLatestPublicOgImage, toOpenGraphImages } from "@/lib/seo";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string | string[] }>;
@@ -21,14 +22,30 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   const query = normalizeQuery(params.q);
 
   if (!query) {
+    const fallbackImage = await getLatestPublicOgImage();
+
     return {
-      title: "Search experiences",
+      title: "Search experiences - Trustora",
       description: "Search travel stay experiences on Trustora.",
+      openGraph: {
+        title: "Search experiences - Trustora",
+        description: "Search travel stay experiences on Trustora.",
+        type: "website",
+        url: "/search",
+        images: toOpenGraphImages(fallbackImage, "Search experiences - Trustora"),
+      },
+      alternates: {
+        canonical: "/search",
+      },
     };
   }
 
-  const title = `Search results for \"${query}\" â€” Trustora`;
+  const posts = await searchPosts(null, query);
+  const fallbackImage = await getLatestPublicOgImage();
+  const openGraphImage = posts[0]?.leadImageUrl ?? fallbackImage;
+  const title = `Search results for \"${query}\" - Trustora`;
   const description = `Discover travel stay experiences matching \"${query}\" on Trustora.`;
+  const url = `/search?q=${encodeURIComponent(query)}`;
 
   return {
     title,
@@ -37,10 +54,11 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
       title,
       description,
       type: "website",
-      url: `/search?q=${encodeURIComponent(query)}`,
+      url,
+      images: toOpenGraphImages(openGraphImage, title),
     },
     alternates: {
-      canonical: `/search?q=${encodeURIComponent(query)}`,
+      canonical: url,
     },
   };
 }

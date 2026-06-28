@@ -1,26 +1,105 @@
+import type { Metadata } from "next";
+
 import { auth } from "@/auth";
 import { AccommodationCard } from "@/components/accommodation-card";
 import { FilterPanel } from "@/components/explore/filter-panel";
 import { getAccommodationCards } from "@/lib/accommodations";
 import { parseFiltersFromParams } from "@/lib/explore-filters";
+import { toOpenGraphImages } from "@/lib/seo";
 
 import { OnboardingPrompt } from "./onboarding-prompt";
 import { ProfileSetupDialog } from "./profile-setup-dialog";
 
-export default async function ExplorePage({
-  searchParams,
-}: {
+type ExplorePageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
-}) {
-  const session = await auth();
-  const resolvedSearchParams = await searchParams;
+};
+
+function getResolvedParams(searchParams: Record<string, string | undefined>) {
   const params = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(resolvedSearchParams)) {
+  for (const [key, value] of Object.entries(searchParams)) {
     if (typeof value === "string" && value.trim()) {
       params.set(key, value);
     }
   }
+
+  return params;
+}
+
+function buildExploreCanonicalUrl(params: URLSearchParams) {
+  const canonicalParams = new URLSearchParams();
+
+  const country = params.get("country")?.trim() ?? "";
+  const city = params.get("city")?.trim() ?? "";
+  const tripType = params.get("tripType")?.trim() ?? "";
+  const tags = params.get("tags")?.trim() ?? "";
+
+  if (country) {
+    canonicalParams.set("country", country);
+  }
+
+  if (city) {
+    canonicalParams.set("city", city);
+  }
+
+  if (tripType) {
+    canonicalParams.set("tripType", tripType);
+  }
+
+  if (tags) {
+    canonicalParams.set("tags", tags);
+  }
+
+  const query = canonicalParams.toString();
+  return query ? `/explore?${query}` : "/explore";
+}
+
+function buildExploreTitle(filters: { country: string; city: string; tripType: string; tags: string[] }) {
+  const locationPart = filters.city && filters.country
+    ? ` in ${filters.city}, ${filters.country}`
+    : filters.country
+      ? ` in ${filters.country}`
+      : "";
+
+  const tripTypePart = filters.tripType ? ` for ${filters.tripType} travelers` : "";
+  const tagPart = filters.tags.length > 0 ? ` tagged ${filters.tags.join(", ")}` : "";
+
+  return `Explore accommodations${locationPart}${tripTypePart}${tagPart} - Trustora`;
+}
+
+export async function generateMetadata({ searchParams }: ExplorePageProps): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const params = getResolvedParams(resolvedSearchParams);
+  const filters = parseFiltersFromParams(params);
+  const accommodations = await getAccommodationCards(filters);
+
+  const title = buildExploreTitle(filters);
+  const description = accommodations.length > 0
+    ? `Browse ${accommodations.length} traveler-reviewed accommodations on Trustora.`
+    : "Browse traveler-reviewed accommodations on Trustora.";
+  const url = buildExploreCanonicalUrl(params);
+  const openGraphImage = accommodations[0]?.leadImageUrl ?? null;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url,
+      images: toOpenGraphImages(openGraphImage, title),
+    },
+    alternates: {
+      canonical: url,
+    },
+  };
+}
+
+export default async function ExplorePage({ searchParams }: ExplorePageProps) {
+  const session = await auth();
+  const resolvedSearchParams = await searchParams;
+  const params = getResolvedParams(resolvedSearchParams);
 
   const filters = parseFiltersFromParams(params);
   const accommodations = await getAccommodationCards(filters);

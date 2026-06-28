@@ -6,6 +6,7 @@ import { auth, googleAuthConfigured } from "@/auth";
 import { PostCard } from "@/components/post-card";
 import { getLocationPosts, resolveCityFromSlug, resolveCountryFromSlug } from "@/lib/location-feed";
 import { locationToSlug } from "@/lib/location-slug";
+import { getLatestPublicOgImage, toOpenGraphImages } from "@/lib/seo";
 
 type CityPageProps = {
   params: Promise<{ country: string; city: string }>;
@@ -33,6 +34,9 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   const title = `Experiences in ${city}, ${country}`;
   const description = `Browse real travel stay experiences in ${city}, ${country} on Trustora.`;
   const url = `/explore/${countrySlug}/${citySlug}`;
+  const posts = await getLocationPosts(null, country, city);
+  const fallbackImage = await getLatestPublicOgImage();
+  const openGraphImage = posts[0]?.leadImageUrl ?? fallbackImage;
 
   return {
     title,
@@ -42,6 +46,7 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
       description,
       type: "website",
       url,
+      images: toOpenGraphImages(openGraphImage, title),
     },
     alternates: {
       canonical: url,
